@@ -1,4 +1,4 @@
-package hu.finominfo.counter;
+package hu.finominfo.common;
 
 import hu.finominfo.common.PropReader;
 import java.util.Arrays;
@@ -23,6 +23,7 @@ public class PropertiesReader {
     private volatile String beep;
     private volatile String success;
     private volatile String failed;
+    private final boolean controller;
 
     public PropertiesReader() {
         Properties prop = PropReader.getSingletonInstance().getProperties();
@@ -34,8 +35,13 @@ public class PropertiesReader {
         beep = prop.getProperty("beep", "beep.wav");
         success = prop.getProperty("success", "success.wav");
         failed = prop.getProperty("failed", "failed.wav");
+        controller = prop.getProperty("node", "controlled").equalsIgnoreCase("servant");
     }
-    
+
+    public boolean isController() {
+        return controller;
+    }
+
     public String getFailed() {
         return failed;
     }
