@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication;
+package hu.finominfo.common;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
