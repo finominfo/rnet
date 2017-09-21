@@ -16,8 +16,10 @@ public class ConnectionBroadcaster {
     private final EventLoopGroup group;
     private final Bootstrap bootstrap;
     private final Channel ch;
+    private final int port;
 
     public ConnectionBroadcaster(int port) {
+        this.port = port;
         group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -28,9 +30,8 @@ public class ConnectionBroadcaster {
     }
 
     public void send(ChannelFutureListener futureListener) {
-        int serverPort = 10001;
         for (final String ip : Interface.ips) {
-            ChannelFuture channelFuture = ch.writeAndFlush(new Connection(ip, serverPort));
+            ChannelFuture channelFuture = ch.writeAndFlush(new Connection(ip, port));
             if (null!= futureListener) {
                 channelFuture.addListener(futureListener);
             }

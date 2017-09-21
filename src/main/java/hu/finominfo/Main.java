@@ -4,6 +4,7 @@ import hu.finominfo.common.PropReader;
 import hu.finominfo.common.PropertiesReader;
 import hu.finominfo.node.controller.Controller;
 import hu.finominfo.node.servant.Servant;
+import hu.finominfo.rnet.communication.Interface;
 
 import java.io.File;
 
@@ -27,8 +28,9 @@ public class Main {
 
     public static void main(String [] args) {
         setupLog4J();
+        Interface.getInterfaces();
         if (CONTROLLER) {
-            new Controller().start();
+            new Controller().run();
         } else {
             new Servant().start();
         }
