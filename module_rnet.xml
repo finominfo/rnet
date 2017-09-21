@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_rnet" default="compile.module.rnet">
+  <dirname property="module.rnet.basedir" file="${ant.file.module_rnet}"/>
+  
+  <property name="module.jdk.home.rnet" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.rnet" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.rnet" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.rnet" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  
+  <property name="rnet.output.dir" value="${module.rnet.basedir}/build/classes/main"/>
+  <property name="rnet.testoutput.dir" value="${module.rnet.basedir}/build/classes/test"/>
+  
+  <path id="rnet.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="rnet.module.production.classpath">
+    <path refid="${module.jdk.classpath.rnet}"/>
+    <path refid="library.gradle:_io.netty:netty-all:4.1.15.final.classpath"/>
+    <path refid="library.gradle:_log4j:log4j:1.2.17.classpath"/>
+  </path>
+  
+  <path id="rnet.runtime.production.module.classpath">
+    <pathelement location="${rnet.output.dir}"/>
+    <path refid="library.gradle:_io.netty:netty-all:4.1.15.final.classpath"/>
+    <path refid="library.gradle:_log4j:log4j:1.2.17.classpath"/>
+  </path>
+  
+  <path id="rnet.module.classpath">
+    <path refid="${module.jdk.classpath.rnet}"/>
+    <pathelement location="${rnet.output.dir}"/>
+    <path refid="library.gradle:_junit:junit:4.11.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.gradle:_io.netty:netty-all:4.1.15.final.classpath"/>
+    <path refid="library.gradle:_log4j:log4j:1.2.17.classpath"/>
+  </path>
+  
+  <path id="rnet.runtime.module.classpath">
+    <pathelement location="${rnet.testoutput.dir}"/>
+    <pathelement location="${rnet.output.dir}"/>
+    <path refid="library.gradle:_junit:junit:4.11.classpath"/>
+    <path refid="library.gradle:_org.hamcrest:hamcrest-core:1.3.classpath"/>
+    <path refid="library.gradle:_io.netty:netty-all:4.1.15.final.classpath"/>
+    <path refid="library.gradle:_log4j:log4j:1.2.17.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.rnet">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.rnet">
+    <patternset refid="excluded.from.module.rnet"/>
+  </patternset>
+  
+  <path id="rnet.module.sourcepath">
+    <dirset dir="${module.rnet.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="rnet.module.test.sourcepath">
+    <dirset dir="${module.rnet.basedir}">
+      <include name="src/test/java"/>
+      <include name="src/test/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.rnet" depends="compile.module.rnet.production,compile.module.rnet.tests" description="Compile module rnet"/>
+  
+  <target name="compile.module.rnet.production" depends="register.custom.compilers" description="Compile module rnet; production classes">
+    <mkdir dir="${rnet.output.dir}"/>
+    <javac2 destdir="${rnet.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.rnet}/javac">
+      <compilerarg line="${compiler.args.rnet}"/>
+      <bootclasspath refid="rnet.module.bootclasspath"/>
+      <classpath refid="rnet.module.production.classpath"/>
+      <src refid="rnet.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.rnet"/>
+    </javac2>
+    
+    <copy todir="${rnet.output.dir}">
+      <fileset dir="${module.rnet.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.rnet.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.rnet.tests" depends="register.custom.compilers,compile.module.rnet.production" description="compile module rnet; test classes" unless="skip.tests">
+    <mkdir dir="${rnet.testoutput.dir}"/>
+    <javac2 destdir="${rnet.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.rnet}/javac">
+      <compilerarg line="${compiler.args.rnet}"/>
+      <bootclasspath refid="rnet.module.bootclasspath"/>
+      <classpath refid="rnet.module.classpath"/>
+      <src refid="rnet.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.rnet"/>
+    </javac2>
+    
+    <copy todir="${rnet.testoutput.dir}">
+      <fileset dir="${module.rnet.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.rnet.basedir}/src/test/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.rnet" description="cleanup module">
+    <delete dir="${rnet.output.dir}"/>
+    <delete dir="${rnet.testoutput.dir}"/>
+  </target>
+</project>

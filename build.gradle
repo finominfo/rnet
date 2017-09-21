@@ -1,0 +1,13 @@
+apply plugin: 'java'
+
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'io.netty', name: 'netty-all', version: '4.1.15.Final'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
