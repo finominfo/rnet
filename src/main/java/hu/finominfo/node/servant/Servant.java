@@ -26,7 +26,7 @@ public class Servant implements Runnable, ChannelFutureListener {
     private final int broadcastMonitorPort;
     private final int clientPort;
     private final int serverPort;
-    private volatile String currentServer;
+    private volatile String currentConnectToServer;
     private volatile Client currentClient;
 
     public Servant() {
@@ -54,8 +54,8 @@ public class Servant implements Runnable, ChannelFutureListener {
                     Connection connection = iterator.next();
                     String address = connection.getServerIp();
                     if (!Globals.get().connectedServers.keySet().contains(address)) {
-                        logger.info("Try to connect to a new server: " + address + ":" + clientPort);
-                        currentServer = address;
+                        //logger.info("Try to connect to a new server: " + address + ":" + clientPort);
+                        currentConnectToServer = address;
                         currentClient = new Client(address, clientPort);
                         currentClient.bind().addListener(this);
                         foundNewServer = true;
@@ -63,7 +63,7 @@ public class Servant implements Runnable, ChannelFutureListener {
                     }
                 }
                 if (!foundNewServer) {
-                    logger.info("Not found new server to connect.");
+                    //logger.info("Not found new server to connect.");
                     nextStart();
                 }
                 break;
@@ -87,8 +87,9 @@ public class Servant implements Runnable, ChannelFutureListener {
                     eventToDo = EventToDo.CLIENT;
                     break;
                 case CLIENT:
-                    Globals.get().connectedServers.put(currentServer, future);
-                    logger.info("Sever successfully connected: " + currentServer);
+                    Globals.get().connectedServers.put(currentConnectToServer, future);
+                    logger.info("Sever successfully connected: " + currentConnectToServer + ":" + clientPort);
+                    //sendAddress
                     break;
             }
         } else {
@@ -102,7 +103,7 @@ public class Servant implements Runnable, ChannelFutureListener {
                     server.stop();
                     break;
                 case CLIENT:
-                    logger.error("Server could not connected: " + currentServer);
+                    logger.error("Server could not connected: " + currentConnectToServer);
                     currentClient.stop();
                     break;
             }

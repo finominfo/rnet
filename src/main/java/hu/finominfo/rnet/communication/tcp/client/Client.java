@@ -26,7 +26,7 @@ public class Client {
         bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioSocketChannel.class)
-                //.option(ChannelOption.SO_KEEPALIVE, true)
+                .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.SO_SNDBUF, Event.BUFFER_SIZE)
                 .option(ChannelOption.SO_RCVBUF, Event.BUFFER_SIZE)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 300_000)
@@ -40,7 +40,6 @@ public class Client {
                             }
                         }
                 );
-                //.localAddress(new InetSocketAddress(address, port));
     }
     public ChannelFuture bind() {
         return bootstrap.connect(new InetSocketAddress(address, port));
