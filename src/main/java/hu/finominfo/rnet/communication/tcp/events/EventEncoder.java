@@ -14,11 +14,6 @@ import java.util.List;
  */
 public class EventEncoder extends MessageToMessageEncoder<Event> {
     private final static Logger logger = Logger.getLogger(EventEncoder.class);
-    private final InetSocketAddress remoteAddress;
-
-    public EventEncoder(InetSocketAddress remoteAddress) {
-        this.remoteAddress = remoteAddress;
-    }
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Event msg, List<Object> out) throws Exception {

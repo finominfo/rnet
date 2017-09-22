@@ -9,6 +9,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -37,6 +38,7 @@ public class Server {
                             protected void initChannel(ServerSocketChannel channel)
                                     throws Exception {
                                 ChannelPipeline pipeline = channel.pipeline();
+                                pipeline.addLast(new IdleStateHandler(300, 0, 0));
                                 pipeline.addLast(new EventDecoder());
                                 pipeline.addLast(new FileEventHandler());
                             }

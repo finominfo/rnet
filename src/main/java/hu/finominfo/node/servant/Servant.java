@@ -27,12 +27,13 @@ public class Servant implements Runnable, ChannelFutureListener {
     private final int clientPort;
     private final int serverPort;
     private volatile String currentServer;
+    private volatile Client currentClient;
 
     public Servant() {
         broadcastMonitorPort = Props.get().getPort();
         serverPort = broadcastMonitorPort + 1;
         clientPort = broadcastMonitorPort + 2;
-        eventToDo = EventToDo.SERVER;
+        eventToDo = EventToDo.BROADCAST_MONITOR;
     }
 
     @Override
@@ -53,14 +54,16 @@ public class Servant implements Runnable, ChannelFutureListener {
                     Connection connection = iterator.next();
                     String address = connection.getServerIp();
                     if (!Globals.get().connectedServers.keySet().contains(address)) {
+                        logger.info("Try to connect to a new server: " + address + ":" + clientPort);
                         currentServer = address;
-                        Client client = new Client(address, clientPort);
-                        client.bind().addListener(this);
+                        currentClient = new Client(address, clientPort);
+                        currentClient.bind().addListener(this);
                         foundNewServer = true;
                         break;
                     }
                 }
                 if (!foundNewServer) {
+                    logger.info("Not found new server to connect.");
                     nextStart();
                 }
                 break;
@@ -77,14 +80,15 @@ public class Servant implements Runnable, ChannelFutureListener {
             switch (eventToDo) {
                 case BROADCAST_MONITOR:
                     eventToDo = EventToDo.SERVER;
+                    logger.error("Broadcast monitor successfully created at port: " + broadcastMonitorPort);
                     break;
                 case SERVER:
-                    logger.info("Server successful created at port: " + serverPort);
+                    logger.info("Server successfully created at port: " + serverPort);
                     eventToDo = EventToDo.CLIENT;
                     break;
                 case CLIENT:
                     Globals.get().connectedServers.put(currentServer, future);
-                    logger.info("Sever successful connected: " + currentServer);
+                    logger.info("Sever successfully connected: " + currentServer);
                     break;
             }
         } else {
@@ -99,6 +103,7 @@ public class Servant implements Runnable, ChannelFutureListener {
                     break;
                 case CLIENT:
                     logger.error("Server could not connected: " + currentServer);
+                    currentClient.stop();
                     break;
             }
         }

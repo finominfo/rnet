@@ -2,6 +2,8 @@ package hu.finominfo.rnet.communication;
 
 import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 
 import java.net.UnknownHostException;
 
