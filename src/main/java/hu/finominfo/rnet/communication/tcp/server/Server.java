@@ -9,6 +9,7 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.log4j.Logger;
@@ -33,10 +34,10 @@ public class Server {
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childOption(ChannelOption.SO_SNDBUF, Event.BUFFER_SIZE)
                 .childOption(ChannelOption.SO_RCVBUF, Event.BUFFER_SIZE)
-                .handler(
-                        new ChannelInitializer<ServerSocketChannel>() {
+                .childHandler(
+                        new ChannelInitializer<SocketChannel>() {
                             @Override
-                            protected void initChannel(ServerSocketChannel channel)
+                            protected void initChannel(SocketChannel channel)
                                     throws Exception {
                                 ChannelPipeline pipeline = channel.pipeline();
                                 pipeline.addLast(new IdleStateHandler(300, 0, 0));
@@ -46,7 +47,7 @@ public class Server {
                             }
                         }
                 )
-                .childHandler(new ChannelHandler() {
+                .handler(new ChannelHandler() {
                     @Override
                     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
                         String ipAndPort = ctx.channel().remoteAddress().toString();
