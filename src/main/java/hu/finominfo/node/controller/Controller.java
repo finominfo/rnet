@@ -53,17 +53,17 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
             case CLIENT:
                 boolean foundNewClient = false;
                 Iterator<Map.Entry<String, ClientParam>> iterator = Globals.get().clients.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        currentClient = iterator.next();
-                        if (currentClient.getValue().getConnectedBack().compareAndSet(false, true)) {
-                            String address = Globals.get().getIp(currentClient.getKey());
-                            Client client = new Client(address, clientPort);
-                            currentClient.getValue().setClient(client);
-                            client.bind().addListener(this);
-                            foundNewClient = true;
-                            break;
-                        }
+                while (iterator.hasNext()) {
+                    currentClient = iterator.next();
+                    ClientParam clientParam = currentClient.getValue();
+                    if (clientParam.possibleToTry() && null != clientParam.getContext() && clientParam.getConnectedBack().compareAndSet(false, true)) {
+                        Client client = new Client(currentClient.getKey(), clientPort);
+                        clientParam.setClient(client);
+                        client.bind().addListener(this);
+                        foundNewClient = true;
+                        break;
                     }
+                }
                 if (!foundNewClient) {
                     nextStart();
                 }
@@ -83,7 +83,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
                     eventToDo = EventToDo.BROADCAST;
                     break;
                 case CLIENT:
-                    logger.info("Client successful connected back: " + Globals.get().getIp(currentClient.getKey()));
+                    logger.info("Client successful connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
             }
         } else {
@@ -93,7 +93,9 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
                     server.stop();
                     break;
                 case CLIENT:
-                    logger.error("Client could not connected back: " + Globals.get().getIp(currentClient.getKey()));
+                    currentClient.getValue().getConnectedBack().set(false);
+                    currentClient.getValue().setLastTrying();
+                    logger.error("Client could not connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
             }
         }
@@ -105,7 +107,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
         switch (result) {
             case BROADCAST_FINISHED:
                 broadcaster.stop();
-                if (attachment > 1) {
+                if (attachment > 1 && !Globals.get().clients.isEmpty()) {
                     eventToDo = EventToDo.CLIENT;
                 }
                 break;

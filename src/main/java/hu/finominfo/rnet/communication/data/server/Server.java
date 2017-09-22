@@ -50,14 +50,21 @@ public class Server {
                     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
                         String ipAndPort = ctx.channel().remoteAddress().toString();
                         logger.info(ipAndPort + " connected.");
-                        Globals.get().clients.put(ipAndPort, new ClientParam(ctx));
+                        String ip = Globals.get().getIp(ipAndPort);
+                        ClientParam clientParam = Globals.get().clients.get(ip);
+                        if (null == clientParam) {
+                            Globals.get().clients.put(ip, new ClientParam(ctx));
+                        } else {
+                            clientParam.setContext(ctx);
+                        }
                     }
 
                     @Override
                     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
                         String ipAndPort = ctx.channel().remoteAddress().toString();
                         logger.info(ipAndPort + " disconnected.");
-                        Globals.get().clients.remove(ipAndPort);
+                        String ip = Globals.get().getIp(ipAndPort);
+                        Globals.get().clients.get(ip).setContext(null);
 
                     }
 

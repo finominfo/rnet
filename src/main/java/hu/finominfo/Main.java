@@ -25,7 +25,7 @@ public class Main {
         if (Props.get().isController()) {
             new Controller().run();
         } else {
-            new Servant().start();
+            new Servant().run();
         }
     }
 }
