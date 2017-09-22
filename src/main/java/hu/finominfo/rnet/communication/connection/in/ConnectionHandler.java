@@ -11,7 +11,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 public class ConnectionHandler extends SimpleChannelInboundHandler<Connection> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Connection msg) throws Exception {
-        //TODO: Itt kell elindítani a TCP kapcsolatot visszafelé
         boolean found = false;
         for (Connection connection : Interface.connections) {
             if (connection.equals(msg)) {
@@ -22,6 +21,7 @@ public class ConnectionHandler extends SimpleChannelInboundHandler<Connection> {
         if (!found) {
             Interface.connections.add(msg);
         }
+        //TODO: Itt kell elindítani a TCP kapcsolatot visszafelé
         System.out.println(msg.getServerIp() + ":" + msg.getServerPort() + " connections size: " + Interface.connections.size());
     }
 

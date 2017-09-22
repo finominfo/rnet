@@ -19,6 +19,5 @@
     <orderEntry type="library" exported="" name="Gradle: io.netty:netty-all:4.1.15.Final" level="project" />
     <orderEntry type="library" exported="" name="Gradle: log4j:log4j:1.2.17" level="project" />
     <orderEntry type="library" name="Gradle: com.pi4j:pi4j-core:1.1" level="project" />
-    <orderEntry type="library" exported="" name="com.pi4j:pi4j-core:1.1" level="project" />
   </component>
 </module>
