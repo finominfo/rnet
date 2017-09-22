@@ -3,6 +3,9 @@ package hu.finominfo.node.servant;
 import hu.finominfo.common.Globals;
 import hu.finominfo.common.Props;
 import hu.finominfo.node.EventToDo;
+import hu.finominfo.rnet.communication.Interface;
+import hu.finominfo.rnet.communication.tcp.client.ServerParam;
+import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.tcp.client.Client;
@@ -12,7 +15,11 @@ import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
@@ -20,7 +27,8 @@ import java.util.concurrent.TimeUnit;
 public class Servant implements Runnable, ChannelFutureListener {
 
     private final static Logger logger = Logger.getLogger(Servant.class);
-    private volatile EventToDo eventToDo;
+    private final Queue<EventToDo> tasksToDo = new ConcurrentLinkedQueue<>();
+    private volatile EventToDo currentToDo;
     private volatile ConnectionMonitor monitor;
     private volatile Server server;
     private final int broadcastMonitorPort;
@@ -28,33 +36,44 @@ public class Servant implements Runnable, ChannelFutureListener {
     private final int serverPort;
     private volatile String currentConnectToServer;
     private volatile Client currentClient;
+    private volatile Map.Entry<String, ServerParam> currentServerParam;
+    private final AtomicBoolean shouldNext = new AtomicBoolean(true);
 
     public Servant() {
         broadcastMonitorPort = Props.get().getPort();
         serverPort = broadcastMonitorPort + 1;
         clientPort = broadcastMonitorPort + 2;
-        eventToDo = EventToDo.BROADCAST_MONITOR;
+        tasksToDo.add(EventToDo.BROADCAST_MONITOR);
+        tasksToDo.add(EventToDo.START_SERVER);
+        tasksToDo.add(EventToDo.FIND_SERVERS_TO_CONNECT);
+        tasksToDo.add(EventToDo.SEND_MAC_ADRESSES);
     }
+
 
     @Override
     public void run() {
-        switch (eventToDo) {
+        if (shouldNext.compareAndSet(true, false)) {
+            currentToDo = tasksToDo.poll();
+        }
+        if (null == currentToDo) {
+            runLater();
+        }
+        switch (currentToDo) {
             case BROADCAST_MONITOR:
                 monitor = new ConnectionMonitor(broadcastMonitorPort);
                 monitor.bind().addListener(this);
                 break;
-            case SERVER:
+            case START_SERVER:
                 server = new Server(serverPort);
                 server.bind().addListener(this);
                 break;
-            case CLIENT:
+            case FIND_SERVERS_TO_CONNECT:
                 boolean foundNewServer = false;
                 Iterator<Connection> iterator = Globals.get().connections.iterator();
                 while (iterator.hasNext()) {
                     Connection connection = iterator.next();
                     String address = connection.getServerIp();
                     if (!Globals.get().connectedServers.keySet().contains(address)) {
-                        //logger.info("Try to connect to a new server: " + address + ":" + clientPort);
                         currentConnectToServer = address;
                         currentClient = new Client(address, clientPort);
                         currentClient.bind().addListener(this);
@@ -63,52 +82,74 @@ public class Servant implements Runnable, ChannelFutureListener {
                     }
                 }
                 if (!foundNewServer) {
-                    //logger.info("Not found new server to connect.");
-                    nextStart();
+                    shouldNext.set(true);
+                    runLater();
+                }
+                break;
+            case SEND_MAC_ADRESSES:
+                boolean shouldSend = false;
+                Iterator<Map.Entry<String, ServerParam>> serverIterator = Globals.get().connectedServers.entrySet().iterator();
+                while (serverIterator.hasNext()) {
+                    currentServerParam = serverIterator.next();
+                    if (currentServerParam.getValue().getSentAddresses().compareAndSet(false, true)) {
+                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new AddressEvent(Interface.adresses)).addListener(this);
+                        shouldSend = true;
+                        break;
+                    }
+                }
+                if (!shouldSend) {
+                    shouldNext.set(true);
+                    runLater();
                 }
                 break;
         }
     }
 
-    private void nextStart() {
-        Globals.get().executor.schedule(this, 3, TimeUnit.SECONDS);
+    private void runLater() {
+        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
     }
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (future.isSuccess()) {
-            switch (eventToDo) {
+            switch (currentToDo) {
                 case BROADCAST_MONITOR:
-                    eventToDo = EventToDo.SERVER;
+                    shouldNext.set(true);
                     logger.error("Broadcast monitor successfully created at port: " + broadcastMonitorPort);
                     break;
-                case SERVER:
+                case START_SERVER:
                     logger.info("Server successfully created at port: " + serverPort);
-                    eventToDo = EventToDo.CLIENT;
+                    shouldNext.set(true);
                     break;
-                case CLIENT:
-                    Globals.get().connectedServers.put(currentConnectToServer, future);
+                case FIND_SERVERS_TO_CONNECT:
+                    Globals.get().connectedServers.put(currentConnectToServer, new ServerParam(future));
                     logger.info("Sever successfully connected: " + currentConnectToServer + ":" + clientPort);
-                    //sendAddress
+                    break;
+                case SEND_MAC_ADRESSES:
+                    logger.info("Send mac addresses was successful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     break;
             }
         } else {
-            switch (eventToDo) {
+            switch (currentToDo) {
                 case BROADCAST_MONITOR:
                     logger.error("Broadcast monitor could not started");
                     monitor.stop();
                     break;
-                case SERVER:
+                case START_SERVER:
                     logger.error("Server could not started at port: " + serverPort);
                     server.stop();
                     break;
-                case CLIENT:
+                case FIND_SERVERS_TO_CONNECT:
                     logger.error("Server could not connected: " + currentConnectToServer);
                     currentClient.stop();
                     break;
+                case SEND_MAC_ADRESSES:
+                    logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
+                    currentServerParam.getValue().getSentAddresses().set(false);
+                    break;
             }
         }
-        nextStart();
+        runLater();
     }
 
 }

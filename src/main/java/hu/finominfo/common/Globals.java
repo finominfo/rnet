@@ -1,10 +1,11 @@
 package hu.finominfo.common;
 
+import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
-import io.netty.channel.ChannelFuture;
 
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
 
@@ -26,7 +27,8 @@ public class Globals {
     public final Queue<Event> events = new ConcurrentLinkedQueue<>();
     public final ConcurrentHashMap.KeySetView<Connection, Boolean> connections = ConcurrentHashMap.newKeySet();
     public final ConcurrentMap<String, ClientParam> serverClients = new ConcurrentHashMap<>(); //ip and port - context
-    public final ConcurrentMap<String, ChannelFuture> connectedServers = new ConcurrentHashMap<>();
+    public final ConcurrentMap<String, ServerParam> connectedServers = new ConcurrentHashMap<>();
+    public final ConcurrentMap<String, List<Long>> clientNameAddress = new ConcurrentHashMap<>();
 
 
     public final String getIp(String ipAndPort) {

@@ -35,13 +35,13 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
         broadcastPort = Props.get().getPort();
         clientPort = broadcastPort + 1;
         serverPort = broadcastPort + 2;
-        eventToDo = EventToDo.SERVER;
+        eventToDo = EventToDo.START_SERVER;
     }
 
     @Override
     public void run() {
         switch (eventToDo) {
-            case SERVER:
+            case START_SERVER:
                 server = new Server(serverPort);
                 server.bind().addListener(this);
                 break;
@@ -49,7 +49,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
                 broadcaster = new Broadcaster(broadcastPort);
                 broadcaster.start(4, 2, this);
                 break;
-            case CLIENT:
+            case FIND_SERVERS_TO_CONNECT:
                 boolean foundNewClient = false;
                 Iterator<Map.Entry<String, ClientParam>> iterator = Globals.get().serverClients.entrySet().iterator();
                 while (iterator.hasNext()) {
@@ -64,42 +64,42 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
                     }
                 }
                 if (!foundNewClient) {
-                    nextStart();
+                    runLater();
                 }
                 break;
         }
     }
 
-    private void nextStart() {
-        Globals.get().executor.schedule(this, 3, TimeUnit.SECONDS);
+    private void runLater() {
+        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
     }
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (future.isSuccess()) {
             switch (eventToDo) {
-                case SERVER:
+                case START_SERVER:
                     logger.info("Server successful created at port: " + serverPort);
                     eventToDo = EventToDo.BROADCAST;
                     break;
-                case CLIENT:
+                case FIND_SERVERS_TO_CONNECT:
                     logger.info("Client successful connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
             }
         } else {
             switch (eventToDo) {
-                case SERVER:
+                case START_SERVER:
                     logger.error("Server could not started at port: " + serverPort);
                     server.stop();
                     break;
-                case CLIENT:
+                case FIND_SERVERS_TO_CONNECT:
                     currentClient.getValue().getConnectedBack().set(false);
                     currentClient.getValue().setLastTrying();
                     logger.error("Client could not connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
             }
         }
-        nextStart();
+        runLater();
     }
 
     @Override
@@ -108,17 +108,17 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
             case BROADCAST_FINISHED:
                 broadcaster.stop();
                 if (attachment > 1 && !Globals.get().serverClients.isEmpty()) {
-                    eventToDo = EventToDo.CLIENT;
+                    eventToDo = EventToDo.FIND_SERVERS_TO_CONNECT;
                 }
                 break;
         }
-        nextStart();
+        runLater();
     }
 
     @Override
     public void failed(Throwable exc, Integer attachment) {
         logger.error(exc);
-        nextStart();
+        runLater();
     }
 
 }
