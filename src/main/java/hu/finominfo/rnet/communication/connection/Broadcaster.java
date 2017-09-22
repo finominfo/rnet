@@ -58,7 +58,7 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
             if (faultTimes.decrementAndGet() >= 0) {
                 times.incrementAndGet();
             }
-            Globals.executor.schedule(this, waitingInSeconds.get(), TimeUnit.SECONDS);
+            Globals.get().executor.schedule(this, waitingInSeconds.get(), TimeUnit.SECONDS);
         }
     }
 
@@ -72,7 +72,7 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
         } else {
             numOfSuccessfulSending.incrementAndGet();
         }
-        Globals.executor.schedule(this, waitingInSeconds.get(), TimeUnit.SECONDS);
+        Globals.get().executor.schedule(this, waitingInSeconds.get(), TimeUnit.SECONDS);
     }
 
     public void stop() {

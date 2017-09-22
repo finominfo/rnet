@@ -14,21 +14,13 @@ public class PropReader {
 
     private final Properties prop = new Properties();
     private static final Lock lock = new ReentrantLock();
-    private static volatile PropReader reader = null;
 
-    public static PropReader getSingletonInstance() {
-        if (reader == null) {
-            lock.lock();
-            try {
-                if (reader == null) {
-                    reader = new PropReader();
-                }
-            } finally {
-                lock.unlock();
-            }
-        }
-        return reader;
+    private static PropReader ourInstance = new PropReader();
+
+    public static PropReader get() {
+        return ourInstance;
     }
+
 
     private PropReader() {
         InputStream input = null;

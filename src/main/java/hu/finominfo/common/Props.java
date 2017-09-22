@@ -6,10 +6,9 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- *
- * @author User
+ * Created by kalman.kovacs@gmail.com on 2017.09.21.
  */
-public class PropertiesReader {
+public class Props {
 
     private volatile List<Long> times;
     private final String defaultTimes = "120, 120, 120, 120, 120, 120, 120, 120, 120, 120";
@@ -25,8 +24,14 @@ public class PropertiesReader {
     private final boolean controller;
     private final int port;
 
-    public PropertiesReader() {
-        Properties prop = PropReader.getSingletonInstance().getProperties();
+    private static Props ourInstance = new Props();
+
+    public static Props get() {
+        return ourInstance;
+    }
+
+    private Props() {
+        Properties prop = PropReader.get().getProperties();
         List<String> myList = Arrays.asList(prop.getProperty("times", defaultTimes).split(","));
         times = myList.stream().map((String s) -> Long.parseLong(s.trim()) * 60_000L).collect(Collectors.toList());
         roomNames = Arrays.asList(prop.getProperty("roomNames", defaultNames).split(","));
@@ -35,7 +40,7 @@ public class PropertiesReader {
         beep = prop.getProperty("beep", "beep.wav");
         success = prop.getProperty("success", "success.wav");
         failed = prop.getProperty("failed", "failed.wav");
-        controller = prop.getProperty("node", "controlled").equalsIgnoreCase("servant");
+        controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
         port = Integer.valueOf(prop.getProperty("port", "10000"));
     }
 

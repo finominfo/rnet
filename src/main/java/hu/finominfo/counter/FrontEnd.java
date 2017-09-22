@@ -1,6 +1,6 @@
 package hu.finominfo.counter;
 
-import hu.finominfo.common.PropertiesReader;
+import hu.finominfo.common.Props;
 import hu.finominfo.rpi.io.HandlingIO;
 import hu.finominfo.audio.AudioPlayer;
 import hu.finominfo.audio.AudioPlayerContinuous;
@@ -33,7 +33,7 @@ public class FrontEnd extends JPanel {
     private final JPanel mainPanel;
     public final double diff;
     public final ScheduledThreadPoolExecutor executor;
-    private final PropertiesReader propertiesReader;
+    private final Props props = Props.get();
     private final Font customFont;
     private final Set<AudioPlayerContinuous> continuousPlayers = new HashSet<>();
     private final List<String> animalVoices = new ArrayList<>();
@@ -41,7 +41,6 @@ public class FrontEnd extends JPanel {
 
     public FrontEnd(Font customFont) {
         this.customFont = customFont;
-        propertiesReader = new PropertiesReader();
         Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         diff = ((double) screenSize.width) / 1920;
         System.out.println("diff: " + diff);
@@ -52,15 +51,15 @@ public class FrontEnd extends JPanel {
     public void start() {
         mainPanel.setBackground(BG);
         mainPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        AudioPlayerWrapper beep = new AudioPlayerWrapper(executor, propertiesReader.getBeep());
-        AudioPlayer success = new AudioPlayer(executor, propertiesReader.getSuccess());
-        AudioPlayer failed = new AudioPlayer(executor, propertiesReader.getFailed());
-        for (String name : propertiesReader.getBaseAudio()) {
+        AudioPlayerWrapper beep = new AudioPlayerWrapper(executor, props.getBeep());
+        AudioPlayer success = new AudioPlayer(executor, props.getSuccess());
+        AudioPlayer failed = new AudioPlayer(executor, props.getFailed());
+        for (String name : props.getBaseAudio()) {
             AudioPlayerContinuous ap = new AudioPlayerContinuous(executor, name);
             ap.play(null);
             continuousPlayers.add(ap);
         }
-        for (String name : propertiesReader.getAnimalVoices()) {
+        for (String name : props.getAnimalVoices()) {
             try {
                 animalVoices.add(name);
                 System.out.println(name);
@@ -98,7 +97,7 @@ public class FrontEnd extends JPanel {
                         Color.GREEN,
                         Color.RED,
                         diff,
-                        propertiesReader.getTimes().get(i),
+                        props.getTimes().get(i),
                         executor).make();
                 i++;
                 mainPanel.add(panel[j]);

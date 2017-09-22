@@ -34,7 +34,7 @@ public class Client {
                             }
                         }
                 )
-                .localAddress(new InetSocketAddress("0.0.0.0", port));
+                .localAddress(new InetSocketAddress(address, port));
     }
     public ChannelFuture bind() {
         return bootstrap.bind();

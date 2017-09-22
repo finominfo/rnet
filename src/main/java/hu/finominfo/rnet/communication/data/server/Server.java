@@ -1,20 +1,26 @@
 package hu.finominfo.rnet.communication.data.server;
 
+import hu.finominfo.common.Globals;
 import hu.finominfo.rnet.communication.data.events.Event;
 import hu.finominfo.rnet.communication.data.events.EventDecoder;
 import hu.finominfo.rnet.communication.data.events.file.FileEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by User on 2017.09.17..
  */
 public class Server {
+    private final static Logger logger = Logger.getLogger(Server.class);
     private final EventLoopGroup parentGroup;
     private final EventLoopGroup childGroup;
     private final ServerBootstrap bootstrap;
@@ -29,20 +35,40 @@ public class Server {
                 .childOption(ChannelOption.SO_SNDBUF, Event.BUFFER_SIZE)
                 .childOption(ChannelOption.SO_RCVBUF, Event.BUFFER_SIZE)
                 .handler(
-                        new ChannelInitializer<SocketChannel>() {
+                        new ChannelInitializer<ServerSocketChannel>() {
                             @Override
-                            protected void initChannel(SocketChannel channel)
+                            protected void initChannel(ServerSocketChannel channel)
                                     throws Exception {
                                 ChannelPipeline pipeline = channel.pipeline();
-                                //pipeline.addLast(new EventEncoder(InetSocketAddress));
                                 pipeline.addLast(new EventDecoder());
                                 pipeline.addLast(new FileEventHandler());
-                                //pipeline.addLast(new EventHandler());
                             }
                         }
                 )
+                .childHandler(new ChannelHandler() {
+                    @Override
+                    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+                        String ipAndPort = ctx.channel().remoteAddress().toString();
+                        logger.info(ipAndPort + " connected.");
+                        Globals.get().clients.put(ipAndPort, new ClientParam(ctx));
+                    }
+
+                    @Override
+                    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+                        String ipAndPort = ctx.channel().remoteAddress().toString();
+                        logger.info(ipAndPort + " disconnected.");
+                        Globals.get().clients.remove(ipAndPort);
+
+                    }
+
+                    @Override
+                    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                        logger.error(ctx.channel().remoteAddress().toString(), cause);
+                    }
+                })
                 .localAddress(new InetSocketAddress("0.0.0.0", port));
     }
+
 
     public ChannelFuture bind() {
         return bootstrap.bind();
