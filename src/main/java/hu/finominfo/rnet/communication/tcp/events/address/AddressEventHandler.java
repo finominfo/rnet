@@ -4,6 +4,7 @@ import hu.finominfo.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.apache.log4j.Logger;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -16,8 +17,10 @@ import java.util.stream.Collectors;
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
  */
 public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEvent> {
+    private final static Logger logger = Logger.getLogger(AddressEventHandler.class);
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AddressEvent msg) throws Exception {
+        logger.info("AddressEvent arrived: " + msg.getAddresses().get(0));
         boolean found = false;
         for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
             for (Long long1 : entry.getValue()) {

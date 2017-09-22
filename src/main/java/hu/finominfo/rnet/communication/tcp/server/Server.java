@@ -3,6 +3,7 @@ package hu.finominfo.rnet.communication.tcp.server;
 import hu.finominfo.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
+import hu.finominfo.rnet.communication.tcp.events.address.AddressEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -40,6 +41,7 @@ public class Server {
                                 ChannelPipeline pipeline = channel.pipeline();
                                 pipeline.addLast(new IdleStateHandler(300, 0, 0));
                                 pipeline.addLast(new EventDecoder());
+                                pipeline.addLast(new AddressEventHandler());
                                 pipeline.addLast(new FileEventHandler());
                             }
                         }

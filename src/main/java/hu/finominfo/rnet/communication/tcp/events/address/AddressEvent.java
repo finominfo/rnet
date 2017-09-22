@@ -14,7 +14,7 @@ public class AddressEvent extends Event {
     private final List<Long> addresses;
 
     public AddressEvent(List<Long> addresses) {
-        super(EventType.RECEIVED);
+        super(EventType.ADDRESS);
         this.addresses = addresses;
     }
 

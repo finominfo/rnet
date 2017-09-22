@@ -17,12 +17,15 @@ public class EventDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        logger.info("SOMETHING ARRIVED");
         if (in.readInt() != Event.CODE) {
+            logger.error("NO EVENT CODE");
             in.discardReadBytes();
             return;
         }
         EventType eventType = EventType.get(in.readByte());
         if (null == eventType) {
+            logger.error("NO EVENT TYPE");
             in.discardReadBytes();
             return;
         }

@@ -82,7 +82,9 @@ public class Servant implements Runnable, ChannelFutureListener {
                     }
                 }
                 if (!foundNewServer) {
-                    shouldNext.set(true);
+                    if (!Globals.get().connectedServers.isEmpty()) {
+                        shouldNext.set(true);
+                    }
                     runLater();
                 }
                 break;
