@@ -1,7 +1,7 @@
-package hu.finominfo.rnet.communication.data.client;
+package hu.finominfo.rnet.communication.tcp.client;
 
-import hu.finominfo.rnet.communication.data.events.Event;
-import hu.finominfo.rnet.communication.data.events.EventEncoder;
+import hu.finominfo.rnet.communication.tcp.events.Event;
+import hu.finominfo.rnet.communication.tcp.events.EventEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;

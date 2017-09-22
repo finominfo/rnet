@@ -1,20 +1,17 @@
-package hu.finominfo.rnet.communication.data.server;
+package hu.finominfo.rnet.communication.tcp.server;
 
 import hu.finominfo.common.Globals;
-import hu.finominfo.rnet.communication.data.events.Event;
-import hu.finominfo.rnet.communication.data.events.EventDecoder;
-import hu.finominfo.rnet.communication.data.events.file.FileEventHandler;
+import hu.finominfo.rnet.communication.tcp.events.Event;
+import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
+import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by User on 2017.09.17..
@@ -51,9 +48,9 @@ public class Server {
                         String ipAndPort = ctx.channel().remoteAddress().toString();
                         logger.info(ipAndPort + " connected.");
                         String ip = Globals.get().getIp(ipAndPort);
-                        ClientParam clientParam = Globals.get().clients.get(ip);
+                        ClientParam clientParam = Globals.get().serverClients.get(ip);
                         if (null == clientParam) {
-                            Globals.get().clients.put(ip, new ClientParam(ctx));
+                            Globals.get().serverClients.put(ip, new ClientParam(ctx));
                         } else {
                             clientParam.setContext(ctx);
                         }
@@ -64,7 +61,7 @@ public class Server {
                         String ipAndPort = ctx.channel().remoteAddress().toString();
                         logger.info(ipAndPort + " disconnected.");
                         String ip = Globals.get().getIp(ipAndPort);
-                        Globals.get().clients.get(ip).setContext(null);
+                        Globals.get().serverClients.get(ip).setContext(null);
 
                     }
 

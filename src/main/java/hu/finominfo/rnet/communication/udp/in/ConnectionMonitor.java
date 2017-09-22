@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication.connection.in;
+package hu.finominfo.rnet.communication.udp.in;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

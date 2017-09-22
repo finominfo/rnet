@@ -1,7 +1,7 @@
-package hu.finominfo.rnet.communication.data.events;
+package hu.finominfo.rnet.communication.tcp.events;
 
-import hu.finominfo.rnet.communication.data.events.address.AddressEvent;
-import hu.finominfo.rnet.communication.data.events.file.FileEvent;
+import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;

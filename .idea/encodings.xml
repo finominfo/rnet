@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/node/servant/Servant.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/Test.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/connection/Connection.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/connection/out/ConnectionBroadcaster.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/connection/out/ConnectionEncoder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/data/events/Event.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/data/events/EventDecoder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/data/events/EventEncoder.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/data/events/file/FileEvent.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/tcp/events/Event.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/tcp/events/EventDecoder.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/tcp/events/EventEncoder.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/tcp/events/file/FileEvent.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/udp/Connection.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/udp/out/ConnectionBroadcaster.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/hu/finominfo/rnet/communication/udp/out/ConnectionEncoder.java" charset="UTF-8" />
   </component>
 </project>

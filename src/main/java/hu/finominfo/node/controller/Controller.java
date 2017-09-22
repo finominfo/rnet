@@ -3,12 +3,11 @@ package hu.finominfo.node.controller;
 import hu.finominfo.common.Globals;
 import hu.finominfo.common.Props;
 import hu.finominfo.node.EventToDo;
-import hu.finominfo.rnet.communication.Interface;
-import hu.finominfo.rnet.communication.connection.Broadcaster;
+import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.node.CompletedEvent;
-import hu.finominfo.rnet.communication.data.client.Client;
-import hu.finominfo.rnet.communication.data.server.ClientParam;
-import hu.finominfo.rnet.communication.data.server.Server;
+import hu.finominfo.rnet.communication.tcp.client.Client;
+import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.communication.tcp.server.Server;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
@@ -52,7 +51,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
                 break;
             case CLIENT:
                 boolean foundNewClient = false;
-                Iterator<Map.Entry<String, ClientParam>> iterator = Globals.get().clients.entrySet().iterator();
+                Iterator<Map.Entry<String, ClientParam>> iterator = Globals.get().serverClients.entrySet().iterator();
                 while (iterator.hasNext()) {
                     currentClient = iterator.next();
                     ClientParam clientParam = currentClient.getValue();
@@ -80,6 +79,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
         if (future.isSuccess()) {
             switch (eventToDo) {
                 case SERVER:
+                    logger.info("Server successful created at port: " + serverPort);
                     eventToDo = EventToDo.BROADCAST;
                     break;
                 case CLIENT:
@@ -89,7 +89,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
         } else {
             switch (eventToDo) {
                 case SERVER:
-                    logger.error("Server could not started");
+                    logger.error("Server could not started at port: " + serverPort);
                     server.stop();
                     break;
                 case CLIENT:
@@ -107,7 +107,7 @@ public class Controller implements CompletionHandler<CompletedEvent, Integer>, R
         switch (result) {
             case BROADCAST_FINISHED:
                 broadcaster.stop();
-                if (attachment > 1 && !Globals.get().clients.isEmpty()) {
+                if (attachment > 1 && !Globals.get().serverClients.isEmpty()) {
                     eventToDo = EventToDo.CLIENT;
                 }
                 break;

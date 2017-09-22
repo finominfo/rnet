@@ -1,14 +1,12 @@
-package hu.finominfo.rnet.communication.connection.in;
+package hu.finominfo.rnet.communication.udp.in;
 
-import hu.finominfo.rnet.communication.connection.Connection;
+import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.util.CharsetUtil;
 
-import java.net.InetSocketAddress;
-import java.nio.charset.Charset;
 import java.util.List;
 
 /**

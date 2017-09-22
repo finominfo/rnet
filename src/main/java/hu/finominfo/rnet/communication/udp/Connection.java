@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication.connection;
+package hu.finominfo.rnet.communication.udp;
 
 
 /**

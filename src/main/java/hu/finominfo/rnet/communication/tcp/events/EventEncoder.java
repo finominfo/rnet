@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication.data.events;
+package hu.finominfo.rnet.communication.tcp.events;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

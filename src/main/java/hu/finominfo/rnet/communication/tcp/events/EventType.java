@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication.data.events;
+package hu.finominfo.rnet.communication.tcp.events;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.19..

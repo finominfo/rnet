@@ -1,6 +1,6 @@
-package hu.finominfo.rnet.communication.connection.out;
+package hu.finominfo.rnet.communication.udp.out;
 
-import hu.finominfo.rnet.communication.connection.Connection;
+import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;

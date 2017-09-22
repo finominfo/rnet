@@ -1,8 +1,8 @@
-package hu.finominfo.rnet.communication.connection;
+package hu.finominfo.rnet.communication.udp;
 
 import hu.finominfo.common.Globals;
 import hu.finominfo.node.CompletedEvent;
-import hu.finominfo.rnet.communication.connection.out.ConnectionBroadcaster;
+import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;

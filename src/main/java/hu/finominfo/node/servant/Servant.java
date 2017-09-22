@@ -2,68 +2,65 @@ package hu.finominfo.node.servant;
 
 import hu.finominfo.common.Globals;
 import hu.finominfo.common.Props;
-import hu.finominfo.node.CompletedEvent;
 import hu.finominfo.node.EventToDo;
-import hu.finominfo.rnet.communication.connection.Broadcaster;
-import hu.finominfo.rnet.communication.data.client.Client;
-import hu.finominfo.rnet.communication.data.server.ClientParam;
-import hu.finominfo.rnet.communication.data.server.Server;
+import hu.finominfo.rnet.communication.udp.Connection;
+import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
+import hu.finominfo.rnet.communication.tcp.client.Client;
+import hu.finominfo.rnet.communication.tcp.server.Server;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 
-import java.nio.channels.CompletionHandler;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
  */
-public class Servant implements CompletionHandler<CompletedEvent, Integer>, Runnable, ChannelFutureListener {
+public class Servant implements Runnable, ChannelFutureListener {
 
     private final static Logger logger = Logger.getLogger(Servant.class);
     private volatile EventToDo eventToDo;
-    private volatile Broadcaster broadcaster;
+    private volatile ConnectionMonitor monitor;
     private volatile Server server;
-    private final int broadcastPort;
+    private final int broadcastMonitorPort;
     private final int clientPort;
     private final int serverPort;
-    private volatile Map.Entry<String, ClientParam> currentClient = null;
+    private volatile String currentServer;
 
     public Servant() {
-        broadcastPort = Props.get().getPort();
-        clientPort = broadcastPort + 1;
-        serverPort = broadcastPort + 2;
+        broadcastMonitorPort = Props.get().getPort();
+        serverPort = broadcastMonitorPort + 1;
+        clientPort = broadcastMonitorPort + 2;
         eventToDo = EventToDo.SERVER;
     }
 
     @Override
     public void run() {
         switch (eventToDo) {
+            case BROADCAST_MONITOR:
+                monitor = new ConnectionMonitor(broadcastMonitorPort);
+                monitor.bind().addListener(this);
+                break;
             case SERVER:
                 server = new Server(serverPort);
                 server.bind().addListener(this);
                 break;
-            case BROADCAST:
-                broadcaster = new Broadcaster(broadcastPort);
-                broadcaster.start(4, 2, this);
-                break;
             case CLIENT:
-                boolean foundNewClient = false;
-                Iterator<Map.Entry<String, ClientParam>> iterator = Globals.get().clients.entrySet().iterator();
+                boolean foundNewServer = false;
+                Iterator<Connection> iterator = Globals.get().connections.iterator();
                 while (iterator.hasNext()) {
-                    currentClient = iterator.next();
-                    if (currentClient.getValue().getConnectedBack().compareAndSet(false, true)) {
-                        String address = Globals.get().getIp(currentClient.getKey());
+                    Connection connection = iterator.next();
+                    String address = connection.getServerIp();
+                    if (!Globals.get().connectedServers.keySet().contains(address)) {
+                        currentServer = address;
                         Client client = new Client(address, clientPort);
-                        currentClient.getValue().setClient(client);
                         client.bind().addListener(this);
-                        foundNewClient = true;
+                        foundNewServer = true;
                         break;
                     }
                 }
-                if (!foundNewClient) {
+                if (!foundNewServer) {
                     nextStart();
                 }
                 break;
@@ -78,44 +75,33 @@ public class Servant implements CompletionHandler<CompletedEvent, Integer>, Runn
     public void operationComplete(ChannelFuture future) throws Exception {
         if (future.isSuccess()) {
             switch (eventToDo) {
+                case BROADCAST_MONITOR:
+                    eventToDo = EventToDo.SERVER;
+                    break;
                 case SERVER:
-                    eventToDo = EventToDo.BROADCAST;
+                    logger.info("Server successful created at port: " + serverPort);
+                    eventToDo = EventToDo.CLIENT;
                     break;
                 case CLIENT:
-                    logger.info("Client successful connected back: " + currentClient.getKey());
+                    Globals.get().connectedServers.put(currentServer, future);
+                    logger.info("Sever successful connected: " + currentServer);
                     break;
             }
         } else {
             switch (eventToDo) {
+                case BROADCAST_MONITOR:
+                    logger.error("Broadcast monitor could not started");
+                    monitor.stop();
+                    break;
                 case SERVER:
-                    logger.error("Server could not started");
+                    logger.error("Server could not started at port: " + serverPort);
                     server.stop();
                     break;
                 case CLIENT:
-                    currentClient.getValue().getConnectedBack().set(false);
-                    logger.error("Client could not connected back: " + currentClient.getKey());
+                    logger.error("Server could not connected: " + currentServer);
                     break;
             }
         }
-        nextStart();
-    }
-
-    @Override
-    public void completed(CompletedEvent result, Integer attachment) {
-        switch (result) {
-            case BROADCAST_FINISHED:
-                broadcaster.stop();
-                if (attachment > 1) {
-                    eventToDo = EventToDo.CLIENT;
-                }
-                break;
-        }
-        nextStart();
-    }
-
-    @Override
-    public void failed(Throwable exc, Integer attachment) {
-        logger.error(exc);
         nextStart();
     }
 

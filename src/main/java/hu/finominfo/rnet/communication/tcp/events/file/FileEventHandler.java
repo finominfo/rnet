@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication.data.events.file;
+package hu.finominfo.rnet.communication.tcp.events.file;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

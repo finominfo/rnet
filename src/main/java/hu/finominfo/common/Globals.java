@@ -1,11 +1,12 @@
 package hu.finominfo.common;
 
-import hu.finominfo.rnet.communication.data.server.ClientParam;
+import hu.finominfo.rnet.communication.udp.Connection;
+import hu.finominfo.rnet.communication.tcp.events.Event;
+import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import io.netty.channel.ChannelFuture;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.Queue;
+import java.util.concurrent.*;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
@@ -22,7 +23,11 @@ public class Globals {
     public final String audioFolder = "./audio";
     public final String pictureFolder = "./picture";
     public final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(4);
-    public final ConcurrentMap<String, ClientParam> clients = new ConcurrentHashMap<>(); //ip and port - context
+    public final Queue<Event> events = new ConcurrentLinkedQueue<>();
+    public final ConcurrentHashMap.KeySetView<Connection, Boolean> connections = ConcurrentHashMap.newKeySet();
+    public final ConcurrentMap<String, ClientParam> serverClients = new ConcurrentHashMap<>(); //ip and port - context
+    public final ConcurrentMap<String, ChannelFuture> connectedServers = new ConcurrentHashMap<>();
+
 
     public final String getIp(String ipAndPort) {
         int pos = ipAndPort.lastIndexOf(':');

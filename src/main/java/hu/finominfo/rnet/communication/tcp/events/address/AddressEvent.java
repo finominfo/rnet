@@ -1,7 +1,7 @@
-package hu.finominfo.rnet.communication.data.events.address;
+package hu.finominfo.rnet.communication.tcp.events.address;
 
-import hu.finominfo.rnet.communication.data.events.Event;
-import hu.finominfo.rnet.communication.data.events.EventType;
+import hu.finominfo.rnet.communication.tcp.events.Event;
+import hu.finominfo.rnet.communication.tcp.events.EventType;
 import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
-package hu.finominfo.rnet.communication.connection.in;
+package hu.finominfo.rnet.communication.udp.in;
 
-import hu.finominfo.rnet.communication.Interface;
-import hu.finominfo.rnet.communication.connection.Connection;
+import hu.finominfo.common.Globals;
+import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
@@ -12,17 +12,16 @@ public class ConnectionHandler extends SimpleChannelInboundHandler<Connection> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Connection msg) throws Exception {
         boolean found = false;
-        for (Connection connection : Interface.connections) {
+        for (Connection connection : Globals.get().connections) {
             if (connection.equals(msg)) {
                 found = true;
                 break;
             }
         }
         if (!found) {
-            Interface.connections.add(msg);
+            Globals.get().connections.add(msg);
         }
-        //TODO: Itt kell elindítani a TCP kapcsolatot visszafelé
-        System.out.println(msg.getServerIp() + ":" + msg.getServerPort() + " connections size: " + Interface.connections.size());
+        System.out.println(msg.getServerIp() + ":" + msg.getServerPort() + " connections size: " + Globals.get().connections.size());
     }
 
     @Override

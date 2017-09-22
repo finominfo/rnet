@@ -1,6 +1,6 @@
-package hu.finominfo.rnet.communication.data.server;
+package hu.finominfo.rnet.communication.tcp.server;
 
-import hu.finominfo.rnet.communication.data.client.Client;
+import hu.finominfo.rnet.communication.tcp.client.Client;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.concurrent.atomic.AtomicBoolean;
