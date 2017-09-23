@@ -2,6 +2,7 @@ package hu.finominfo.rnet.communication.tcp.events.address;
 
 import hu.finominfo.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
+import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
@@ -18,20 +19,30 @@ import java.util.stream.Collectors;
  */
 public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEvent> {
     private final static Logger logger = Logger.getLogger(AddressEventHandler.class);
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AddressEvent msg) throws Exception {
         logger.info("AddressEvent arrived: " + msg.getAddresses().get(0));
         boolean found = false;
+
+        String ipAndPort = ctx.channel().remoteAddress().toString();
+        String ip = Globals.get().getIp(ipAndPort);
+        ClientParam clientParam = Globals.get().serverClients.get(ip);
+
         for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
             for (Long long1 : entry.getValue()) {
                 for (Long long2 : msg.getAddresses()) {
                     if (long1.longValue() == long2.longValue()) {
+                        clientParam.setName(entry.getKey());
                         return;
                     }
                 }
             }
         }
-        if (Globals.get().clientNameAddress.putIfAbsent(String.valueOf(msg.getAddresses().get(0)), msg.getAddresses()) == null) {
+        clientParam.setName(ip);
+
+        if (Globals.get().clientNameAddress.putIfAbsent(String.valueOf(ip), msg.getAddresses()) == null) {
+            //TODO: Csinálni globális TasksToDo-t
             StringBuilder builder = new StringBuilder();
             for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
                 builder.append(entry.getKey()).append('=');

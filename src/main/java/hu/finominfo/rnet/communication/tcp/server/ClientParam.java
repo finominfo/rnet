@@ -3,6 +3,8 @@ package hu.finominfo.rnet.communication.tcp.server;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import io.netty.channel.ChannelHandlerContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -13,6 +15,15 @@ public class ClientParam {
     private final AtomicBoolean connectedBack = new AtomicBoolean(false);
     private volatile Client client = null;
     private volatile long lastTrying = 0;
+    private volatile String name = "";
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public ClientParam(ChannelHandlerContext context) {
         this.context = context;
