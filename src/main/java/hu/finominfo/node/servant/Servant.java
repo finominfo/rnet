@@ -1,9 +1,6 @@
 package hu.finominfo.node.servant;
 
-import hu.finominfo.common.Globals;
-import hu.finominfo.common.Props;
-import hu.finominfo.common.TaskToDo;
-import hu.finominfo.common.Worker;
+import hu.finominfo.common.*;
 import hu.finominfo.rnet.communication.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
@@ -21,7 +18,7 @@ import java.util.Map;
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
  */
-public class Servant extends Worker implements ChannelFutureListener {
+public class Servant extends SynchronousWorker implements ChannelFutureListener {
 
     private final static Logger logger = Logger.getLogger(Servant.class);
     private volatile ConnectionMonitor monitor;
@@ -32,7 +29,6 @@ public class Servant extends Worker implements ChannelFutureListener {
     private volatile String currentConnectToServer;
     private volatile Client currentClient;
     private volatile Map.Entry<String, ServerParam> currentServerParam;
-    private volatile long lastStart = 0;
 
 
     public Servant() {
@@ -40,30 +36,28 @@ public class Servant extends Worker implements ChannelFutureListener {
         broadcastMonitorPort = Props.get().getPort();
         serverPort = broadcastMonitorPort + 1;
         clientPort = broadcastMonitorPort + 2;
-        Globals.get().tasksToDo.add(TaskToDo.MONITOR_BROADCAST);
-        Globals.get().tasksToDo.add(TaskToDo.START_SERVER);
-        Globals.get().tasksToDo.add(TaskToDo.FIND_SERVERS_TO_CONNECT);
-        Globals.get().tasksToDo.add(TaskToDo.SEND_MAC_ADRESSES);
+        Globals.get().addToTasksIfNotExists(TaskToDo.MONITOR_BROADCAST);
+        Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
+        Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
+        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
     }
 
 
     @Override
-    public void runCurrentTask() {
+    public void runCurrentAsynchronousTask() {
         switch (currentTask) {
             case MONITOR_BROADCAST:
                 monitor = new ConnectionMonitor(broadcastMonitorPort);
                 monitor.bind().addListener(this);
                 break;
             case START_SERVER:
-                if (System.currentTimeMillis() - lastStart > 5000) {
-                    lastStart = System.currentTimeMillis();
+                if (shouldHandleAgain(5000)) {
                     server = new Server(serverPort);
                     server.bind().addListener(this);
                 }
                 break;
             case FIND_SERVERS_TO_CONNECT:
-                if (System.currentTimeMillis() - lastStart > 2000) {
-                    lastStart = System.currentTimeMillis();
+                if (shouldHandleAgain(2000)) {
                     boolean foundNewServer = false;
                     Iterator<Connection> iterator = Globals.get().connections.iterator();
                     while (iterator.hasNext()) {
@@ -77,7 +71,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                             break;
                         }
                     }
-                    if (!foundNewServer && currentTaskRunning() > 5000) {
+                    if (!foundNewServer && currentTaskRunning(5000)) {
                         if (!Globals.get().connectedServers.isEmpty()) {
                             currentTaskFinished();
                         }
@@ -95,7 +89,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                         break;
                     }
                 }
-                if (!shouldSend && currentTaskRunning() > 5000) {
+                if (!shouldSend && currentTaskRunning(5000)) {
                     currentTaskFinished();
                 }
                 break;

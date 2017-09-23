@@ -41,8 +41,8 @@ public class Server {
                             protected void initChannel(SocketChannel channel)
                                     throws Exception {
                                 ChannelPipeline pipeline = channel.pipeline();
-                                pipeline.addLast(new MyChannelHandler());
                                 pipeline.addLast(new IdleStateHandler(300, 0, 0));
+                                pipeline.addLast(new MyChannelHandler());
                                 pipeline.addLast(new EventDecoder());
                                 pipeline.addLast(new AddressEventHandler());
                                 pipeline.addLast(new FileEventHandler());

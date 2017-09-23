@@ -21,6 +21,7 @@ public class Globals {
     }
 
     public final static int VERSION = 1;
+    public final static String ADDRESSES = "addresses.txt";
     public final String videoFolder = "./video";
     public final String audioFolder = "./audio";
     public final String pictureFolder = "./picture";
@@ -30,8 +31,17 @@ public class Globals {
     public final ConcurrentMap<String, ClientParam> serverClients = new ConcurrentHashMap<>(); //ip and port - context
     public final ConcurrentMap<String, ServerParam> connectedServers = new ConcurrentHashMap<>();
     public final ConcurrentMap<String, List<Long>> clientNameAddress = new ConcurrentHashMap<>();
-    public final Queue<TaskToDo> tasksToDo = new ConcurrentLinkedQueue<>();
+    final Queue<TaskToDo> tasksToDo = new ConcurrentLinkedQueue<>();
 
+    public final void addToTasksIfNotExists(TaskToDo taskToDo) {
+        if (!tasksToDo.contains(taskToDo)) {
+            tasksToDo.add(taskToDo);
+        }
+    }
+
+    public final void addToTasksForced(TaskToDo taskToDo) {
+        tasksToDo.add(taskToDo);
+    }
 
     public final String getIp(String ipAndPort) {
         int pos = ipAndPort.lastIndexOf(':');
