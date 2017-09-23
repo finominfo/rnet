@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication;
+package hu.finominfo.rnet.common;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

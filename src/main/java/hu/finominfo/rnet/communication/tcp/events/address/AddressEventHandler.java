@@ -1,19 +1,14 @@
 package hu.finominfo.rnet.communication.tcp.events.address;
 
-import hu.finominfo.common.Globals;
-import hu.finominfo.common.TaskToDo;
-import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
+import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.TaskToDo;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
 
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..

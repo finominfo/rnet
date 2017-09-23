@@ -1,4 +1,4 @@
-package hu.finominfo.common;
+package hu.finominfo.rnet.common;
 
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 

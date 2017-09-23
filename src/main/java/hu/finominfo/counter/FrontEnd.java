@@ -1,6 +1,6 @@
 package hu.finominfo.counter;
 
-import hu.finominfo.common.Props;
+import hu.finominfo.Props;
 import hu.finominfo.rpi.io.HandlingIO;
 import hu.finominfo.audio.AudioPlayer;
 import hu.finominfo.audio.AudioPlayerContinuous;

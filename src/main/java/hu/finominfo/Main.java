@@ -1,9 +1,8 @@
 package hu.finominfo;
 
-import hu.finominfo.common.Props;
-import hu.finominfo.node.controller.Controller;
-import hu.finominfo.node.servant.Servant;
-import hu.finominfo.rnet.communication.Interface;
+import hu.finominfo.rnet.node.controller.Controller;
+import hu.finominfo.rnet.node.servant.Servant;
+import hu.finominfo.rnet.common.Interface;
 
 import java.io.File;
 
@@ -22,10 +21,11 @@ public class Main {
     public static void main(String [] args) {
         setupLog4J();
         Interface.getInterfaces();
-        if (Props.get().isController()) {
+        if (hu.finominfo.Props.get().isController()) {
             new Controller().run();
         } else {
             new Servant().run();
         }
     }
+
 }

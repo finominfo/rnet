@@ -1,7 +1,7 @@
 package hu.finominfo.rnet.communication.udp;
 
-import hu.finominfo.common.Globals;
-import hu.finominfo.node.CompletedEvent;
+import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.node.controller.CompletedEvent;
 import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;

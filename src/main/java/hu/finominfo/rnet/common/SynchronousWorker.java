@@ -1,4 +1,4 @@
-package hu.finominfo.common;
+package hu.finominfo.rnet.common;
 
 import org.apache.log4j.Logger;
 

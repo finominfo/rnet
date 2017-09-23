@@ -1,4 +1,4 @@
-package hu.finominfo.common;
+package hu.finominfo;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * Created by kalman.kovacs@gmail.com on 2017.09.21.
+ * Created by kalman.kovacs@gmail.com on 2017.09.23.
  */
 public class Props {
 
@@ -24,9 +24,9 @@ public class Props {
     private final boolean controller;
     private final int port;
 
-    private static Props ourInstance = new Props();
+    private static hu.finominfo.Props ourInstance = new hu.finominfo.Props();
 
-    public static Props get() {
+    public static hu.finominfo.Props get() {
         return ourInstance;
     }
 

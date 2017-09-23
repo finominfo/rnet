@@ -1,7 +1,8 @@
-package hu.finominfo.node.servant;
+package hu.finominfo.rnet.node.servant;
 
-import hu.finominfo.common.*;
-import hu.finominfo.rnet.communication.Interface;
+import hu.finominfo.Props;
+import hu.finominfo.rnet.common.*;
+import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
 import hu.finominfo.rnet.communication.udp.Connection;

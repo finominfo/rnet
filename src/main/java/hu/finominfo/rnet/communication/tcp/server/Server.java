@@ -1,15 +1,12 @@
 package hu.finominfo.rnet.communication.tcp.server;
 
-import hu.finominfo.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.ServerSocketChannel;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;

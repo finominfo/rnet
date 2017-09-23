@@ -1,9 +1,9 @@
-package hu.finominfo.node.controller;
+package hu.finominfo.rnet.node.controller;
 
-import hu.finominfo.common.*;
+import hu.finominfo.Props;
+import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
-import hu.finominfo.node.CompletedEvent;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.communication.tcp.server.Server;
@@ -14,7 +14,6 @@ import org.apache.log4j.Logger;
 import java.nio.channels.CompletionHandler;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.

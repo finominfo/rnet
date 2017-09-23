@@ -1,6 +1,6 @@
 package hu.finominfo.rnet.communication.udp.out;
 
-import hu.finominfo.rnet.communication.Interface;
+import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;

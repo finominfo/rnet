@@ -1,12 +1,12 @@
 package hu.finominfo.rnet.communication.tcp.server;
 
-import hu.finominfo.common.Globals;
+import hu.finominfo.rnet.common.Globals;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 
 /**
- * Created by kk on 2017.09.23..
+ * Created by kalman.kovacs@gmail.com on 2017.09.23.
  */
 public class MyChannelHandler implements ChannelHandler {
     private final static Logger logger = Logger.getLogger(MyChannelHandler.class);
