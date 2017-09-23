@@ -20,6 +20,7 @@ public class Globals {
         return ourInstance;
     }
 
+    public final static int VERSION = 1;
     public final String videoFolder = "./video";
     public final String audioFolder = "./audio";
     public final String pictureFolder = "./picture";
@@ -29,14 +30,14 @@ public class Globals {
     public final ConcurrentMap<String, ClientParam> serverClients = new ConcurrentHashMap<>(); //ip and port - context
     public final ConcurrentMap<String, ServerParam> connectedServers = new ConcurrentHashMap<>();
     public final ConcurrentMap<String, List<Long>> clientNameAddress = new ConcurrentHashMap<>();
+    public final Queue<TaskToDo> tasksToDo = new ConcurrentLinkedQueue<>();
 
 
     public final String getIp(String ipAndPort) {
         int pos = ipAndPort.lastIndexOf(':');
         if (ipAndPort.startsWith("/")) {
             return ipAndPort.substring(1, pos);
-        }
-        else {
+        } else {
             return ipAndPort.substring(0, pos);
         }
     }

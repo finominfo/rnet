@@ -6,6 +6,7 @@ import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.ServerSocketChannel;
@@ -34,12 +35,13 @@ public class Server {
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .childOption(ChannelOption.SO_SNDBUF, Event.BUFFER_SIZE)
                 .childOption(ChannelOption.SO_RCVBUF, Event.BUFFER_SIZE)
-                .childHandler(
+                .childHandler( // Ez így biztos jó.
                         new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel channel)
                                     throws Exception {
                                 ChannelPipeline pipeline = channel.pipeline();
+                                pipeline.addLast(new MyChannelHandler());
                                 pipeline.addLast(new IdleStateHandler(300, 0, 0));
                                 pipeline.addLast(new EventDecoder());
                                 pipeline.addLast(new AddressEventHandler());
@@ -47,34 +49,6 @@ public class Server {
                             }
                         }
                 )
-                .handler(new ChannelHandler() {
-                    @Override
-                    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-                        String ipAndPort = ctx.channel().remoteAddress().toString();
-                        logger.info(ipAndPort + " connected.");
-                        String ip = Globals.get().getIp(ipAndPort);
-                        ClientParam clientParam = Globals.get().serverClients.get(ip);
-                        if (null == clientParam) {
-                            Globals.get().serverClients.put(ip, new ClientParam(ctx));
-                        } else {
-                            clientParam.setContext(ctx);
-                        }
-                    }
-
-                    @Override
-                    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-                        String ipAndPort = ctx.channel().remoteAddress().toString();
-                        logger.info(ipAndPort + " disconnected.");
-                        String ip = Globals.get().getIp(ipAndPort);
-                        Globals.get().serverClients.get(ip).setContext(null);
-
-                    }
-
-                    @Override
-                    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                        logger.error(ctx.channel().remoteAddress().toString(), cause);
-                    }
-                })
                 .localAddress(new InetSocketAddress("0.0.0.0", port));
     }
 

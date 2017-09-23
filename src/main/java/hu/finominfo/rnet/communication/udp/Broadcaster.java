@@ -21,7 +21,7 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
     private final AtomicInteger times;
     private final AtomicInteger numOfSuccessfulSending;
     private final AtomicInteger faultTimes;
-    private final AtomicInteger waitingInSeconds;
+    private final AtomicInteger waitingInMilliSeconds;
     private final ConnectionBroadcaster broadcaster;
     private volatile CompletionHandler<CompletedEvent, Integer> completionHandler;
 
@@ -29,15 +29,15 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
         this.port = port;
         this.times = new AtomicInteger();
         this.faultTimes = new AtomicInteger();
-        this.waitingInSeconds = new AtomicInteger();
+        this.waitingInMilliSeconds = new AtomicInteger();
         this.numOfSuccessfulSending = new AtomicInteger();
         broadcaster = new ConnectionBroadcaster(port);
     }
 
-    public void start(int times, int waitingInSeconds, final CompletionHandler<CompletedEvent, Integer> completionHandler) {
+    public void start(int times, int waitingInMilliSeconds, final CompletionHandler<CompletedEvent, Integer> completionHandler) {
         this.times.set(times);
         this.faultTimes.set(times);
-        this.waitingInSeconds.set(waitingInSeconds);
+        this.waitingInMilliSeconds.set(waitingInMilliSeconds);
         this.numOfSuccessfulSending.set(0);
         this.completionHandler = completionHandler;
         run();
@@ -58,7 +58,7 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
             if (faultTimes.decrementAndGet() >= 0) {
                 times.incrementAndGet();
             }
-            Globals.get().executor.schedule(this, waitingInSeconds.get(), TimeUnit.SECONDS);
+            Globals.get().executor.schedule(this, waitingInMilliSeconds.get(), TimeUnit.MILLISECONDS);
         }
     }
 
@@ -72,7 +72,7 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
         } else {
             numOfSuccessfulSending.incrementAndGet();
         }
-        Globals.get().executor.schedule(this, waitingInSeconds.get(), TimeUnit.SECONDS);
+        Globals.get().executor.schedule(this, waitingInMilliSeconds.get(), TimeUnit.MILLISECONDS);
     }
 
     public void stop() {

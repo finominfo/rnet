@@ -27,7 +27,12 @@ public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEven
 
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
+        logger.info(ip);
+        logger.info(Globals.get().serverClients.entrySet().iterator().next().getKey());
+
         ClientParam clientParam = Globals.get().serverClients.get(ip);
+        logger.info(clientParam == null);
+
 
         for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
             for (Long long1 : entry.getValue()) {
@@ -41,8 +46,9 @@ public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEven
         }
         clientParam.setName(ip);
 
-        if (Globals.get().clientNameAddress.putIfAbsent(String.valueOf(ip), msg.getAddresses()) == null) {
-            //TODO: Csinálni globális TasksToDo-t
+
+        if (Globals.get().clientNameAddress.putIfAbsent(ip, msg.getAddresses()) == null) {
+            //TODO: A ClientParam-ot is feldolgozni
             StringBuilder builder = new StringBuilder();
             for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
                 builder.append(entry.getKey()).append('=');

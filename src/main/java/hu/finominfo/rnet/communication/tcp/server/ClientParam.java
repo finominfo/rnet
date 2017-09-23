@@ -54,6 +54,6 @@ public class ClientParam {
     }
 
     public boolean possibleToTry() {
-        return lastTrying + 60_000 < System.currentTimeMillis();
+        return lastTrying + 2_000 < System.currentTimeMillis();
     }
 }
