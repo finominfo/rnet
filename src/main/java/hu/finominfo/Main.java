@@ -1,5 +1,6 @@
 package hu.finominfo;
 
+import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.node.controller.Controller;
 import hu.finominfo.rnet.node.servant.Servant;
 import hu.finominfo.rnet.common.Interface;
@@ -21,7 +22,7 @@ public class Main {
     public static void main(String [] args) {
         setupLog4J();
         Interface.getInterfaces();
-        if (hu.finominfo.Props.get().isController()) {
+        if (Props.get().isController()) {
             new Controller().run();
         } else {
             new Servant().run();

@@ -1,4 +1,4 @@
-package hu.finominfo;
+package hu.finominfo.properties;
 
 import java.io.FileInputStream;
 import java.io.IOException;

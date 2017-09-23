@@ -1,6 +1,6 @@
 package hu.finominfo.rnet.node.controller;
 
-import hu.finominfo.Props;
+import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Broadcaster;

@@ -1,4 +1,4 @@
-package hu.finominfo;
+package hu.finominfo.properties;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +24,9 @@ public class Props {
     private final boolean controller;
     private final int port;
 
-    private static hu.finominfo.Props ourInstance = new hu.finominfo.Props();
+    private static Props ourInstance = new Props();
 
-    public static hu.finominfo.Props get() {
+    public static Props get() {
         return ourInstance;
     }
 
