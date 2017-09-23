@@ -45,7 +45,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
 
     @Override
     public void runCurrentAsynchronousTask() {
-        switch (currentTask) {
+        switch (currentTask.getTaskToDo()) {
             case MONITOR_BROADCAST:
                 monitor = new ConnectionMonitor(broadcastMonitorPort);
                 monitor.bind().addListener(this);
@@ -93,13 +93,17 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                     currentTaskFinished();
                 }
                 break;
+            default:
+                logger.error("Not implemented task: " + currentTask.getTaskToDo().toString());
+                currentTaskFinished();
+                break;
         }
     }
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (future.isSuccess()) {
-            switch (currentTask) {
+            switch (currentTask.getTaskToDo()) {
                 case MONITOR_BROADCAST:
                     currentTaskFinished();
                     logger.error("Broadcast monitor successfully created at port: " + broadcastMonitorPort);
@@ -117,7 +121,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                     break;
             }
         } else {
-            switch (currentTask) {
+            switch (currentTask.getTaskToDo()) {
                 case MONITOR_BROADCAST:
                     logger.error("Broadcast monitor could not started");
                     monitor.stop();

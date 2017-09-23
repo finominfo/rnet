@@ -3,7 +3,6 @@ package hu.finominfo.common;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -13,7 +12,7 @@ public abstract class Worker implements Runnable {
 
     private final static Logger logger = Logger.getLogger(Worker.class);
 
-    protected volatile TaskToDo currentTask;
+    protected volatile Task currentTask;
     private volatile long currentTaskStarted = 0;
     private final AtomicLong lastHandling = new AtomicLong(0);
 
@@ -21,8 +20,8 @@ public abstract class Worker implements Runnable {
     @Override
     public void run() {
         if (null == currentTask) {
-            if (!Globals.get().tasksToDo.isEmpty()) {
-                currentTask = Globals.get().tasksToDo.poll();
+            if (!Globals.get().tasks.isEmpty()) {
+                currentTask = Globals.get().tasks.poll();
                 currentTaskStarted = System.currentTimeMillis();
                 lastHandling.set(0);
             }

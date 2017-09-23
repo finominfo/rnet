@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public abstract class SynchronousWorker extends Worker {
 
     public void runCurrentTask() {
 
-        switch (currentTask) {
+        switch (currentTask.getTaskToDo()) {
             case LOAD_NAME_ADDRESS:
                 loadNameAddress();
                 currentTaskFinished();
@@ -41,9 +42,16 @@ public abstract class SynchronousWorker extends Worker {
 
     private void loadNameAddress() {
         try (Stream<String> stream = Files.lines(Paths.get(Globals.ADDRESSES))) {
-
-            stream.forEach(System.out::println);
-
+            stream.forEach(str -> {
+                String[] strings = str.split("=");
+                String key = strings[0];
+                List<Long> value = new ArrayList<>();
+                for (String s : strings[1].split("-")) {
+                    value.add(Long.parseLong(s));
+                }
+                Globals.get().clientNameAddress.put(key, value);
+                logger.info("Loaded address: " + key + " -> " + value.stream().map(Object::toString).collect(Collectors.joining(",")));
+            });
         } catch (IOException e) {
             logger.error(e);
         }

@@ -1,6 +1,7 @@
 package hu.finominfo.node.controller;
 
 import hu.finominfo.common.*;
+import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.node.CompletedEvent;
 import hu.finominfo.rnet.communication.tcp.client.Client;
@@ -36,11 +37,12 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
         Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
         Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
+        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "success.wav", FileType.AUDIO);
     }
 
     @Override
     public void runCurrentAsynchronousTask() {
-        switch (currentTask) {
+        switch (currentTask.getTaskToDo()) {
             case START_SERVER:
                 server = new Server(serverPort);
                 server.bind().addListener(this);
@@ -69,13 +71,17 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                     currentTaskFinished();
                 }
                 break;
+            default:
+                logger.error("Not implemented task: " + currentTask.getTaskToDo().toString());
+                currentTaskFinished();
+                break;
         }
     }
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (future.isSuccess()) {
-            switch (currentTask) {
+            switch (currentTask.getTaskToDo()) {
                 case START_SERVER:
                     logger.info("Server successful created at port: " + serverPort);
                     currentTaskFinished();
@@ -85,7 +91,7 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                     break;
             }
         } else {
-            switch (currentTask) {
+            switch (currentTask.getTaskToDo()) {
                 case START_SERVER:
                     logger.error("Server could not started at port: " + serverPort);
                     server.stop();
