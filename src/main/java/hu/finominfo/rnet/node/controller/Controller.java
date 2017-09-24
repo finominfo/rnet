@@ -2,6 +2,8 @@ package hu.finominfo.rnet.node.controller;
 
 import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.common.*;
+import hu.finominfo.rnet.communication.tcp.events.Event;
+import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.rnet.communication.tcp.client.Client;
@@ -11,7 +13,12 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.CompletionHandler;
+import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -36,7 +43,7 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
         Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
         Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
-        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "success.wav", FileType.AUDIO);
+        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "success.wav", FileType.AUDIO, "192.168.0.111");
     }
 
     @Override
@@ -47,9 +54,9 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                 server.bind().addListener(this);
                 break;
             case SEND_BROADCAST:
-                if (broadcaster == null && shouldHandleAgain(5000)) {
+                if (broadcaster == null && shouldHandleAgain(3000)) {
                     broadcaster = new Broadcaster(broadcastPort);
-                    broadcaster.start(3, 1000, this);
+                    broadcaster.start(2, 900, this);
                 }
                 break;
             case FIND_SERVERS_TO_CONNECT:
@@ -70,6 +77,42 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                     currentTaskFinished();
                 }
                 break;
+            case SEND_FILE:
+                if (shouldHandleAgain(500)) {
+                    if (currentTask.getIsLast().get()) {
+                        currentTaskFinished();
+                        return;
+                    }
+                    try {
+                        File file = new File(currentTask.getName());
+                        long length = file.length();
+                        long remaining = length - currentTask.getFilePosition().get();
+                        if (remaining == 0) {
+                            currentTaskFinished();
+                            return;
+                        }
+                        boolean isLast = remaining <= Event.MAX_BINARY_SIZE;
+                        currentTask.getIsLast().set(isLast);
+                        int smaller = isLast ? (int) remaining : Event.MAX_BINARY_SIZE;
+                        byte[] bytes = new byte[smaller];
+                        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+                        RandomAccessFile raf = new RandomAccessFile(file, "r");
+                        FileChannel fc = raf.getChannel();
+                        fc.position(currentTask.getFilePosition().get());
+                        fc.read(buffer);
+                        byte[] data = buffer.array();
+                        currentTask.getFilePosition().addAndGet(data.length);
+                        currentTask.getCurrentLength().set(data.length);
+                        int pos =  currentTask.getName().lastIndexOf(File.pathSeparatorChar);
+                        String shortName = currentTask.getName().substring(pos + 1);
+                        FileEvent fileEvent = new FileEvent(currentTask.getFileType(), data, shortName, isLast);
+                        Globals.get().connectedServers.get(currentTask.getName()).getFuture().channel().writeAndFlush(fileEvent).addListener(this);
+                    } catch (Exception e) {
+                        logger.error(e);
+                        currentTaskFinished();
+                    }
+                }
+                break;
             default:
                 logger.error("Not implemented task: " + currentTask.getTaskToDo().toString());
                 currentTaskFinished();
@@ -88,6 +131,10 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                 case FIND_SERVERS_TO_CONNECT:
                     logger.info("Client successful connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
+                case SEND_FILE:
+                    int from = currentTask.getFilePosition().get() - currentTask.getCurrentLength().get();
+                    logger.info("FILE sending was successful position from: " + from + " to: " + currentTask.getFilePosition());
+                    break;
             }
         } else {
             switch (currentTask.getTaskToDo()) {
@@ -101,6 +148,11 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                     currentClient.getValue().setLastTrying();
                     logger.error("Client could not connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
+                case SEND_FILE:
+                    int from = currentTask.getFilePosition().get() - currentTask.getCurrentLength().get();
+                    logger.info("FILE sending was failed position from: " + from + " to: " + currentTask.getFilePosition());
+                    currentTask.getFilePosition().set(from);
+                    break;
             }
         }
     }
@@ -111,7 +163,8 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
             case BROADCAST_FINISHED:
                 broadcaster.stop();
                 broadcaster = null;
-                if (currentTaskRunning(4000) && !Globals.get().serverClients.isEmpty() ) {
+                if (currentTaskRunning(2000) && !Globals.get().serverClients.isEmpty()) {
+                    Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
                     currentTaskFinished();
                 }
                 break;
@@ -121,7 +174,8 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
     @Override
     public void failed(Throwable exc, Integer attachment) {
         logger.error(currentTask, exc);
-        currentTaskFinished();
+        broadcaster.stop();
+        broadcaster = null;
     }
 
 }

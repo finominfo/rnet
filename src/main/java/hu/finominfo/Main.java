@@ -24,8 +24,10 @@ public class Main {
         Interface.getInterfaces();
         if (Props.get().isController()) {
             new Controller().run();
+            //TODO: 1 percenként send broadcast küldése
         } else {
             new Servant().run();
+            //TODO: 5 percenként find servers to connect a tasks queue-ba tenni
         }
     }
 

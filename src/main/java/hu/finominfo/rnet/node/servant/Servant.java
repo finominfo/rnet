@@ -22,7 +22,7 @@ import java.util.Map;
 public class Servant extends SynchronousWorker implements ChannelFutureListener {
 
     private final static Logger logger = Logger.getLogger(Servant.class);
-    private volatile ConnectionMonitor monitor;
+    private volatile ConnectionMonitor monitor = null;
     private volatile Server server;
     private final int broadcastMonitorPort;
     private final int clientPort;
@@ -41,6 +41,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
         Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
         Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+
     }
 
 
@@ -48,6 +49,9 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
     public void runCurrentAsynchronousTask() {
         switch (currentTask.getTaskToDo()) {
             case MONITOR_BROADCAST:
+                if (monitor != null) {
+                    monitor.stop();
+                }
                 monitor = new ConnectionMonitor(broadcastMonitorPort);
                 monitor.bind().addListener(this);
                 break;
@@ -72,10 +76,9 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                             break;
                         }
                     }
-                    if (!foundNewServer && currentTaskRunning(5000)) {
-                        if (!Globals.get().connectedServers.isEmpty()) {
-                            currentTaskFinished();
-                        }
+                    if (!foundNewServer && !Globals.get().connectedServers.isEmpty()) {
+                        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+                        currentTaskFinished();
                     }
                 }
                 break;
@@ -90,7 +93,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                         break;
                     }
                 }
-                if (!shouldSend && currentTaskRunning(5000)) {
+                if (!shouldSend && currentTaskRunning(2000)) {
                     currentTaskFinished();
                 }
                 break;
@@ -126,6 +129,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                 case MONITOR_BROADCAST:
                     logger.error("Broadcast monitor could not started");
                     monitor.stop();
+                    monitor = null;
                     break;
                 case START_SERVER:
                     logger.error("Server could not started at port: " + serverPort);
