@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.udp.in;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.TaskToDo;
 import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -24,6 +25,12 @@ public class ConnectionHandler extends SimpleChannelInboundHandler<Connection> {
             Globals.get().connections.add(msg);
         }
         logger.info("Connection object arrived: " + msg.getServerIp() + ":" + msg.getServerPort() + " connections size: " + Globals.get().connections.size());
+        if (Globals.get().isTasksEmpty()) {
+            Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
+            Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
+            Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+        }
+
     }
 
     @Override

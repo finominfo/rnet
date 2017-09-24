@@ -49,14 +49,19 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
     public void runCurrentAsynchronousTask() {
         switch (currentTask.getTaskToDo()) {
             case MONITOR_BROADCAST:
-                if (monitor != null) {
-                    monitor.stop();
+                if (shouldHandleAgain(5000)) {
+                    if (monitor != null) {
+                        monitor.stop();
+                    }
+                    monitor = new ConnectionMonitor(broadcastMonitorPort);
+                    monitor.bind().addListener(this);
                 }
-                monitor = new ConnectionMonitor(broadcastMonitorPort);
-                monitor.bind().addListener(this);
                 break;
             case START_SERVER:
                 if (shouldHandleAgain(5000)) {
+                    if (server != null) {
+                        server.stop();
+                    }
                     server = new Server(serverPort);
                     server.bind().addListener(this);
                 }
@@ -76,8 +81,10 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                             break;
                         }
                     }
-                    if (!foundNewServer && !Globals.get().connectedServers.isEmpty()) {
-                        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+                    if ((!foundNewServer && !Globals.get().connectedServers.isEmpty()) || (currentTask.getCounter().incrementAndGet() > 100)) {
+                        if (Globals.get().isTasksEmpty()) {
+                            Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+                        }
                         currentTaskFinished();
                     }
                 }
@@ -93,7 +100,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                         break;
                     }
                 }
-                if (!shouldSend && currentTaskRunning(2000)) {
+                if ((!shouldSend && currentTaskRunning(2000))  || (currentTask.getCounter().incrementAndGet() > 100)) {
                     currentTaskFinished();
                 }
                 break;

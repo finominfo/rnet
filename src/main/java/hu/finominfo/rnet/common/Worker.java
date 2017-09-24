@@ -3,6 +3,7 @@ package hu.finominfo.rnet.common;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -15,6 +16,7 @@ public abstract class Worker implements Runnable {
     protected volatile Task currentTask;
     private volatile long currentTaskStarted = 0;
     private final AtomicLong lastHandling = new AtomicLong(0);
+    protected final AtomicBoolean fileSendingFinished = new AtomicBoolean(false);
 
 
     @Override
@@ -43,6 +45,7 @@ public abstract class Worker implements Runnable {
 
     protected void currentTaskFinished() {
         currentTask = null;
+        fileSendingFinished.set(true);
     }
 
     protected boolean currentTaskRunning(long millis) {

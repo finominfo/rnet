@@ -2,6 +2,7 @@ package hu.finominfo.rnet.node.controller;
 
 import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.common.*;
+import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
@@ -43,7 +44,7 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
         Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
         Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
-        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "success.wav", FileType.AUDIO, "192.168.0.111");
+        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "netty-all-4.1.15.Final.jar", FileType.AUDIO, "192.168.0.111");
     }
 
     @Override
@@ -78,7 +79,7 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                 }
                 break;
             case SEND_FILE:
-                if (shouldHandleAgain(500)) {
+                if (fileSendingFinished.compareAndSet(true, false)) {
                     if (currentTask.getIsLast().get()) {
                         currentTaskFinished();
                         return;
@@ -106,9 +107,9 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                         int pos =  currentTask.getName().lastIndexOf(File.pathSeparatorChar);
                         String shortName = currentTask.getName().substring(pos + 1);
                         FileEvent fileEvent = new FileEvent(currentTask.getFileType(), data, shortName, isLast);
-                        Globals.get().connectedServers.get(currentTask.getName()).getFuture().channel().writeAndFlush(fileEvent).addListener(this);
+                        Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel().writeAndFlush(fileEvent).addListener(this);
                     } catch (Exception e) {
-                        logger.error(e);
+                        logger.error(Utils.getStackTrace(e));
                         currentTaskFinished();
                     }
                 }
@@ -129,9 +130,11 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                     currentTaskFinished();
                     break;
                 case FIND_SERVERS_TO_CONNECT:
+                    Globals.get().connectedServers.put(currentClient.getKey(), new ServerParam(future));
                     logger.info("Client successful connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
                 case SEND_FILE:
+                    fileSendingFinished.set(true);
                     int from = currentTask.getFilePosition().get() - currentTask.getCurrentLength().get();
                     logger.info("FILE sending was successful position from: " + from + " to: " + currentTask.getFilePosition());
                     break;
@@ -149,9 +152,14 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                     logger.error("Client could not connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
                 case SEND_FILE:
-                    int from = currentTask.getFilePosition().get() - currentTask.getCurrentLength().get();
-                    logger.info("FILE sending was failed position from: " + from + " to: " + currentTask.getFilePosition());
-                    currentTask.getFilePosition().set(from);
+                    if (currentTask.getCounter().incrementAndGet() > 50) {
+                        currentTaskFinished();
+                    } else {
+                        fileSendingFinished.set(true);
+                        int from = currentTask.getFilePosition().get() - currentTask.getCurrentLength().get();
+                        logger.info("FILE sending was failed position from: " + from + " to: " + currentTask.getFilePosition());
+                        currentTask.getFilePosition().set(from);
+                    }
                     break;
             }
         }
@@ -164,7 +172,10 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                 broadcaster.stop();
                 broadcaster = null;
                 if (currentTaskRunning(2000) && !Globals.get().serverClients.isEmpty()) {
-                    Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
+                //if (currentTaskRunning(2000)) {
+                    if (Globals.get().isTasksEmpty()) {
+                        Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
+                    }
                     currentTaskFinished();
                 }
                 break;

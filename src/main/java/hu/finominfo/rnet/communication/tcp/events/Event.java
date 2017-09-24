@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 public abstract class Event {
     public static final int CODE = 0x11224433;
     public static final int MAX_BINARY_SIZE = 1_000_000;
+    public static final int MAX_FILE_SIZE = 33_000_000;
     public static final int BUFFER_SIZE = MAX_BINARY_SIZE + 100_000;
     private final EventType eventType; //A getNumbert kell elküldeni
 

@@ -16,6 +16,7 @@ public class Task {
     private final FileType fileType;
     private final AtomicInteger filePosition = new AtomicInteger(0);
     private final AtomicInteger currentLength = new AtomicInteger(0);
+    private final AtomicInteger counter = new AtomicInteger(0);
     private final AtomicBoolean isLast = new AtomicBoolean(false);
 
 
@@ -73,5 +74,9 @@ public class Task {
 
     public AtomicBoolean getIsLast() {
         return isLast;
+    }
+
+    public AtomicInteger getCounter() {
+        return counter;
     }
 }

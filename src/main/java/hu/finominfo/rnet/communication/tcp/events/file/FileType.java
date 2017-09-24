@@ -4,14 +4,15 @@ package hu.finominfo.rnet.communication.tcp.events.file;
  * Created by kalman.kovacs@gmail.com on 2017.09.19..
  */
 public enum FileType {
-    VIDEO((byte) 1),
-    AUDIO((byte) 2),
-    PICTURE((byte) 3);
+    VIDEO(1),
+    AUDIO(2),
+    PICTURE(3),
+    MAIN(4);
 
     private final byte number;
 
-    FileType(byte b) {
-        number = b;
+    FileType(int b) {
+        number = (byte)b;
     }
 
     public byte getNumber() {

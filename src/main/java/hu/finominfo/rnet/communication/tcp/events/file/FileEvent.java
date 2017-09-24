@@ -42,10 +42,10 @@ public class FileEvent extends Event {
     public static FileEvent create(ByteBuf msg) {
         FileType fileType = FileType.get(msg.readByte());
         int size = msg.readInt();
+        int size2 = msg.readInt();
         byte[] data = new byte[size];
         msg.readBytes(data);
-        size = msg.readInt();
-        byte[] strData = new byte[size];
+        byte[] strData = new byte[size2];
         msg.readBytes(strData);
         String name = new String(strData, CharsetUtil.UTF_8);
         boolean lastPart = msg.readBoolean();
@@ -56,9 +56,9 @@ public class FileEvent extends Event {
     public void getRemainingData(ByteBuf buf) {
         buf.writeByte(getFileType().getNumber());
         buf.writeInt(getData().length);
-        buf.writeBytes(getData());
         byte[] strData = getName().getBytes(CharsetUtil.UTF_8);
         buf.writeInt(strData.length);
+        buf.writeBytes(getData());
         buf.writeBytes(strData);
         buf.writeBoolean(isLastPart());
     }

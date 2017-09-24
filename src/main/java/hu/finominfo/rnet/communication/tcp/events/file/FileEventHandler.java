@@ -7,32 +7,51 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.file.Files;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
  */
 public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> {
     private final static Logger logger = Logger.getLogger(FileEventHandler.class);
+    private volatile String lastFileName = null;
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FileEvent msg) throws Exception {
-        String nameWithPath = null;
+        String path = null;
         switch (msg.getFileType()) {
+            case MAIN:
+                path = ".";
+                break;
             case VIDEO:
-                nameWithPath = Globals.get().videoFolder + File.pathSeparator + msg.getName();
+                path = Globals.get().videoFolder;
                 break;
             case AUDIO:
-                nameWithPath = Globals.get().audioFolder + File.pathSeparator + msg.getName();
+            path = Globals.get().audioFolder;
                 break;
             case PICTURE:
-                nameWithPath = Globals.get().pictureFolder + File.pathSeparator + msg.getName();
+                path = Globals.get().pictureFolder;
                 break;
         }
-        try (FileOutputStream fos = new FileOutputStream(nameWithPath, true)) {
+        String fullName = path + File.separator + msg.getName();
+        if (null == lastFileName) {
+            lastFileName = fullName;
+            try {
+                boolean result = Files.deleteIfExists(new File(fullName).toPath());
+            } catch (Exception e) {
+                logger.error("Could not delete file: " + fullName);
+            }
+        }
+        try (FileOutputStream fos = new FileOutputStream(fullName, true)) {
             fos.write(msg.getData());
             fos.flush();
             fos.close();
         } catch (Exception ex) {
             logger.error(ex);
+        } finally {
+            if (msg.isLastPart()) {
+                lastFileName = null;
+            }
         }
     }
 }

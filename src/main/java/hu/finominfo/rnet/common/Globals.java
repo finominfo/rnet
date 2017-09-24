@@ -5,7 +5,12 @@ import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import org.apache.log4j.Logger;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
@@ -22,6 +27,7 @@ public class Globals {
     }
 
     public final static int VERSION = 1;
+    private final static Logger logger = Logger.getLogger(Globals.class);
     public final static String ADDRESSES = "addresses.txt";
     public final String videoFolder = "video";
     public final String audioFolder = "audio";
@@ -34,6 +40,9 @@ public class Globals {
     public final ConcurrentMap<String, List<Long>> clientNameAddress = new ConcurrentHashMap<>();
     final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
 
+    public boolean isTasksEmpty() {
+        return tasks.isEmpty();
+    }
     public final void addToTasksIfNotExists(TaskToDo taskToDo) {
         Task task = new Task(taskToDo);
         if (!tasks.contains(task)) {
@@ -65,5 +74,23 @@ public class Globals {
         } else {
             return ipAndPort.substring(0, pos);
         }
+    }
+
+    public void restart() {
+        //TODO: Executor-okat shutdown-nolni!!!
+        StringBuilder cmd = new StringBuilder();
+        cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
+        for (String jvmArg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+            cmd.append(jvmArg + " ");
+        }
+        cmd.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
+        cmd.append(Window.class.getName()).append(" ");
+
+        try {
+            Runtime.getRuntime().exec(cmd.toString());
+        } catch (IOException e) {
+            logger.error(Utils.getStackTrace(e));
+        }
+        System.exit(0);
     }
 }
