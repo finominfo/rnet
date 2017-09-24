@@ -19,6 +19,7 @@ import java.util.stream.Stream;
  */
 public abstract class SynchronousWorker extends Worker {
     private final static Logger logger = Logger.getLogger(SynchronousWorker.class);
+
     public SynchronousWorker() {
         super();
     }
@@ -52,7 +53,7 @@ public abstract class SynchronousWorker extends Worker {
                 Globals.get().clientNameAddress.put(key, value);
                 logger.info("Loaded address: " + key + " -> " + value.stream().map(Object::toString).collect(Collectors.joining(",")));
             });
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.error(e);
         }
     }

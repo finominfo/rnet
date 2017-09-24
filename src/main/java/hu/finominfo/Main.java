@@ -1,11 +1,14 @@
 package hu.finominfo;
 
 import hu.finominfo.properties.Props;
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.node.controller.Controller;
+import hu.finominfo.rnet.node.controller.Repeater;
 import hu.finominfo.rnet.node.servant.Servant;
 import hu.finominfo.rnet.common.Interface;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
@@ -23,11 +26,11 @@ public class Main {
         setupLog4J();
         Interface.getInterfaces();
         if (Props.get().isController()) {
+            Globals.get().executor.schedule(new Repeater(), 10, TimeUnit.SECONDS);
             new Controller().run();
-            //TODO: 1 percenként send broadcast küldése
+
         } else {
             new Servant().run();
-            //TODO: 5 percenként find servers to connect a tasks queue-ba tenni
         }
     }
 

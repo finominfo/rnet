@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.server;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.TaskToDo;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
@@ -21,6 +22,7 @@ public class MyChannelHandler implements ChannelHandler {
         } else {
             clientParam.setContext(ctx);
         }
+        Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
     }
 
     @Override

@@ -18,6 +18,8 @@ public class Task {
     private final AtomicInteger currentLength = new AtomicInteger(0);
     private final AtomicInteger counter = new AtomicInteger(0);
     private final AtomicBoolean isLast = new AtomicBoolean(false);
+    private final AtomicBoolean taskSendingFinished = new AtomicBoolean(true);
+
 
 
     public Task(TaskToDo taskToDo) {
@@ -78,5 +80,9 @@ public class Task {
 
     public AtomicInteger getCounter() {
         return counter;
+    }
+
+    public AtomicBoolean getTaskSendingFinished() {
+        return taskSendingFinished;
     }
 }

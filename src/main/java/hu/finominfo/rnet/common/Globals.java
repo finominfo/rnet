@@ -38,15 +38,22 @@ public class Globals {
     public final ConcurrentMap<String, ClientParam> serverClients = new ConcurrentHashMap<>(); //ip and port - context
     public final ConcurrentMap<String, ServerParam> connectedServers = new ConcurrentHashMap<>();
     public final ConcurrentMap<String, List<Long>> clientNameAddress = new ConcurrentHashMap<>();
-    final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
+    public final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
 
     public boolean isTasksEmpty() {
         return tasks.isEmpty();
     }
+
     public final void addToTasksIfNotExists(TaskToDo taskToDo) {
         Task task = new Task(taskToDo);
         if (!tasks.contains(task)) {
             tasks.add(task);
+        }
+    }
+
+    public final void addToTasksIfEmpty(TaskToDo taskToDo) {
+        if (tasks.isEmpty()) {
+            tasks.add(new Task(taskToDo));
         }
     }
 
@@ -56,6 +63,7 @@ public class Globals {
             tasks.add(task);
         }
     }
+
     public final void addToTasksIfNotExists(TaskToDo taskToDo, String name, FileType fileType, String toSend) {
         Task task = new Task(taskToDo, name, fileType, toSend);
         if (!tasks.contains(task)) {

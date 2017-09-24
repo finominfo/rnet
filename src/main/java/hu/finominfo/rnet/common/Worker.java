@@ -16,7 +16,7 @@ public abstract class Worker implements Runnable {
     protected volatile Task currentTask;
     private volatile long currentTaskStarted = 0;
     private final AtomicLong lastHandling = new AtomicLong(0);
-    protected final AtomicBoolean fileSendingFinished = new AtomicBoolean(false);
+
 
 
     @Override
@@ -30,6 +30,7 @@ public abstract class Worker implements Runnable {
         }
         if (null != currentTask) {
             try {
+                //logger.info("CURRENT TASK: " + currentTask.getTaskToDo().toString());
                 runCurrentTask();
             } catch(Exception e) {
                 logger.error(currentTask, e);
@@ -45,7 +46,6 @@ public abstract class Worker implements Runnable {
 
     protected void currentTaskFinished() {
         currentTask = null;
-        fileSendingFinished.set(true);
     }
 
     protected boolean currentTaskRunning(long millis) {

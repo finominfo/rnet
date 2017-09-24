@@ -39,8 +39,8 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
         clientPort = broadcastMonitorPort + 2;
         Globals.get().addToTasksIfNotExists(TaskToDo.MONITOR_BROADCAST);
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
-        Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
-        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+        //Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
+        //Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
 
     }
 
@@ -67,7 +67,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                 }
                 break;
             case FIND_SERVERS_TO_CONNECT:
-                if (shouldHandleAgain(2000)) {
+                if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                     boolean foundNewServer = false;
                     Iterator<Connection> iterator = Globals.get().connections.iterator();
                     while (iterator.hasNext()) {
@@ -81,10 +81,8 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                             break;
                         }
                     }
-                    if ((!foundNewServer && !Globals.get().connectedServers.isEmpty()) || (currentTask.getCounter().incrementAndGet() > 100)) {
-                        if (Globals.get().isTasksEmpty()) {
-                            Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
-                        }
+                    if ((!foundNewServer && !Globals.get().connectedServers.isEmpty()) || (currentTask.getCounter().incrementAndGet() > 50)) {
+                        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
                         currentTaskFinished();
                     }
                 }
@@ -100,7 +98,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                         break;
                     }
                 }
-                if ((!shouldSend && currentTaskRunning(2000))  || (currentTask.getCounter().incrementAndGet() > 100)) {
+                if ((!shouldSend && currentTaskRunning(2000)) || (currentTask.getCounter().incrementAndGet() > 100)) {
                     currentTaskFinished();
                 }
                 break;
@@ -113,6 +111,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
+        currentTask.getTaskSendingFinished().set(true);
         if (future.isSuccess()) {
             switch (currentTask.getTaskToDo()) {
                 case MONITOR_BROADCAST:

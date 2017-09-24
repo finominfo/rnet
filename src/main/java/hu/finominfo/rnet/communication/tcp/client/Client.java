@@ -39,6 +39,7 @@ public class Client {
                                     throws Exception {
                                 ChannelPipeline pipeline = channel.pipeline();
                                 pipeline.addLast(new EventEncoder());
+                                pipeline.addLast(new ExceptionHandler());
                             }
                         }
                 );
