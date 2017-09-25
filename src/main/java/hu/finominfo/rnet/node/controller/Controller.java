@@ -20,6 +20,7 @@ import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
@@ -188,4 +189,8 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
         broadcaster = null;
     }
 
+    @Override
+    protected Queue<Task> getTaskQueue() {
+        return Globals.get().tasks;
+    }
 }

@@ -5,6 +5,8 @@ import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.frontend.FrontEndWorker;
+import hu.finominfo.rnet.frontend.controller.FrontEnd;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -39,9 +41,22 @@ public class Globals {
     public final ConcurrentMap<String, ServerParam> connectedServers = new ConcurrentHashMap<>();
     public final ConcurrentMap<String, List<Long>> clientNameAddress = new ConcurrentHashMap<>();
     public final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
+    public final Queue<Task> frontEndTasks = new ConcurrentLinkedQueue<>();
+    private volatile FrontEnd frontEnd = null;
+
+    public FrontEnd getFrontEnd() {
+        if (frontEnd == null) {
+            frontEnd = new FrontEnd();
+        }
+        return frontEnd;
+    }
 
     public boolean isTasksEmpty() {
         return tasks.isEmpty();
+    }
+
+    public boolean isFrontEndTasksEmpty() {
+        return frontEndTasks.isEmpty();
     }
 
     public final void addToTasksIfNotExists(TaskToDo taskToDo) {
@@ -51,6 +66,12 @@ public class Globals {
         }
     }
 
+    public final void addToFrontEndTasksIfNotExists(TaskToDo taskToDo) {
+        Task task = new Task(taskToDo);
+        if (!frontEndTasks.contains(task)) {
+            frontEndTasks.add(task);
+        }
+    }
     public final void addToTasksIfEmpty(TaskToDo taskToDo) {
         if (tasks.isEmpty()) {
             tasks.add(new Task(taskToDo));

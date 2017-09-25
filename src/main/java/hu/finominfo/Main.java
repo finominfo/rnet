@@ -2,8 +2,9 @@ package hu.finominfo;
 
 import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.frontend.FrontEndWorker;
 import hu.finominfo.rnet.node.controller.Controller;
-import hu.finominfo.rnet.node.controller.Repeater;
+import hu.finominfo.rnet.common.ControllerRepeater;
 import hu.finominfo.rnet.node.servant.Servant;
 import hu.finominfo.rnet.common.Interface;
 
@@ -26,8 +27,10 @@ public class Main {
         setupLog4J();
         Interface.getInterfaces();
         if (Props.get().isController()) {
-            Globals.get().executor.schedule(new Repeater(), 10, TimeUnit.SECONDS);
+            Globals.get().executor.schedule(new ControllerRepeater(), 5, TimeUnit.SECONDS);
+            Globals.get().getFrontEnd();
             new Controller().run();
+            new FrontEndWorker().run();
 
         } else {
             new Servant().run();

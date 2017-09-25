@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
@@ -151,5 +152,10 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
                     break;
             }
         }
+    }
+
+    @Override
+    protected Queue<Task> getTaskQueue() {
+        return Globals.get().tasks;
     }
 }

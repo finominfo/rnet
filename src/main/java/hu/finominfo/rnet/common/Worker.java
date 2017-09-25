@@ -2,6 +2,7 @@ package hu.finominfo.rnet.common;
 
 import org.apache.log4j.Logger;
 
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -22,8 +23,8 @@ public abstract class Worker implements Runnable {
     @Override
     public void run() {
         if (null == currentTask) {
-            if (!Globals.get().tasks.isEmpty()) {
-                currentTask = Globals.get().tasks.poll();
+            if (!getTaskQueue().isEmpty()) {
+                currentTask = getTaskQueue().poll();
                 currentTaskStarted = System.currentTimeMillis();
                 lastHandling.set(0);
             }
@@ -61,4 +62,5 @@ public abstract class Worker implements Runnable {
         return false;
     }
     protected abstract void runCurrentTask();
+    protected abstract Queue<Task> getTaskQueue();
 }

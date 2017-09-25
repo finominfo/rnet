@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
@@ -8,9 +9,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,9 +34,30 @@ public abstract class SynchronousWorker extends Worker {
                 saveNameAddress();
                 currentTaskFinished();
                 break;
+            case REFRESH_SERVANT_LIST:
+                refreshServantList();
+                currentTaskFinished();
+                break;
             default:
                 runCurrentAsynchronousTask();
                 break;
+        }
+    }
+
+    private void refreshServantList() {
+        List<String> existingNameOrIp = Globals.get().serverClients.values().stream()
+                .filter(clientParam -> clientParam.getContext() != null)
+                .map(ClientParam::getName).collect(Collectors.toList());
+        List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsList.elements());
+        for (String nameOrIp : existingNameOrIp) {
+            if (!elements.contains(nameOrIp)) {
+                Globals.get().getFrontEnd().servantsList.addElement(nameOrIp);
+            }
+        }
+        for (int i = 0; i < elements.size(); i++) {
+            if(!existingNameOrIp.contains(elements.get(i))) {
+                Globals.get().getFrontEnd().servantsList.remove(i);
+            }
         }
     }
 
