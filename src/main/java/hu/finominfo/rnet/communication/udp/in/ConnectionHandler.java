@@ -1,7 +1,7 @@
 package hu.finominfo.rnet.communication.udp.in;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.common.TaskToDo;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

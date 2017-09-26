@@ -1,7 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.address;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.common.TaskToDo;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -34,7 +34,7 @@ public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEven
         }
         clientParam.setName(ip);
         if (Globals.get().clientNameAddress.putIfAbsent(ip, msg.getAddresses()) == null) {
-            Globals.get().addToTasksIfNotExists(TaskToDo.SAVE_NAME_ADDRESS);
+            Globals.get().addToFrontEndTasksIfNotExists(TaskToDo.SAVE_NAME_ADDRESS);
         }
     }
 }

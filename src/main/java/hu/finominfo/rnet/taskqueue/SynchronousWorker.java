@@ -1,11 +1,11 @@
-package hu.finominfo.rnet.common;
+package hu.finominfo.rnet.taskqueue;
 
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,11 +49,9 @@ public abstract class SynchronousWorker extends Worker {
                 .filter(clientParam -> clientParam.getContext() != null)
                 .map(ClientParam::getName).collect(Collectors.toList());
         List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsList.elements());
-        for (String nameOrIp : existingNameOrIp) {
-            if (!elements.contains(nameOrIp)) {
-                Globals.get().getFrontEnd().servantsList.addElement(nameOrIp);
-            }
-        }
+        existingNameOrIp.stream()
+                .filter(nameOrIp -> !elements.contains(nameOrIp))
+                .forEach(Globals.get().getFrontEnd().servantsList::addElement);
         for (int i = 0; i < elements.size(); i++) {
             if(!existingNameOrIp.contains(elements.get(i))) {
                 Globals.get().getFrontEnd().servantsList.remove(i);

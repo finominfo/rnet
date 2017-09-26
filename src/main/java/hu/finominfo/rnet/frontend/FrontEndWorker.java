@@ -1,8 +1,8 @@
 package hu.finominfo.rnet.frontend;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.common.SynchronousWorker;
-import hu.finominfo.rnet.common.Task;
+import hu.finominfo.rnet.taskqueue.SynchronousWorker;
+import hu.finominfo.rnet.taskqueue.Task;
 import org.apache.log4j.Logger;
 
 import java.util.Queue;

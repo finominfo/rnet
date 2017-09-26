@@ -1,5 +1,5 @@
 
-package hu.finominfo.rnet.common;
+package hu.finominfo.rnet.taskqueue;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.

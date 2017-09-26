@@ -1,7 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.server;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.common.TaskToDo;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;

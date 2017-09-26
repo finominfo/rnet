@@ -5,8 +5,9 @@ import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
-import hu.finominfo.rnet.frontend.FrontEndWorker;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
+import hu.finominfo.rnet.taskqueue.Task;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
 import org.apache.log4j.Logger;
 
 import java.awt.*;

@@ -1,10 +1,9 @@
-package hu.finominfo.rnet.common;
+package hu.finominfo.rnet.taskqueue;
 
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.23.

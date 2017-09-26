@@ -9,6 +9,9 @@ import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.communication.tcp.server.Server;
+import hu.finominfo.rnet.taskqueue.SynchronousWorker;
+import hu.finominfo.rnet.taskqueue.Task;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
@@ -39,7 +42,6 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
         broadcastPort = Props.get().getPort();
         clientPort = broadcastPort + 1;
         serverPort = broadcastPort + 2;
-        Globals.get().addToTasksIfNotExists(TaskToDo.LOAD_NAME_ADDRESS);
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
         Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
         //Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);

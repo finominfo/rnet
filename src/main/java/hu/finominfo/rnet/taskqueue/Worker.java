@@ -1,10 +1,10 @@
-package hu.finominfo.rnet.common;
+package hu.finominfo.rnet.taskqueue;
 
+import hu.finominfo.rnet.common.Globals;
 import org.apache.log4j.Logger;
 
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
