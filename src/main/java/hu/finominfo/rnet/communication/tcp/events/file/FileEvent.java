@@ -13,13 +13,15 @@ public class FileEvent extends Event {
     private final FileType fileType;
     private final byte[] data; //A length-et is el kell küldeni!!!
     private final String name; //A length-et is el kell küldeni!!!
+    private final boolean firstPart;
     private final boolean lastPart;
 
-    public FileEvent(FileType fileType, byte[] data, String name, boolean lastPart) {
+    public FileEvent(FileType fileType, byte[] data, String name, boolean firstPart, boolean lastPart) {
         super(EventType.FILE);
         this.fileType = fileType;
         this.data = data;
         this.name = name;
+        this.firstPart = firstPart;
         this.lastPart = lastPart;
     }
 
@@ -35,12 +37,18 @@ public class FileEvent extends Event {
         return name;
     }
 
+    public boolean isFirstPart() {
+        return firstPart;
+    }
+
     public boolean isLastPart() {
         return lastPart;
     }
 
     public static FileEvent create(ByteBuf msg) {
         FileType fileType = FileType.get(msg.readByte());
+        boolean firstPart = msg.readBoolean();
+        boolean lastPart = msg.readBoolean();
         int size = msg.readInt();
         int size2 = msg.readInt();
         byte[] data = new byte[size];
@@ -48,19 +56,19 @@ public class FileEvent extends Event {
         byte[] strData = new byte[size2];
         msg.readBytes(strData);
         String name = new String(strData, CharsetUtil.UTF_8);
-        boolean lastPart = msg.readBoolean();
-        return new FileEvent(fileType, data, name, lastPart);
+        return new FileEvent(fileType, data, name, firstPart, lastPart);
     }
 
     @Override
     public void getRemainingData(ByteBuf buf) {
         buf.writeByte(getFileType().getNumber());
+        buf.writeBoolean(isFirstPart());
+        buf.writeBoolean(isLastPart());
         buf.writeInt(getData().length);
         byte[] strData = getName().getBytes(CharsetUtil.UTF_8);
         buf.writeInt(strData.length);
         buf.writeBytes(getData());
         buf.writeBytes(strData);
-        buf.writeBoolean(isLastPart());
     }
 }
 

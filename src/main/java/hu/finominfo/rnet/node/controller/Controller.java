@@ -98,6 +98,7 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                             return;
                         }
                         boolean isLast = remaining <= Event.MAX_BINARY_SIZE;
+                        boolean isFirst = currentTask.getFilePosition().get() == 0;
                         currentTask.getIsLast().set(isLast);
                         int smaller = isLast ? (int) remaining : Event.MAX_BINARY_SIZE;
                         byte[] bytes = new byte[smaller];
@@ -111,7 +112,7 @@ public class Controller extends SynchronousWorker implements CompletionHandler<C
                         currentTask.getCurrentLength().set(data.length);
                         int pos = currentTask.getName().lastIndexOf(File.pathSeparatorChar);
                         String shortName = currentTask.getName().substring(pos + 1);
-                        FileEvent fileEvent = new FileEvent(currentTask.getFileType(), data, shortName, isLast);
+                        FileEvent fileEvent = new FileEvent(currentTask.getFileType(), data, shortName, isFirst, isLast);
                         Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel().writeAndFlush(fileEvent).addListener(this);
                     } catch (Exception e) {
                         logger.error(Utils.getStackTrace(e));
