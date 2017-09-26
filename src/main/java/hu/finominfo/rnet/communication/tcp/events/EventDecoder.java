@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
  */
 public class EventDecoder extends ByteToMessageDecoder {
-    private final static Logger logger = Logger.getLogger(EventDecoder.class);
+    private final Logger logger = Logger.getLogger(EventDecoder.class);
     private final ConcurrentMap<ChannelHandlerContext, FileInputCollector> inputs = new ConcurrentHashMap<>();
     private final ByteBuf fileBuffer = Unpooled.buffer();
     private final AtomicInteger fileSize = new AtomicInteger(0);
