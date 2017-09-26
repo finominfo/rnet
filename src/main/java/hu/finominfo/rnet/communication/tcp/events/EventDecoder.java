@@ -9,6 +9,8 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -16,16 +18,17 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EventDecoder extends ByteToMessageDecoder {
     private final static Logger logger = Logger.getLogger(EventDecoder.class);
+    private final ConcurrentMap<ChannelHandlerContext, FileInputCollector> inputs = new ConcurrentHashMap<>();
     private final ByteBuf fileBuffer = Unpooled.buffer();
-    private final ByteBuf input = Unpooled.buffer();
     private final AtomicInteger fileSize = new AtomicInteger(0);
-    private volatile boolean waitingFoContinue = false;
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        EventType eventType;
+        FileInputCollector fileInputCollector = getByteBufHolder(ctx);
+        ByteBuf input = fileInputCollector.getByteBuf();
         input.writeBytes(in);
-        if (!waitingFoContinue) {
+        EventType eventType;
+        if (! fileInputCollector.isWaitingForContinue()) {
             eventType = checkBeginning(input);
             if (eventType == null) return;
             logger.info(eventType.name() + " event arrived");
@@ -37,7 +40,7 @@ public class EventDecoder extends ByteToMessageDecoder {
                 out.add(AddressEvent.create(input));
                 break;
             case FILE:
-                waitingFoContinue = true;
+                fileInputCollector.setWaitingForContinue(true);
                 if (fileSize.get() == 0) {
                     if (input.readableBytes() > 9) {
                         fileSize.set(input.getInt(6) + input.getInt(10) + 10);
@@ -57,7 +60,7 @@ public class EventDecoder extends ByteToMessageDecoder {
                 //logger.info(eventType.name() + " event required bytes: " + (requiredMore - currentSize));
                 if (fileBuffer.readableBytes() == fileSize.get()) {
                     fileSize.set(0);
-                    waitingFoContinue = false;
+                    fileInputCollector.setWaitingForContinue(false);
                     logger.info(eventType.name() + " event part finished");
                     out.add(FileEvent.create(fileBuffer));
                 }
@@ -76,9 +79,21 @@ public class EventDecoder extends ByteToMessageDecoder {
 
         int readableBytes = input.readableBytes();
         if (readableBytes > 0) {
-            logger.error("readeable bytes: " + readableBytes);
+            logger.error("Readable bytes: " + readableBytes);
             input.discardReadBytes();
         }
+    }
+
+    private FileInputCollector getByteBufHolder(ChannelHandlerContext ctx) {
+        FileInputCollector byteBufHolder = inputs.get(ctx);
+        if (byteBufHolder == null) {
+            FileInputCollector byteBufHolderTemp = new FileInputCollector();
+            byteBufHolder = inputs.putIfAbsent(ctx, byteBufHolderTemp);
+            if (byteBufHolder == null) {
+                byteBufHolder = byteBufHolderTemp;
+            }
+        }
+        return byteBufHolder;
     }
 
     private EventType checkBeginning(ByteBuf in) {
