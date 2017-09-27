@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
@@ -21,11 +23,35 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> implements Runnable {
     private final static Logger logger = Logger.getLogger(FileEventHandler.class);
     private final ConcurrentMap<ChannelHandlerContext, Queue<FileEvent>> fileEvents = new ConcurrentHashMap<>();
+    private final Lock lock = new ReentrantLock();
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FileEvent msg) throws Exception {
+        if (isClean(ctx, msg)) {
+            getFileEvents(ctx).add(msg);
+            startSaving();
+        } else {
+            logger.error("FILE PART WAS DROPPED BECAUSE OF PARALLEL SENDING: " + msg.getName());
+        }
+    }
+
+    private boolean isClean(ChannelHandlerContext ctx, FileEvent msg) {
+        Set<String> names = new HashSet<>();
+        lock.lock();
+        try {
+            fileEvents.entrySet().stream()
+                    .filter(ctxEntry -> ctxEntry.getKey() != ctx)
+                    .forEach(ctxEntry2 -> ctxEntry2.getValue().stream().forEach(fileEvent -> names.add(fileEvent.getName())));
+            return !names.contains(msg.getName());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+
+    private Queue<FileEvent> getFileEvents(ChannelHandlerContext ctx) {
         Queue<FileEvent> events = this.fileEvents.get(ctx);
         if (events == null) {
             Queue<FileEvent> eventsTemp = new ConcurrentLinkedQueue<>();
@@ -34,18 +60,7 @@ public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> imp
                 events = eventsTemp;
             }
         }
-        if (!getFileNames().contains(msg.getName())) {
-            events.add(msg);
-            startSaving();
-        } else {
-            logger.error("FILE PART WAS DROPPED BECAUSE OF PARALLEL SENDING: " + msg.getName());
-        }
-    }
-
-    private Set<String> getFileNames() {
-        Set<String> names = new HashSet<>();
-        fileEvents.values().stream().forEach(fileEvents -> fileEvents.stream().forEach(fileEvent -> names.add(fileEvent.getName())));
-        return names;
+        return events;
     }
 
     private void startSaving() {

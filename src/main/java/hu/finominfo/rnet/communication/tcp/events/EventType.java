@@ -4,17 +4,18 @@ package hu.finominfo.rnet.communication.tcp.events;
  * Created by kalman.kovacs@gmail.com on 2017.09.19..
  */
 public enum EventType {
-    RECEIVED((byte) 1),
-    NOT_RECEIVED((byte) 2),
-    ADDRESS((byte) 3),
-    FILE((byte) 4),
-    START((byte) 5),
-    STOP((byte) 6);
+    RECEIVED(1),
+    NOT_RECEIVED(2),
+    ADDRESS(3),
+    FILE(4),
+    START(5),
+    STOP(6),
+    FOLDERS(7);
 
     private final byte number;
 
-    EventType(byte b) {
-        number = b;
+    EventType(int b) {
+        number = (byte) b;
     }
 
     public byte getNumber() {

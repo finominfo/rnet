@@ -1,13 +1,14 @@
 package hu.finominfo.rnet.communication.tcp.events;
 
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.log4j.Logger;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -18,32 +19,33 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EventDecoder extends ByteToMessageDecoder {
     private final Logger logger = Logger.getLogger(EventDecoder.class);
-    private final ConcurrentMap<ChannelHandlerContext, FileInputCollector> inputs = new ConcurrentHashMap<>();
-    private final ByteBuf fileBuffer = Unpooled.buffer();
-    private final AtomicInteger fileSize = new AtomicInteger(0);
+    private final ConcurrentMap<ChannelHandlerContext, InputCollector> inputs = new ConcurrentHashMap<>();
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        FileInputCollector fileInputCollector = getByteBufHolder(ctx);
-        ByteBuf input = fileInputCollector.getByteBuf();
+        InputCollector inputCollector = getInputCollector(ctx);
+        ByteBuf input = inputCollector.getByteBuf();
         input.writeBytes(in);
-        EventType eventType;
-        if (! fileInputCollector.isWaitingForContinue()) {
-            eventType = checkBeginning(input);
+        EventType eventType = inputCollector.getEventType();
+        if (eventType == null) {
+            eventType = getEventType(input);
             if (eventType == null) return;
             logger.info(eventType.name() + " event arrived");
-        } else {
-            eventType = EventType.FILE;
         }
         switch (eventType) {
             case ADDRESS:
                 out.add(AddressEvent.create(input));
                 break;
+            case FOLDERS:
+                break;
             case FILE:
-                fileInputCollector.setWaitingForContinue(true);
+                inputCollector.setEventType(EventType.FILE);
+                AtomicInteger fileSize = inputCollector.getFileSize();
+                ByteBuf fileBuffer = inputCollector.getFileBuffer();
                 if (fileSize.get() == 0) {
-                    if (input.readableBytes() > 9) {
-                        fileSize.set(input.getInt(6) + input.getInt(10) + 10);
+                    garbageFinishedChannels();
+                    if (input.readableBytes() > 10) {
+                        fileSize.set(input.getInt(7) + input.getInt(11) + 11);
                     } else {
                         return;
                     }
@@ -60,7 +62,7 @@ public class EventDecoder extends ByteToMessageDecoder {
                 //logger.info(eventType.name() + " event required bytes: " + (requiredMore - currentSize));
                 if (fileBuffer.readableBytes() == fileSize.get()) {
                     fileSize.set(0);
-                    fileInputCollector.setWaitingForContinue(false);
+                    inputCollector.setEventType(null);
                     logger.info(eventType.name() + " event part finished");
                     out.add(FileEvent.create(fileBuffer));
                 }
@@ -84,19 +86,30 @@ public class EventDecoder extends ByteToMessageDecoder {
         }
     }
 
-    private FileInputCollector getByteBufHolder(ChannelHandlerContext ctx) {
-        FileInputCollector byteBufHolder = inputs.get(ctx);
-        if (byteBufHolder == null) {
-            FileInputCollector byteBufHolderTemp = new FileInputCollector();
-            byteBufHolder = inputs.putIfAbsent(ctx, byteBufHolderTemp);
-            if (byteBufHolder == null) {
-                byteBufHolder = byteBufHolderTemp;
+    private void garbageFinishedChannels() {
+        for (Iterator<ChannelHandlerContext> iterator = inputs.keySet().iterator(); iterator.hasNext();) {
+            ChannelHandlerContext ctx = iterator.next();
+            String ipAndPort = ctx.channel().remoteAddress().toString();
+            String ip = Globals.get().getIp(ipAndPort);
+            if (Globals.get().serverClients.get(ip).getContext() == null) {
+                iterator.remove();
             }
         }
-        return byteBufHolder;
     }
 
-    private EventType checkBeginning(ByteBuf in) {
+    private InputCollector getInputCollector(ChannelHandlerContext ctx) {
+        InputCollector inputCollector = inputs.get(ctx);
+        if (inputCollector == null) {
+            InputCollector inputCollectorTemp = new InputCollector();
+            inputCollector = inputs.putIfAbsent(ctx, inputCollectorTemp);
+            if (inputCollector == null) {
+                inputCollector = inputCollectorTemp;
+            }
+        }
+        return inputCollector;
+    }
+
+    private EventType getEventType(ByteBuf in) {
         EventType eventType;
         if (in.readInt() != Event.CODE) {
             logger.error("NO EVENT CODE");
