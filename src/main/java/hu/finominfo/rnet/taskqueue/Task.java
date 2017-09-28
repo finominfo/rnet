@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Task {
     private final TaskToDo taskToDo;
+    private final FrontEndTaskToDo frontEndTaskToDo;
     private final String name;
     private final String toSend;
     private final FileType fileType;
@@ -21,22 +22,34 @@ public class Task {
 
 
 
-    public Task(TaskToDo taskToDo) {
-        this.taskToDo = taskToDo;
-        this.name = null;
-        this.fileType = null;
-        this.toSend = null;
-    }
-
     public Task(TaskToDo taskToDo, String name) {
         this.taskToDo = taskToDo;
+        this.frontEndTaskToDo = null;
         this.name = name;
         this.fileType = null;
         this.toSend = null;
     }
 
+    public Task(TaskToDo taskToDo) {
+        this.taskToDo = taskToDo;
+        this.frontEndTaskToDo = null;
+        this.name = null;
+        this.fileType = null;
+        this.toSend = null;
+    }
+
+    public Task(FrontEndTaskToDo taskToDo) {
+        this.taskToDo = null;
+        this.frontEndTaskToDo = taskToDo;
+        this.name = null;
+        this.fileType = null;
+        this.toSend = null;
+    }
+
+
     public Task(TaskToDo taskToDo, String name, FileType fileType) {
         this.taskToDo = taskToDo;
+        this.frontEndTaskToDo = null;
         this.name = name;
         this.fileType = fileType;
         this.toSend = null;
@@ -44,9 +57,14 @@ public class Task {
 
     public Task(TaskToDo taskToDo, String name, FileType fileType, String toSend) {
         this.taskToDo = taskToDo;
+        this.frontEndTaskToDo = null;
         this.name = name;
         this.fileType = fileType;
         this.toSend = toSend;
+    }
+
+    public FrontEndTaskToDo getFrontEndTaskToDo() {
+        return frontEndTaskToDo;
     }
 
     public TaskToDo getTaskToDo() {

@@ -9,9 +9,10 @@ import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.Server;
-import hu.finominfo.rnet.taskqueue.SynchronousWorker;
+import hu.finominfo.rnet.frontend.FrontEndWorker;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
+import hu.finominfo.rnet.taskqueue.Worker;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
@@ -23,7 +24,7 @@ import java.util.Queue;
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
  */
-public class Servant extends SynchronousWorker implements ChannelFutureListener {
+public class Servant extends Worker implements ChannelFutureListener {
 
     private final static Logger logger = Logger.getLogger(Servant.class);
     private volatile ConnectionMonitor monitor = null;
@@ -50,7 +51,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
 
 
     @Override
-    public void runCurrentAsynchronousTask() {
+    public void runCurrentTask() {
         switch (currentTask.getTaskToDo()) {
             case MONITOR_BROADCAST:
                 if (shouldHandleAgain(5000)) {
@@ -158,7 +159,7 @@ public class Servant extends SynchronousWorker implements ChannelFutureListener 
     }
 
     @Override
-    protected Queue<Task> getTaskQueue() {
-        return Globals.get().tasks;
+    protected Task getTask() {
+        return Globals.get().tasks.poll();
     }
 }

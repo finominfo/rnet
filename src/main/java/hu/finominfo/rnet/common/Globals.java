@@ -6,6 +6,7 @@ import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
+import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import org.apache.log4j.Logger;
@@ -29,7 +30,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 1;
+    public final static String VERSION = "0.1";
     private final static Logger logger = Logger.getLogger(Globals.class);
     public final static String ADDRESSES = "addresses.txt";
     public final String videoFolder = "video";
@@ -67,7 +68,7 @@ public class Globals {
         }
     }
 
-    public final void addToFrontEndTasksIfNotExists(TaskToDo taskToDo) {
+    public final void addToFrontEndTasksIfNotExists(FrontEndTaskToDo taskToDo) {
         Task task = new Task(taskToDo);
         if (!frontEndTasks.contains(task)) {
             frontEndTasks.add(task);

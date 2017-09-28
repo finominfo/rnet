@@ -19,23 +19,20 @@ public abstract class Worker implements Runnable {
     private final AtomicLong lastHandling = new AtomicLong(0);
 
 
-
     @Override
     public void run() {
         if (null == currentTask) {
-            if (!getTaskQueue().isEmpty()) {
-                currentTask = getTaskQueue().poll();
+            currentTask = getTask();
+            if (null != currentTask) {
                 currentTaskStarted = System.currentTimeMillis();
                 lastHandling.set(0);
-            }
-        }
-        if (null != currentTask) {
-            try {
-                //logger.info("CURRENT TASK: " + currentTask.getTaskToDo().toString());
-                runCurrentTask();
-            } catch(Exception e) {
-                logger.error(currentTask, e);
-                currentTaskFinished();
+                try {
+                    //logger.info("CURRENT TASK: " + currentTask.getTaskToDo().toString());
+                    runCurrentTask();
+                } catch (Exception e) {
+                    logger.error(currentTask, e);
+                    currentTaskFinished();
+                }
             }
         }
         checkNext();
@@ -61,6 +58,8 @@ public abstract class Worker implements Runnable {
         }
         return false;
     }
+
     protected abstract void runCurrentTask();
-    protected abstract Queue<Task> getTaskQueue();
+
+    protected abstract Task getTask();
 }

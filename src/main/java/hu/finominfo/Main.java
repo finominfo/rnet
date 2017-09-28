@@ -7,6 +7,7 @@ import hu.finominfo.rnet.node.controller.Controller;
 import hu.finominfo.rnet.taskqueue.ControllerRepeater;
 import hu.finominfo.rnet.node.servant.Servant;
 import hu.finominfo.rnet.common.Interface;
+import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class Main {
             Globals.get().getFrontEnd();
             new Controller().run();
             new FrontEndWorker().run();
-            Globals.get().addToFrontEndTasksIfNotExists(TaskToDo.LOAD_NAME_ADDRESS);
+            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
 
 
         } else {
