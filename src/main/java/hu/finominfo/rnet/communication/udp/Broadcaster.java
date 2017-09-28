@@ -47,10 +47,10 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
     public void run() {
         try {
             if (times.decrementAndGet() >= 0) {
-                logger.info("Sending broadcast...");
+                //logger.info("Sending broadcast...");
                 broadcaster.send(this);
             } else if (null != completionHandler) {
-                logger.info("Broadcasting finished, number of successful sending: " + numOfSuccessfulSending.get());
+                //logger.info("Broadcasting finished, number of successful sending: " + numOfSuccessfulSending.get());
                 completionHandler.completed(CompletedEvent.BROADCAST_FINISHED, numOfSuccessfulSending.get());
             }
         } catch (Exception e) {

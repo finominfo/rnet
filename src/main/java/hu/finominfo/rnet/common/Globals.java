@@ -18,6 +18,8 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
@@ -30,8 +32,9 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static String VERSION = "0.1";
+    private final static int VERSION = 10;
     private final static Logger logger = Logger.getLogger(Globals.class);
+    public final AtomicLong shouldWait = new AtomicLong(0);
     public final static String ADDRESSES = "addresses.txt";
     public final String videoFolder = "video";
     public final String audioFolder = "audio";
@@ -45,6 +48,15 @@ public class Globals {
     public final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
     public final Queue<Task> frontEndTasks = new ConcurrentLinkedQueue<>();
     private volatile FrontEnd frontEnd = null;
+
+    public static String getVersion() {
+        int main = VERSION / 100;
+        int sub = VERSION - main * 100;
+        if (sub % 10 == 0) {
+            sub /= 10;
+        }
+        return "" + main + "." + sub;
+    }
 
     public FrontEnd getFrontEnd() {
         if (frontEnd == null) {
@@ -74,6 +86,7 @@ public class Globals {
             frontEndTasks.add(task);
         }
     }
+
     public final void addToTasksIfEmpty(TaskToDo taskToDo) {
         if (tasks.isEmpty()) {
             tasks.add(new Task(taskToDo));

@@ -3,6 +3,7 @@ package hu.finominfo.rnet.communication.tcp.events;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
+import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -36,6 +37,9 @@ public class EventDecoder extends ByteToMessageDecoder {
             case ADDRESS:
                 out.add(AddressEvent.create(input));
                 break;
+            case WAIT:
+                out.add(WaitEvent.create(input));
+                break;
             case FOLDERS:
                 break;
             case FILE:
@@ -45,7 +49,7 @@ public class EventDecoder extends ByteToMessageDecoder {
                 if (fileSize.get() == 0) {
                     garbageFinishedChannels();
                     if (input.readableBytes() > 10) {
-                        fileSize.set(input.getInt(7) + input.getInt(11) + 11);
+                        fileSize.set(input.getInt(8) + input.getInt(12) + 11);
                     } else {
                         return;
                     }
@@ -65,29 +69,21 @@ public class EventDecoder extends ByteToMessageDecoder {
                     inputCollector.setEventType(null);
                     logger.info(eventType.name() + " event part finished");
                     out.add(FileEvent.create(fileBuffer));
+                    input.discardReadBytes();
+                    fileBuffer.discardReadBytes();
                 }
-                break;
-            case RECEIVED:
-                //Értesítés receivedről!!!
-                break;
-            case NOT_RECEIVED:
-                //Értesítés not receivedről!!!
-                break;
+                return;
             case START:
                 break;
             case STOP:
                 break;
         }
 
-        int readableBytes = input.readableBytes();
-        if (readableBytes > 0) {
-            logger.error("Readable bytes: " + readableBytes);
-            input.discardReadBytes();
-        }
+        input.discardReadBytes();
     }
 
     private void garbageFinishedChannels() {
-        for (Iterator<ChannelHandlerContext> iterator = inputs.keySet().iterator(); iterator.hasNext();) {
+        for (Iterator<ChannelHandlerContext> iterator = inputs.keySet().iterator(); iterator.hasNext(); ) {
             ChannelHandlerContext ctx = iterator.next();
             String ipAndPort = ctx.channel().remoteAddress().toString();
             String ip = Globals.get().getIp(ipAndPort);
@@ -113,13 +109,13 @@ public class EventDecoder extends ByteToMessageDecoder {
         EventType eventType;
         if (in.readInt() != Event.CODE) {
             logger.error("NO EVENT CODE");
-            in.discardReadBytes();
+            in.clear();
             return null;
         }
         eventType = EventType.get(in.readByte());
         if (null == eventType) {
             logger.error("NO EVENT TYPE");
-            in.discardReadBytes();
+            in.clear();
             return null;
         }
         return eventType;

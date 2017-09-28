@@ -5,6 +5,7 @@ import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.tcp.client.Client;
@@ -73,6 +74,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                 break;
             case FIND_SERVERS_TO_CONNECT:
                 if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
+                    logger.info("FIND_SERVERS_TO_CONNECT");
                     boolean foundNewServer = false;
                     Iterator<Connection> iterator = Globals.get().connections.iterator();
                     while (iterator.hasNext()) {
@@ -107,10 +109,21 @@ public class Servant extends Worker implements ChannelFutureListener {
                     currentTaskFinished();
                 }
                 break;
+            case SEND_WAIT:
+                for (ServerParam serverParam :  Globals.get().connectedServers.values()) {
+                    try {
+                        serverParam.getFuture().channel().writeAndFlush(new WaitEvent(5000)).addListener(this);
+                    } catch (Exception e) {
+                        logger.error(e);
+                    }
+                }
+                currentTaskFinished();
+                break;
             default:
                 logger.error("Not implemented task: " + currentTask.getTaskToDo().toString());
                 currentTaskFinished();
                 break;
+
         }
     }
 
@@ -134,6 +147,9 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_MAC_ADRESSES:
                     logger.info("Send mac addresses was successful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     break;
+                case SEND_WAIT:
+                    logger.info("Wait event was sent.");
+                    break;
             }
         } else {
             switch (currentTask.getTaskToDo()) {
@@ -153,6 +169,9 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_MAC_ADRESSES:
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     currentServerParam.getValue().getSentAddresses().set(false);
+                    break;
+                case SEND_WAIT:
+                    logger.info("Wait event sending failed.");
                     break;
             }
         }

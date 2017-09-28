@@ -4,13 +4,12 @@ package hu.finominfo.rnet.communication.tcp.events;
  * Created by kalman.kovacs@gmail.com on 2017.09.19..
  */
 public enum EventType {
-    RECEIVED(1),
-    NOT_RECEIVED(2),
+    FILE(1),
+    WAIT(2),
     ADDRESS(3),
-    FILE(4),
-    START(5),
-    STOP(6),
-    FOLDERS(7);
+    START(4),
+    STOP(5),
+    FOLDERS(6);
 
     private final byte number;
 

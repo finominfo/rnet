@@ -23,23 +23,30 @@ public abstract class Worker implements Runnable {
     public void run() {
         if (null == currentTask) {
             currentTask = getTask();
-            if (null != currentTask) {
-                currentTaskStarted = System.currentTimeMillis();
-                lastHandling.set(0);
-                try {
-                    //logger.info("CURRENT TASK: " + currentTask.getTaskToDo().toString());
-                    runCurrentTask();
-                } catch (Exception e) {
-                    logger.error(currentTask, e);
-                    currentTaskFinished();
-                }
+            if (null != currentTask && currentTask.getTaskToDo() == TaskToDo.SEND_FILE)  {
+                Globals.get().shouldWait.set(0);
+            }
+            currentTaskStarted = System.currentTimeMillis();
+            lastHandling.set(0);
+        }
+        if (null != currentTask) {
+            try {
+                //logger.info("CURRENT TASK: " + currentTask.getTaskToDo().toString());
+                runCurrentTask();
+            } catch (Exception e) {
+                logger.error(currentTask, e);
+                currentTaskFinished();
             }
         }
         checkNext();
     }
 
     private void checkNext() {
-        Globals.get().executor.schedule(this, 100, TimeUnit.MILLISECONDS);
+        long time = 100;
+        if (null != currentTask && currentTask.getTaskToDo() == TaskToDo.SEND_FILE) {
+            time = Globals.get().shouldWait.getAndSet(0);
+        }
+        Globals.get().executor.schedule(this, time, TimeUnit.MILLISECONDS);
     }
 
     protected void currentTaskFinished() {

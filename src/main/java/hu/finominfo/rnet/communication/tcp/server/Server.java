@@ -4,6 +4,7 @@ import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
+import hu.finominfo.rnet.communication.tcp.events.wait.WaitEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -43,6 +44,7 @@ public class Server {
                                 pipeline.addLast(new MyChannelHandler());
                                 pipeline.addLast(new EventDecoder());
                                 pipeline.addLast(new AddressEventHandler());
+                                pipeline.addLast(new WaitEventHandler());
                                 pipeline.addLast(new FileEventHandler());
                             }
                         }

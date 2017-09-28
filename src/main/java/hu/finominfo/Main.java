@@ -2,6 +2,7 @@ package hu.finominfo;
 
 import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.frontend.FrontEndWorker;
 import hu.finominfo.rnet.node.controller.Controller;
 import hu.finominfo.rnet.taskqueue.ControllerRepeater;
@@ -34,6 +35,9 @@ public class Main {
             new Controller().run();
             new FrontEndWorker().run();
             Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
+            Globals.get().executor.schedule(()
+                    -> Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "Red.avi", FileType.VIDEO,"192.168.0.111"),
+                    15, TimeUnit.SECONDS);
 
 
         } else {

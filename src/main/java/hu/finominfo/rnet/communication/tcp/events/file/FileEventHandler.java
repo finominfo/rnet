@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.file;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
@@ -74,6 +75,9 @@ public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> imp
         try {
             FileEvent fileEvent;
             while ((fileEvent = pollOne()) != null) {
+                if (fileEvents.size() > 5) {
+                    Globals.get().addToTasksIfNotExists(TaskToDo.SEND_WAIT);
+                }
                 saveFile(fileEvent);
             }
         } catch (Exception e) {

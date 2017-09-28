@@ -24,7 +24,7 @@ public class ConnectionHandler extends SimpleChannelInboundHandler<Connection> {
         if (!found) {
             Globals.get().connections.add(msg);
         }
-        logger.info("Connection object arrived: " + msg.getServerIp() + ":" + msg.getServerPort() + " connections size: " + Globals.get().connections.size());
+        //logger.info("Connection object arrived: " + msg.getServerIp() + ":" + msg.getServerPort() + " connections size: " + Globals.get().connections.size());
         Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
     }
 
