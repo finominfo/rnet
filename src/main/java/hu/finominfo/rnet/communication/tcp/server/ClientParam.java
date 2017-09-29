@@ -1,10 +1,14 @@
 package hu.finominfo.rnet.communication.tcp.server;
 
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -16,6 +20,7 @@ public class ClientParam {
     private volatile Client client = null;
     private volatile long lastTrying = 0;
     private volatile String name = "";
+    private final Map<String, List<String>> dirs = new HashMap();
 
     public String getName() {
         return name;
@@ -27,6 +32,13 @@ public class ClientParam {
 
     public ClientParam(ChannelHandlerContext context) {
         this.context = context;
+        dirs.put(Globals.get().audioFolder, new ArrayList<>());
+        dirs.put(Globals.get().videoFolder, new ArrayList<>());
+        dirs.put(Globals.get().pictureFolder, new ArrayList<>());
+    }
+
+    public Map<String, List<String>> getDirs() {
+        return dirs;
     }
 
     public ChannelHandlerContext getContext() {

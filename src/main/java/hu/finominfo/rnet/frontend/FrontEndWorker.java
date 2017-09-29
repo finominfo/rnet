@@ -2,7 +2,6 @@ package hu.finominfo.rnet.frontend;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
-import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.Worker;
 import org.apache.log4j.Logger;
@@ -56,13 +55,13 @@ public class FrontEndWorker extends Worker {
         List<String> existingNameOrIp = Globals.get().serverClients.values().stream()
                 .filter(clientParam -> clientParam.getContext() != null)
                 .map(ClientParam::getName).collect(Collectors.toList());
-        List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsList.elements());
+        List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsListModel.elements());
         existingNameOrIp.stream()
                 .filter(nameOrIp -> !elements.contains(nameOrIp))
-                .forEach(Globals.get().getFrontEnd().servantsList::addElement);
+                .forEach(Globals.get().getFrontEnd().servantsListModel::addElement);
         for (int i = 0; i < elements.size(); i++) {
             if (!existingNameOrIp.contains(elements.get(i))) {
-                Globals.get().getFrontEnd().servantsList.remove(i);
+                Globals.get().getFrontEnd().servantsListModel.remove(i);
             }
         }
     }
