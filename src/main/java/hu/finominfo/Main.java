@@ -35,11 +35,9 @@ public class Main {
             new Controller().run();
             new FrontEndWorker().run();
             Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
-            Globals.get().executor.schedule(()
+            /*Globals.get().executor.schedule(()
                     -> Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "Red.avi", FileType.VIDEO,"192.168.0.111"),
-                    15, TimeUnit.SECONDS);
-
-
+                    15, TimeUnit.SECONDS);*/
         } else {
             new Servant().run();
         }

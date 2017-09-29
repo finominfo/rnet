@@ -2,6 +2,7 @@ package hu.finominfo.rnet.common;
 
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -29,12 +30,17 @@ public class Utils {
 
     public static final List<String> getFilesFromFolder(String folder) {
         List<String> files = new ArrayList<>();
-        try (Stream<Path> paths = Files.walk(Paths.get(folder))) {
-            paths.filter(Files::isRegularFile).forEach(path -> files.add(path.toFile().getName()));
+        try {
+            Files.newDirectoryStream(Paths.get(folder), path -> path.toFile().isFile())
+                    .forEach(path -> files.add(path.toFile().getName()));
         } catch (Exception e) {
             logger.error(e);
         }
         return files;
+    }
+
+    public static void main(String[] args) {
+        getFilesFromFolder(".idea").stream().forEach(System.out::println);
     }
 
 }

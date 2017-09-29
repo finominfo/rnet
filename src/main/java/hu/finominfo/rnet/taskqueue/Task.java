@@ -17,6 +17,7 @@ public class Task {
     private final AtomicInteger filePosition = new AtomicInteger(0);
     private final AtomicInteger currentLength = new AtomicInteger(0);
     private final AtomicInteger counter = new AtomicInteger(0);
+    private final AtomicInteger parallelSending = new AtomicInteger(0);
     private final AtomicBoolean isLast = new AtomicBoolean(false);
     private final AtomicBoolean taskSendingFinished = new AtomicBoolean(true);
 
@@ -61,6 +62,11 @@ public class Task {
         this.name = name;
         this.fileType = fileType;
         this.toSend = toSend;
+    }
+
+
+    public AtomicInteger getParallelSending() {
+        return parallelSending;
     }
 
     public FrontEndTaskToDo getFrontEndTaskToDo() {

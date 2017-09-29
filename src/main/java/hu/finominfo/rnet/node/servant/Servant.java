@@ -106,6 +106,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                     }
                 }
                 if ((!shouldSend && currentTaskRunning(2000)) || (currentTask.getCounter().incrementAndGet() > 100)) {
+                    Globals.get().addToTasksIfNotExists(TaskToDo.SEND_DIR);
                     currentTaskFinished();
                 }
                 break;
@@ -113,30 +114,36 @@ public class Servant extends Worker implements ChannelFutureListener {
                 for (ServerParam serverParam : Globals.get().connectedServers.values()) {
                     try {
                         serverParam.getFuture().channel().writeAndFlush(new WaitEvent(5000)).addListener(this);
+                        currentTask.getParallelSending().incrementAndGet();
                     } catch (Exception e) {
                         logger.error(e);
                     }
                 }
-                currentTaskFinished();
             case SEND_DIR:
                 for (ServerParam serverParam : Globals.get().connectedServers.values()) {
                     try {
                         DirEvent dirEvent = new DirEvent();
-                        dirEvent.getDirs().put(Globals.videoFolder, Utils.getFilesFromFolder(Globals.videoFolder + File.pathSeparator));
-                        dirEvent.getDirs().put(Globals.audioFolder, Utils.getFilesFromFolder(Globals.audioFolder + File.pathSeparator));
-                        dirEvent.getDirs().put(Globals.pictureFolder, Utils.getFilesFromFolder(Globals.pictureFolder + File.pathSeparator));
+                        dirEvent.getDirs().put(Globals.videoFolder, Utils.getFilesFromFolder(Globals.videoFolder));
+                        dirEvent.getDirs().put(Globals.audioFolder, Utils.getFilesFromFolder(Globals.audioFolder));
+                        dirEvent.getDirs().put(Globals.pictureFolder, Utils.getFilesFromFolder(Globals.pictureFolder));
                         serverParam.getFuture().channel().writeAndFlush(dirEvent).addListener(this);
+                        currentTask.getParallelSending().incrementAndGet();
                     } catch (Exception e) {
                         logger.error(e);
                     }
                 }
-                currentTaskFinished();
                 break;
             default:
                 logger.error("Not implemented task: " + currentTask.getTaskToDo().toString());
                 currentTaskFinished();
                 break;
 
+        }
+    }
+
+    private void parallelFinished() {
+        if (currentTask.getParallelSending().decrementAndGet() == 0) {
+            currentTaskFinished();
         }
     }
 
@@ -162,9 +169,11 @@ public class Servant extends Worker implements ChannelFutureListener {
                     break;
                 case SEND_WAIT:
                     logger.info("Wait event was sent.");
+                    parallelFinished();
                     break;
                 case SEND_DIR:
                     logger.info("Dir event was sent.");
+                    parallelFinished();
                     break;
             }
         } else {
@@ -188,9 +197,11 @@ public class Servant extends Worker implements ChannelFutureListener {
                     break;
                 case SEND_WAIT:
                     logger.info("Wait event sending failed.");
+                    parallelFinished();
                     break;
                 case SEND_DIR:
                     logger.info("Dir event sending failed.");
+                    parallelFinished();
                     break;
             }
         }

@@ -42,7 +42,7 @@ public class DirEvent extends Event {
         String input = new String(bytes, CharsetUtil.UTF_8);
         DirEvent dirEvent = new DirEvent();
         Arrays.asList(input.split("\n")).stream().forEach(str -> {
-            List<String> strings = Arrays.asList(str.split(":"));
+            List<String> strings = new ArrayList(Arrays.asList(str.split(":")));
             String key = strings.remove(0);
             List<String> values = new ArrayList<>();
             dirEvent.getDirs().put(key, values);

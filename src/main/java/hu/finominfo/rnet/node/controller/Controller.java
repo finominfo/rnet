@@ -61,7 +61,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
             case SEND_BROADCAST:
                 if (broadcaster == null && shouldHandleAgain(1000) && currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                     broadcaster = new Broadcaster(broadcastPort);
-                    broadcaster.start(2, 400, this);
+                    broadcaster.start(1, 400, this);
                 }
                 break;
             case FIND_SERVERS_TO_CONNECT:
