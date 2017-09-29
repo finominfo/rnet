@@ -9,8 +9,7 @@ public enum EventType {
     ADDRESS(3),
     START(4),
     STOP(5),
-    FOLDERS(6),
-    DIR(7);
+    DIR(6);
 
     private final byte number;
 

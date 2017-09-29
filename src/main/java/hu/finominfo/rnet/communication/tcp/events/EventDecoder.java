@@ -49,8 +49,6 @@ public class EventDecoder extends ByteToMessageDecoder {
             case WAIT:
                 out.add(WaitEvent.create(input));
                 break;
-            case FOLDERS:
-                break;
             case FILE:
                 inputCollector.setEventType(EventType.FILE);
                 AtomicInteger fileSize = inputCollector.getFileSize();
