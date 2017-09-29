@@ -113,13 +113,13 @@ public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> imp
                 path = ".";
                 break;
             case VIDEO:
-                path = Globals.get().videoFolder;
+                path = Globals.videoFolder;
                 break;
             case AUDIO:
-                path = Globals.get().audioFolder;
+                path = Globals.audioFolder;
                 break;
             case PICTURE:
-                path = Globals.get().pictureFolder;
+                path = Globals.pictureFolder;
                 break;
         }
         String fullName = path + File.separator + msg.getName();
@@ -136,6 +136,7 @@ public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> imp
             fos.close();
             if (msg.isLastPart()) {
                 logger.info("FILE HAS BEEN WRITTEN SUCCESSFULLY: " + fullName);
+                Globals.get().addToTasksIfNotExists(TaskToDo.SEND_DIR);
             }
         } catch (Exception ex) {
             logger.error(ex);

@@ -5,12 +5,12 @@ import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.Server;
-import hu.finominfo.rnet.frontend.FrontEndWorker;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.taskqueue.Worker;
@@ -18,9 +18,9 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
@@ -110,9 +110,22 @@ public class Servant extends Worker implements ChannelFutureListener {
                 }
                 break;
             case SEND_WAIT:
-                for (ServerParam serverParam :  Globals.get().connectedServers.values()) {
+                for (ServerParam serverParam : Globals.get().connectedServers.values()) {
                     try {
                         serverParam.getFuture().channel().writeAndFlush(new WaitEvent(5000)).addListener(this);
+                    } catch (Exception e) {
+                        logger.error(e);
+                    }
+                }
+                currentTaskFinished();
+            case SEND_DIR:
+                for (ServerParam serverParam : Globals.get().connectedServers.values()) {
+                    try {
+                        DirEvent dirEvent = new DirEvent();
+                        dirEvent.getDirs().put(Globals.videoFolder, Utils.getFilesFromFolder(Globals.videoFolder + File.pathSeparator));
+                        dirEvent.getDirs().put(Globals.audioFolder, Utils.getFilesFromFolder(Globals.audioFolder + File.pathSeparator));
+                        dirEvent.getDirs().put(Globals.pictureFolder, Utils.getFilesFromFolder(Globals.pictureFolder + File.pathSeparator));
+                        serverParam.getFuture().channel().writeAndFlush(dirEvent).addListener(this);
                     } catch (Exception e) {
                         logger.error(e);
                     }
@@ -150,6 +163,9 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_WAIT:
                     logger.info("Wait event was sent.");
                     break;
+                case SEND_DIR:
+                    logger.info("Dir event was sent.");
+                    break;
             }
         } else {
             switch (currentTask.getTaskToDo()) {
@@ -172,6 +188,9 @@ public class Servant extends Worker implements ChannelFutureListener {
                     break;
                 case SEND_WAIT:
                     logger.info("Wait event sending failed.");
+                    break;
+                case SEND_DIR:
+                    logger.info("Dir event sending failed.");
                     break;
             }
         }

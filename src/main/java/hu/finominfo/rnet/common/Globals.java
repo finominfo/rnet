@@ -36,9 +36,9 @@ public class Globals {
     private final static Logger logger = Logger.getLogger(Globals.class);
     public final AtomicLong shouldWait = new AtomicLong(0);
     public final static String ADDRESSES = "addresses.txt";
-    public final String videoFolder = "video";
-    public final String audioFolder = "audio";
-    public final String pictureFolder = "picture";
+    public final static String videoFolder = "video";
+    public final static String audioFolder = "audio";
+    public final static String pictureFolder = "picture";
     public final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(4);
     public final Queue<Event> events = new ConcurrentLinkedQueue<>();
     public final ConcurrentHashMap.KeySetView<Connection, Boolean> connections = ConcurrentHashMap.newKeySet();

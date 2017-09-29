@@ -19,7 +19,7 @@ public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEven
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, AddressEvent msg) throws Exception {
-        logger.info("WaitEvent arrived: " + msg.getAddresses().get(0));
+        logger.info("AddressEvent arrived: " + msg.getAddresses().get(0));
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
         ClientParam clientParam = Globals.get().serverClients.get(ip);

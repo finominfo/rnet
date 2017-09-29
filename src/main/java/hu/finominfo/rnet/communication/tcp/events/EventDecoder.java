@@ -2,6 +2,7 @@ package hu.finominfo.rnet.communication.tcp.events;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import io.netty.buffer.ByteBuf;
@@ -36,6 +37,14 @@ public class EventDecoder extends ByteToMessageDecoder {
         switch (eventType) {
             case ADDRESS:
                 out.add(AddressEvent.create(input));
+                break;
+            case DIR:
+                inputCollector.setEventType(EventType.DIR);
+                if (input.readableBytes() < input.getInt(5) + 4) {
+                    return;
+                }
+                inputCollector.setEventType(null);
+                out.add(DirEvent.create(input));
                 break;
             case WAIT:
                 out.add(WaitEvent.create(input));
