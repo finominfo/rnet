@@ -19,6 +19,7 @@ import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -111,26 +112,25 @@ public class Servant extends Worker implements ChannelFutureListener {
                 }
                 break;
             case SEND_WAIT:
-                for (ServerParam serverParam : Globals.get().connectedServers.values()) {
-                    try {
-                        serverParam.getFuture().channel().writeAndFlush(new WaitEvent(5000)).addListener(this);
-                        currentTask.getParallelSending().incrementAndGet();
-                    } catch (Exception e) {
-                        logger.error(e);
-                    }
+                try {
+                    Globals.get().connectedServers.values().stream()
+                            .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(new WaitEvent(5000)));
+                } catch (Exception e) {
+                    logger.error(e);
+                } finally {
+                    currentTaskFinished();
                 }
             case SEND_DIR:
-                for (ServerParam serverParam : Globals.get().connectedServers.values()) {
-                    try {
-                        DirEvent dirEvent = new DirEvent();
-                        dirEvent.getDirs().put(Globals.videoFolder, Utils.getFilesFromFolder(Globals.videoFolder));
-                        dirEvent.getDirs().put(Globals.audioFolder, Utils.getFilesFromFolder(Globals.audioFolder));
-                        dirEvent.getDirs().put(Globals.pictureFolder, Utils.getFilesFromFolder(Globals.pictureFolder));
-                        serverParam.getFuture().channel().writeAndFlush(dirEvent).addListener(this);
-                        currentTask.getParallelSending().incrementAndGet();
-                    } catch (Exception e) {
-                        logger.error(e);
-                    }
+                try {
+                    DirEvent dirEvent = new DirEvent();
+                    Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
+                            .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
+                    Globals.get().connectedServers.values().stream()
+                            .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(dirEvent));
+                } catch (Exception e) {
+                    logger.error(e);
+                } finally {
+                    currentTaskFinished();
                 }
                 break;
             default:
@@ -141,15 +141,10 @@ public class Servant extends Worker implements ChannelFutureListener {
         }
     }
 
-    private void parallelFinished() {
-        if (currentTask.getParallelSending().decrementAndGet() == 0) {
-            currentTaskFinished();
-        }
-    }
-
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (currentTask == null) {
+            logger.error("currentTask is null: " + future.channel().remoteAddress().toString());
             return;
         }
         currentTask.getTaskSendingFinished().set(true);
@@ -170,14 +165,6 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_MAC_ADRESSES:
                     logger.info("Send mac addresses was successful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     break;
-                case SEND_WAIT:
-                    logger.info("Wait event was sent.");
-                    parallelFinished();
-                    break;
-                case SEND_DIR:
-                    logger.info("Dir event was sent.");
-                    parallelFinished();
-                    break;
             }
         } else {
             switch (currentTask.getTaskToDo()) {
@@ -197,14 +184,6 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_MAC_ADRESSES:
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     currentServerParam.getValue().getSentAddresses().set(false);
-                    break;
-                case SEND_WAIT:
-                    logger.info("Wait event sending failed.");
-                    parallelFinished();
-                    break;
-                case SEND_DIR:
-                    logger.info("Dir event sending failed.");
-                    parallelFinished();
                     break;
             }
         }
