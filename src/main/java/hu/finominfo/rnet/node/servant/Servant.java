@@ -149,6 +149,9 @@ public class Servant extends Worker implements ChannelFutureListener {
 
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
+        if (currentTask == null) {
+            return;
+        }
         currentTask.getTaskSendingFinished().set(true);
         if (future.isSuccess()) {
             switch (currentTask.getTaskToDo()) {
