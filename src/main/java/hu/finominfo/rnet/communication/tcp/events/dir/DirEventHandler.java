@@ -18,23 +18,6 @@ public class DirEventHandler extends SimpleChannelInboundHandler<DirEvent> {
         String ip = Globals.get().getIp(ipAndPort);
         logger.info("DirEvent arrived: " + ip);
         ClientParam clientParam = Globals.get().serverClients.get(ip);
-        msg.getDirs().entrySet().stream().forEach(entry -> {
-            clientParam.getDirs().put(entry.getKey(), entry.getValue());
-            //TODO: Ezt majd átrakni synchron taskként.
-            switch (entry.getKey()) {
-                case Globals.videoFolder :
-                    Globals.get().getFrontEnd().videoListModel.clear();
-                    entry.getValue().stream().forEach(str -> Globals.get().getFrontEnd().videoListModel.addElement(str));
-                break;
-                case Globals.audioFolder :
-                    Globals.get().getFrontEnd().audioListModel.clear();
-                    entry.getValue().stream().forEach(str -> Globals.get().getFrontEnd().audioListModel.addElement(str));
-                    break;
-                case Globals.pictureFolder :
-                    Globals.get().getFrontEnd().pictureListModel.clear();
-                    entry.getValue().stream().forEach(str -> Globals.get().getFrontEnd().pictureListModel.addElement(str));
-                    break;
-            }
-        });
+        msg.getDirs().entrySet().stream().forEach(entry -> clientParam.getDirs().put(entry.getKey(), entry.getValue()));
     }
 }
