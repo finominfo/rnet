@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.address;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
@@ -24,13 +25,9 @@ public class AddressEventHandler extends SimpleChannelInboundHandler<AddressEven
         String ip = Globals.get().getIp(ipAndPort);
         ClientParam clientParam = Globals.get().serverClients.get(ip);
         for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
-            for (Long long1 : entry.getValue()) {
-                for (Long long2 : msg.getAddresses()) {
-                    if (long1.longValue() == long2.longValue()) {
-                        clientParam.setName(entry.getKey());
-                        return;
-                    }
-                }
+            if (Utils.isAddressEquals(msg.getAddresses(), entry.getValue())) {
+                clientParam.setName(entry.getKey());
+                return;
             }
         }
         clientParam.setName(ip);

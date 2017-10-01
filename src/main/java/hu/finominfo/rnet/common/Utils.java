@@ -9,7 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -39,8 +43,16 @@ public class Utils {
         return files;
     }
 
-    public static void main(String[] args) {
-        getFilesFromFolder(".idea").stream().forEach(System.out::println);
+    public static boolean isAddressEquals(List<Long> addr1, List<Long> addr2) {
+        return addr1.stream().anyMatch(aLong -> addr2.contains(aLong));
+    }
+
+    public static <T, U> List<U> convertList(List<T> from, Function<T, U> func) {
+        return from.stream().map(func).collect(Collectors.toList());
+    }
+
+    public static <T, U> U[] convertArray(T[] from, Function<T, U> func, IntFunction<U[]> generator) {
+        return Arrays.stream(from).map(func).toArray(generator);
     }
 
 }

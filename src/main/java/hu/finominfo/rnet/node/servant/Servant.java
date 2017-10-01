@@ -18,7 +18,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -101,7 +100,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                 while (serverIterator.hasNext()) {
                     currentServerParam = serverIterator.next();
                     if (currentServerParam.getValue().getSentAddresses().compareAndSet(false, true)) {
-                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new AddressEvent(Interface.adresses)).addListener(this);
+                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new AddressEvent(Interface.addresses)).addListener(this);
                         shouldSend = true;
                         break;
                     }
