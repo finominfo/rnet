@@ -44,7 +44,7 @@ public abstract class Worker implements Runnable {
     private void checkNext() {
         long time = 100;
         if (null != currentTask && currentTask.getTaskToDo() == TaskToDo.SEND_FILE) {
-            time = Globals.get().shouldWait.getAndSet(0);
+            time = 200 + Globals.get().shouldWait.getAndSet(0);
         }
         Globals.get().executor.schedule(this, time, TimeUnit.MILLISECONDS);
     }

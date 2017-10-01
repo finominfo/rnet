@@ -2,12 +2,15 @@ package hu.finominfo.rnet.frontend.controller;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,7 +84,9 @@ public class FrontEnd extends JFrame implements Runnable {
     private final JScrollPane audioPane = new JScrollPane(audioList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     private final JButton audioPlay = new JButton("PLAY");
     private final JButton audioAdd = new JButton("ADD");
-    private final JButton audioContinuousPlay = new JButton("CONTINUOUS PLAY");
+    private final JButton audioDel = new JButton("DEL");
+    private final JButton audioContinuousPlay = new JButton("CONT PLAY");
+    private final JButton audioStop = new JButton("STOP");
 
     private final JLabel videoLabel = new JLabel("VIDEO");
     public final DefaultListModel<String> videoListModel = new DefaultListModel();
@@ -89,6 +94,7 @@ public class FrontEnd extends JFrame implements Runnable {
     private final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     private final JButton videoPlay = new JButton("PLAY");
     private final JButton videoAdd = new JButton("ADD");
+    private final JButton videoDel = new JButton("DEL");
 
 
     private final JLabel pictureLabel = new JLabel("PICTURE");
@@ -97,14 +103,7 @@ public class FrontEnd extends JFrame implements Runnable {
     private final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     private final JButton pictureShow = new JButton("SHOW");
     private final JButton pictureAdd = new JButton("ADD");
-
-    private final ListSelectionListener dirsSelectionListener = new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            refreshDirs();
-        }
-    };
-
+    private final JButton pictureDel = new JButton("DEL");
 
     public FrontEnd() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,7 +111,46 @@ public class FrontEnd extends JFrame implements Runnable {
 
         Globals.get().executor.schedule(this, 3, TimeUnit.SECONDS);
 
-        servantsList.addListSelectionListener(dirsSelectionListener);
+        servantsList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                refreshDirs();
+            }
+        });
+
+        renameBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedValue = servantsList.getSelectedValue();
+                if (selectedValue != null) {
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+                    JLabel label = new JLabel("Enter a new name:");
+                    JTextField text = new JTextField();
+                    panel.add(label);
+                    panel.add(text);
+                    String[] options = new String[]{"OK", "Cancel"};
+                    int option = JOptionPane.showOptionDialog(null, panel, "Rename",
+                            JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                            null, options, options[1]);
+                    if (option == 0) // pressing OK button
+                    {
+                        String newName = text.getText();
+                        if (!Globals.get().clientNameAddress.keySet().contains(newName)) {
+                            ClientParam clientParam = Globals.get().serverClients.values().stream().filter(param -> param.getName().equals(selectedValue)).findFirst().get();
+                            String oldName = clientParam.getName();
+                            List<Long> address = Globals.get().clientNameAddress.remove(oldName);
+                            Globals.get().clientNameAddress.put(newName, address);
+                            clientParam.setName(newName);
+                            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
+                        } else {
+                            String message = newName + " already exists.";
+                            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
@@ -143,12 +181,16 @@ public class FrontEnd extends JFrame implements Runnable {
         audioLabel.setBounds(280, 5, 155, 30);
         audioPane.setBounds(280, 40, 200, 365);
         getContentPane().add(audioPane);
-        audioPlay.setBounds(280, 420, 80, 30);
+        audioPlay.setBounds(280, 420, 65, 30);
         add(audioPlay);
-        audioAdd.setBounds(380, 420, 80, 30);
+        audioAdd.setBounds(350, 420, 60, 30);
         add(audioAdd);
-        audioContinuousPlay.setBounds(280, 460, 180, 30);
+        audioDel.setBounds(420, 420, 60, 30);
+        add(audioDel);
+        audioContinuousPlay.setBounds(280, 460, 110, 30);
+        audioStop.setBounds(410, 460, 70, 30);
         add(audioContinuousPlay);
+        add(audioStop);
 
 
         videoLabel.setFont(new Font(videoLabel.getFont().getName(), Font.BOLD, 25));
@@ -157,10 +199,12 @@ public class FrontEnd extends JFrame implements Runnable {
         videoLabel.setBounds(530, 5, 155, 30);
         videoPane.setBounds(530, 40, 200, 365);
         getContentPane().add(videoPane);
-        videoPlay.setBounds(530, 420, 80, 30);
+        videoPlay.setBounds(530, 420, 65, 30);
         add(videoPlay);
-        videoAdd.setBounds(630, 420, 80, 30);
+        videoAdd.setBounds(600, 420, 60, 30);
         add(videoAdd);
+        videoDel.setBounds(670, 420, 60, 30);
+        add(videoDel);
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
@@ -169,10 +213,12 @@ public class FrontEnd extends JFrame implements Runnable {
         pictureLabel.setBounds(785, 5, 155, 30);
         picturePane.setBounds(785, 40, 200, 365);
         getContentPane().add(picturePane);
-        pictureShow.setBounds(785, 420, 80, 30);
+        pictureShow.setBounds(785, 420, 74, 30);
         add(pictureShow);
-        pictureAdd.setBounds(885, 420, 80, 30);
+        pictureAdd.setBounds(864, 420, 58, 30);
         add(pictureAdd);
+        pictureDel.setBounds(927, 420, 58, 30);
+        add(pictureDel);
 
 
         setSize(1024, 768);

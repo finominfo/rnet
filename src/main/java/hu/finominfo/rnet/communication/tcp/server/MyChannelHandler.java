@@ -18,6 +18,7 @@ public class MyChannelHandler implements ChannelHandler {
         String ip = Globals.get().getIp(ipAndPort);
         ClientParam clientParam = Globals.get().serverClients.get(ip);
         if (null == clientParam) {
+            clientParam = new ClientParam(ctx);
             Globals.get().serverClients.put(ip, new ClientParam(ctx));
         } else {
             clientParam.setContext(ctx);

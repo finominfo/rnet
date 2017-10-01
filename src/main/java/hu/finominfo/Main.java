@@ -30,13 +30,13 @@ public class Main {
         setupLog4J();
         Interface.getInterfaces();
         if (Props.get().isController()) {
+            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
             Globals.get().executor.schedule(new ControllerRepeater(), 5, TimeUnit.SECONDS);
             Globals.get().getFrontEnd();
             Controller controller = new Controller();
             controller.run();
             Globals.get().controller = controller;
             new FrontEndWorker().run();
-            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
             /*Globals.get().executor.schedule(()
                     -> Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "Red.avi", FileType.VIDEO,"192.168.0.111"),
                     15, TimeUnit.SECONDS);*/

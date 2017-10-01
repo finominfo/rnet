@@ -91,4 +91,8 @@ public class Utils {
         System.exit(0);
     }
 
+    public static void main(String[] args) {
+        System.out.println(isAddressEquals(Arrays.asList(1L, 7L, 8L), Arrays.asList(7L, 4L, 1L)));
+    }
+
 }
