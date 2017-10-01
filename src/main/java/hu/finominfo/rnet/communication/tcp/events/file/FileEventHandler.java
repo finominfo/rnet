@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.file;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -137,6 +138,9 @@ public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> imp
             if (msg.isLastPart()) {
                 logger.info("FILE HAS BEEN WRITTEN SUCCESSFULLY: " + fullName);
                 Globals.get().addToTasksIfNotExists(TaskToDo.SEND_DIR);
+                if (msg.getFileType() == FileType.MAIN && msg.getName().endsWith(Globals.JAR_NAME)) {
+                    Utils.restartApplication();
+                }
             }
         } catch (Exception ex) {
             logger.error(ex);

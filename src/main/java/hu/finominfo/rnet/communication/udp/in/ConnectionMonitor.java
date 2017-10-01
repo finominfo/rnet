@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.communication.udp.in;
 
+import hu.finominfo.rnet.common.Globals;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -31,6 +32,7 @@ public class ConnectionMonitor {
                         }
                 )
                 .localAddress(new InetSocketAddress("0.0.0.0", port));
+        Globals.get().monitor = this;
     }
     public ChannelFuture bind() {
         return bootstrap.bind();

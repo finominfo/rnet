@@ -44,7 +44,7 @@ public class Interface {
                     }
                 }
             }
-            String fileName = "addr.txt";
+            String fileName = Globals.ADDRESS;
             File file = new File(fileName);
             if (file.exists()) {
                 String address = new String(Files.readAllBytes(Paths.get(fileName)));

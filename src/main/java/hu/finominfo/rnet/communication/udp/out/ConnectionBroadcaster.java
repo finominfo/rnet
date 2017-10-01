@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.communication.udp.out;
 
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.udp.Connection;
 import io.netty.bootstrap.Bootstrap;
@@ -27,6 +28,7 @@ public class ConnectionBroadcaster {
                 .option(ChannelOption.SO_BROADCAST, true)
                 .handler(new ConnectionEncoder(new InetSocketAddress("255.255.255.255", port)));
         ch = bootstrap.bind(0).channel();
+        Globals.get().broadcaster = this;
     }
 
     public void send(ChannelFutureListener futureListener) {

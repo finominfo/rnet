@@ -100,7 +100,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                 while (serverIterator.hasNext()) {
                     currentServerParam = serverIterator.next();
                     if (currentServerParam.getValue().getSentAddresses().compareAndSet(false, true)) {
-                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new AddressEvent(Interface.addresses)).addListener(this);
+                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new AddressEvent(Interface.addresses, Globals.VERSION)).addListener(this);
                         shouldSend = true;
                         break;
                     }

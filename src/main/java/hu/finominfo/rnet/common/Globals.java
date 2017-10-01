@@ -1,14 +1,19 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
+import hu.finominfo.rnet.communication.tcp.server.Server;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
+import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
+import hu.finominfo.rnet.taskqueue.Worker;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -32,10 +37,20 @@ public class Globals {
         return ourInstance;
     }
 
-    private final static int VERSION = 10;
+    public final static int VERSION = 14;
+    public final static String JAR_NAME = "rnet.jar";
+    public volatile Worker controller = null;
+    public volatile Worker servant = null;
+    public volatile Server server = null;
+    public volatile Client client = null;
+    public volatile ConnectionBroadcaster broadcaster= null;
+    public volatile ConnectionMonitor monitor = null;
+
+
     private final static Logger logger = Logger.getLogger(Globals.class);
     public final AtomicLong shouldWait = new AtomicLong(0);
     public final static String ADDRESSES = "addresses.txt";
+    public final static String ADDRESS = "address.txt";
     public final static String videoFolder = "video";
     public final static String audioFolder = "audio";
     public final static String pictureFolder = "picture";

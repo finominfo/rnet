@@ -32,14 +32,18 @@ public class Main {
         if (Props.get().isController()) {
             Globals.get().executor.schedule(new ControllerRepeater(), 5, TimeUnit.SECONDS);
             Globals.get().getFrontEnd();
-            new Controller().run();
+            Controller controller = new Controller();
+            controller.run();
+            Globals.get().controller = controller;
             new FrontEndWorker().run();
             Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
             /*Globals.get().executor.schedule(()
                     -> Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "Red.avi", FileType.VIDEO,"192.168.0.111"),
                     15, TimeUnit.SECONDS);*/
         } else {
-            new Servant().run();
+            Servant servant = new Servant();
+            servant.run();
+            Globals.get().servant = servant;
         }
     }
 

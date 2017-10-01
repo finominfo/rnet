@@ -2,6 +2,7 @@ package hu.finominfo.rnet.common;
 
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -11,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -47,12 +49,46 @@ public class Utils {
         return addr1.stream().anyMatch(aLong -> addr2.contains(aLong));
     }
 
-    public static <T, U> List<U> convertList(List<T> from, Function<T, U> func) {
-        return from.stream().map(func).collect(Collectors.toList());
-    }
+    public static void restartApplication()
+    //TODO: Fejleszteni!!!
+    {
+        if (Globals.get().server != null) {
+            Globals.get().server.stop();
+        }
+        if (Globals.get().client != null) {
+            Globals.get().client.stop();
+        }
+        if (Globals.get().broadcaster != null) {
+            Globals.get().broadcaster.stop();
+        }
+        if (Globals.get().monitor != null) {
+            Globals.get().monitor.stop();
+        }
+        Globals.get().executor.shutdown();
 
-    public static <T, U> U[] convertArray(T[] from, Function<T, U> func, IntFunction<U[]> generator) {
-        return Arrays.stream(from).map(func).toArray(generator);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            logger.error(e);
+        }
+        final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+        final File currentJar = new File(Globals.JAR_NAME);
+
+        if (!currentJar.getName().endsWith(".jar"))
+            return;
+
+        final ArrayList<String> command = new ArrayList<String>();
+        command.add(javaBin);
+        command.add("-jar");
+        command.add(currentJar.getPath());
+
+        final ProcessBuilder builder = new ProcessBuilder(command);
+        try {
+            builder.start();
+        } catch (IOException e) {
+            logger.error(e);
+        }
+        System.exit(0);
     }
 
 }
