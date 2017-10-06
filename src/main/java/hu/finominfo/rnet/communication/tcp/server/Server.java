@@ -3,6 +3,7 @@ package hu.finominfo.rnet.communication.tcp.server;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEventHandler;
+import hu.finominfo.rnet.communication.tcp.events.del.DelFileEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEventHandler;
@@ -48,6 +49,7 @@ public class Server {
                                 pipeline.addLast(new WaitEventHandler());
                                 pipeline.addLast(new FileEventHandler());
                                 pipeline.addLast(new DirEventHandler());
+                                pipeline.addLast(new DelFileEventHandler());
                             }
                         }
                 )

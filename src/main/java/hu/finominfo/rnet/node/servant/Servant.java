@@ -46,7 +46,7 @@ public class Servant extends Worker implements ChannelFutureListener {
         Globals.get().addToTasksIfNotExists(TaskToDo.MONITOR_BROADCAST);
         Globals.get().addToTasksIfNotExists(TaskToDo.START_SERVER);
         //Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
-        //Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+        //Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADDRESSES);
 
     }
 
@@ -89,12 +89,12 @@ public class Servant extends Worker implements ChannelFutureListener {
                         }
                     }
                     if ((!foundNewServer && !Globals.get().connectedServers.isEmpty()) || (currentTask.getCounter().incrementAndGet() > 50)) {
-                        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADRESSES);
+                        Globals.get().addToTasksIfNotExists(TaskToDo.SEND_MAC_ADDRESSES);
                         currentTaskFinished();
                     }
                 }
                 break;
-            case SEND_MAC_ADRESSES:
+            case SEND_MAC_ADDRESSES:
                 boolean shouldSend = false;
                 Iterator<Map.Entry<String, ServerParam>> serverIterator = Globals.get().connectedServers.entrySet().iterator();
                 while (serverIterator.hasNext()) {
@@ -161,7 +161,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                     Globals.get().connectedServers.put(currentConnectToServer, new ServerParam(future));
                     logger.info("Sever successfully connected: " + currentConnectToServer + ":" + clientPort);
                     break;
-                case SEND_MAC_ADRESSES:
+                case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was successful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     break;
             }
@@ -180,7 +180,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                     logger.error("Server could not connected: " + currentConnectToServer);
                     currentClient.stop();
                     break;
-                case SEND_MAC_ADRESSES:
+                case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     currentServerParam.getValue().getSentAddresses().set(false);
                     break;

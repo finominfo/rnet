@@ -31,6 +31,7 @@ public abstract class Worker implements Runnable {
         }
         if (null != currentTask) {
             try {
+                Globals.get().currentTask = currentTask;
                 //logger.info("CURRENT TASK: " + currentTask.getTaskToDo().toString());
                 runCurrentTask();
             } catch (Exception e) {
@@ -51,6 +52,7 @@ public abstract class Worker implements Runnable {
 
     protected void currentTaskFinished() {
         currentTask = null;
+        Globals.get().currentTask = null;
     }
 
     protected boolean currentTaskRunning(long millis) {

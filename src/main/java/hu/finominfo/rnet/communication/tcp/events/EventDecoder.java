@@ -2,6 +2,7 @@ package hu.finominfo.rnet.communication.tcp.events;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
@@ -25,6 +26,7 @@ public class EventDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        logger.info("something arrived, size is : " + in.readableBytes());
         InputCollector inputCollector = getInputCollector(ctx);
         ByteBuf input = inputCollector.getByteBuf();
         input.writeBytes(in);
@@ -37,6 +39,9 @@ public class EventDecoder extends ByteToMessageDecoder {
         switch (eventType) {
             case ADDRESS:
                 out.add(AddressEvent.create(input));
+                break;
+            case DEL_FILE:
+                out.add(DelFileEvent.create(input));
                 break;
             case DIR:
                 inputCollector.setEventType(EventType.DIR);

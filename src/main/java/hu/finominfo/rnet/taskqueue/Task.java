@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.taskqueue;
 
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -64,6 +65,24 @@ public class Task {
         this.toSend = toSend;
     }
 
+    public String getPathFromFileType() {
+        String path = "";
+        switch (getFileType()) {
+            case MAIN:
+                path = ".";
+                break;
+            case VIDEO:
+                path = Globals.videoFolder;
+                break;
+            case AUDIO:
+                path = Globals.audioFolder;
+                break;
+            case PICTURE:
+                path = Globals.pictureFolder;
+                break;
+        }
+        return path;
+    }
 
     public AtomicInteger getParallelSending() {
         return parallelSending;

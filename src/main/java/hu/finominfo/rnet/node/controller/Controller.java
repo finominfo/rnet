@@ -4,12 +4,12 @@ import hu.finominfo.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.Event;
+import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.communication.tcp.server.Server;
-import hu.finominfo.rnet.frontend.FrontEndWorker;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.taskqueue.Worker;
@@ -24,7 +24,6 @@ import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Queue;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
@@ -53,7 +52,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
     public void runCurrentTask() {
         switch (currentTask.getTaskToDo()) {
             case START_SERVER:
-                if ( shouldHandleAgain(5000) && currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
+                if (shouldHandleAgain(5000) && currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                     server = new Server(serverPort);
                     server.bind().addListener(this);
                 }
@@ -84,6 +83,19 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                     }
                 }
                 break;
+            case DEL_FILE:
+                try {
+                    if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
+                        Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
+                                .writeAndFlush(new DelFileEvent(currentTask.getPathFromFileType(), currentTask.getName()));
+                        logger.info("DEL_FILE sending, delete file name: " + currentTask.getName());
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                } finally {
+                    currentTaskFinished();
+                }
+                break;
             case SEND_FILE:
                 if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                     if (currentTask.getIsLast().get()) {
@@ -111,8 +123,9 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                         byte[] data = buffer.array();
                         currentTask.getFilePosition().addAndGet(data.length);
                         currentTask.getCurrentLength().set(data.length);
-                        int pos = currentTask.getName().lastIndexOf(File.pathSeparatorChar);
+                        int pos = currentTask.getName().lastIndexOf(File.separatorChar);
                         String shortName = currentTask.getName().substring(pos + 1);
+                        logger.info("shortName: " + shortName);
                         FileEvent fileEvent = new FileEvent(currentTask.getFileType(), data, shortName, isFirst, isLast);
                         Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel().writeAndFlush(fileEvent).addListener(this);
                     } catch (Exception e) {

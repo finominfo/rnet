@@ -37,8 +37,9 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 14;
+    public final static int VERSION = 15;
     public final static String JAR_NAME = "rnet.jar";
+    public volatile Task currentTask = null;
     public volatile Worker controller = null;
     public volatile Worker servant = null;
     public volatile Server server = null;

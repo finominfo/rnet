@@ -1,8 +1,12 @@
 package hu.finominfo.rnet.frontend.controller;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
+import hu.finominfo.rnet.taskqueue.TaskToDo;
+import javafx.concurrent.Task;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -11,6 +15,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,18 +34,19 @@ public class FrontEnd extends JFrame implements Runnable {
     public void run() {
         try {
             refreshDirs();
+            taskNumber.setText(String.valueOf(Globals.get().tasks.size()));
         } catch (Exception e) {
             logger.error(e);
         }
 
-        Globals.get().executor.schedule(this, 3, TimeUnit.SECONDS);
+        Globals.get().executor.schedule(this, 2, TimeUnit.SECONDS);
 
     }
 
     private void refreshDirs() {
         String selectedValue = servantsList.getSelectedValue();
         if (selectedValue != null) {
-            Map<String, List<String>> dirs = Globals.get().serverClients.values().stream().filter(param -> param.getName().equals(selectedValue)).findFirst().get().getDirs();
+            Map<String, List<String>> dirs = Utils.getClientParam(selectedValue).getDirs();
             if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
                     !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
 
@@ -105,11 +111,14 @@ public class FrontEnd extends JFrame implements Runnable {
     private final JButton pictureAdd = new JButton("ADD");
     private final JButton pictureDel = new JButton("DEL");
 
+    private final JLabel taskTextLabel = new JLabel("Remaining tasks:");
+    private final JLabel taskNumber = new JLabel();
+
     public FrontEnd() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("RNET Controller - version " + Globals.getVersion());
 
-        Globals.get().executor.schedule(this, 3, TimeUnit.SECONDS);
+        Globals.get().executor.schedule(this, 2, TimeUnit.SECONDS);
 
         servantsList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -137,7 +146,7 @@ public class FrontEnd extends JFrame implements Runnable {
                     {
                         String newName = text.getText();
                         if (!Globals.get().clientNameAddress.keySet().contains(newName)) {
-                            ClientParam clientParam = Globals.get().serverClients.values().stream().filter(param -> param.getName().equals(selectedValue)).findFirst().get();
+                            ClientParam clientParam = Utils.getClientParam(selectedValue);
                             String oldName = clientParam.getName();
                             List<Long> address = Globals.get().clientNameAddress.remove(oldName);
                             Globals.get().clientNameAddress.put(newName, address);
@@ -163,6 +172,7 @@ public class FrontEnd extends JFrame implements Runnable {
         add(renameBtn);
         sendTextBtn.setBounds(30, 460, 120, 30);
         add(sendTextBtn);
+
 
         counterLabel.setFont(new Font(counterLabel.getFont().getName(), Font.BOLD, 25));
         counterLabel.setBounds(30, 530, 180, 30);
@@ -191,6 +201,8 @@ public class FrontEnd extends JFrame implements Runnable {
         audioStop.setBounds(410, 460, 70, 30);
         add(audioContinuousPlay);
         add(audioStop);
+        audioAdd.addActionListener(addFileSelectAction(Globals.audioFolder, FileType.AUDIO));
+        audioDel.addActionListener(delFileSelectAction(Globals.audioFolder, FileType.AUDIO, audioList));
 
 
         videoLabel.setFont(new Font(videoLabel.getFont().getName(), Font.BOLD, 25));
@@ -205,6 +217,8 @@ public class FrontEnd extends JFrame implements Runnable {
         add(videoAdd);
         videoDel.setBounds(670, 420, 60, 30);
         add(videoDel);
+        videoAdd.addActionListener(addFileSelectAction(Globals.videoFolder, FileType.VIDEO));
+        videoDel.addActionListener(delFileSelectAction(Globals.videoFolder, FileType.VIDEO, videoList));
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
@@ -219,12 +233,59 @@ public class FrontEnd extends JFrame implements Runnable {
         add(pictureAdd);
         pictureDel.setBounds(927, 420, 58, 30);
         add(pictureDel);
+        pictureAdd.addActionListener(addFileSelectAction(Globals.pictureFolder, FileType.PICTURE));
+        pictureDel.addActionListener(delFileSelectAction(Globals.pictureFolder, FileType.PICTURE, pictureList));
 
+
+        add(taskTextLabel);
+        add(taskNumber);
+        taskTextLabel.setBounds(30, 700, 100, 30);
+        taskNumber.setBounds(140, 700, 50, 30);
 
         setSize(1024, 768);
         setLayout(null);
         setVisible(true);
     }
+
+    private ActionListener addFileSelectAction(final String destFolder, final FileType fileType) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedValue = servantsList.getSelectedValue();
+                if (selectedValue != null) {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+                    fileChooser.setDialogTitle("Select " + destFolder + " file");
+                    int result = fileChooser.showOpenDialog(FrontEnd.this);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                        selectedValue = servantsList.getSelectedValue();
+                        if (selectedValue != null) {
+                            Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue));
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+
+    private ActionListener delFileSelectAction(final String destFolder, final FileType fileType, JList<String> list) {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedValue = servantsList.getSelectedValue();
+                if (selectedValue != null) {
+                    String fileName = list.getSelectedValue();
+                    if (fileName != null) {
+                        Globals.get().addToTasksIfNotExists(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue));
+                    }
+                }
+            }
+        };
+    }
+
 
     public static void main(String[] args) {
         new FrontEnd();

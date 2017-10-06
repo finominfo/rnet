@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -24,6 +26,18 @@ import java.util.stream.Stream;
 public class Utils {
 
     private final static Logger logger = Logger.getLogger(Utils.class);
+
+    public static String getIp(String name) {
+        return getIpClientParam(name).getKey();
+    }
+
+    public static ClientParam getClientParam(String name) {
+        return getIpClientParam(name).getValue();
+    }
+
+    public static Map.Entry<String, ClientParam> getIpClientParam(String name) {
+        return Globals.get().serverClients.entrySet().stream().filter(entry -> entry.getValue().getName().equals(name)).findFirst().get();
+    }
 
 
     public static final String getStackTrace(Exception e) {
@@ -48,6 +62,7 @@ public class Utils {
     public static boolean isAddressEquals(List<Long> addr1, List<Long> addr2) {
         return addr1.stream().anyMatch(aLong -> addr2.contains(aLong));
     }
+
 
     public static void restartApplication()
     //TODO: Fejleszteni!!!
