@@ -43,34 +43,6 @@ public class FrontEnd extends JFrame implements Runnable {
 
     }
 
-    private void refreshDirs() {
-        String selectedValue = servantsList.getSelectedValue();
-        if (selectedValue != null) {
-            Map<String, List<String>> dirs = Utils.getClientParam(selectedValue).getDirs();
-            if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
-                    !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
-
-                videoListModel.clear();
-                dirs.get(Globals.videoFolder).stream().forEach(str -> videoListModel.addElement(str));
-            }
-            if (audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
-                    !dirs.get(Globals.audioFolder).stream().allMatch(str -> audioListModel.contains(str))) {
-                audioListModel.clear();
-                dirs.get(Globals.audioFolder).stream().forEach(str -> audioListModel.addElement(str));
-            }
-            if (pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
-                    !dirs.get(Globals.pictureFolder).stream().allMatch(str -> pictureListModel.contains(str))) {
-                pictureListModel.clear();
-                dirs.get(Globals.pictureFolder).stream().forEach(str -> pictureListModel.addElement(str));
-            }
-        } else {
-            videoListModel.clear();
-            audioListModel.clear();
-            pictureListModel.clear();
-        }
-    }
-
-
     private final JLabel servantsLabel = new JLabel("SERVANTS");
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
     private final JList<String> servantsList = new JList<>(servantsListModel);
@@ -131,7 +103,7 @@ public class FrontEnd extends JFrame implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedValue = servantsList.getSelectedValue();
-                if (selectedValue != null) {
+                if (servantsList.getSelectedValuesList().size() == 1 && selectedValue != null) {
                     JPanel panel = new JPanel();
                     panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
                     JLabel label = new JLabel("Enter a new name:");
@@ -163,7 +135,7 @@ public class FrontEnd extends JFrame implements Runnable {
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
-        servantsList.setSelectionMode(SINGLE_SELECTION);
+        servantsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         servantsLabel.setBounds(30, 5, 170, 30);
         servantsList.setBounds(30, 40, 170, 365);
         servantsPane.setBounds(30, 40, 170, 365);
@@ -247,23 +219,53 @@ public class FrontEnd extends JFrame implements Runnable {
         setVisible(true);
     }
 
+    private void refreshDirs() {
+        if (servantsList.getSelectedValuesList().size() < 2) {
+            String selectedValue = servantsList.getSelectedValue();
+            if (selectedValue != null) {
+                Map<String, List<String>> dirs = Utils.getClientParam(selectedValue).getDirs();
+                if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
+                        !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
+
+                    videoListModel.clear();
+                    dirs.get(Globals.videoFolder).stream().forEach(str -> videoListModel.addElement(str));
+                }
+                if (audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
+                        !dirs.get(Globals.audioFolder).stream().allMatch(str -> audioListModel.contains(str))) {
+                    audioListModel.clear();
+                    dirs.get(Globals.audioFolder).stream().forEach(str -> audioListModel.addElement(str));
+                }
+                if (pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
+                        !dirs.get(Globals.pictureFolder).stream().allMatch(str -> pictureListModel.contains(str))) {
+                    pictureListModel.clear();
+                    dirs.get(Globals.pictureFolder).stream().forEach(str -> pictureListModel.addElement(str));
+                }
+            } else {
+                videoListModel.clear();
+                audioListModel.clear();
+                pictureListModel.clear();
+            }
+        }
+    }
+
+
     private ActionListener addFileSelectAction(final String destFolder, final FileType fileType) {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedValue = servantsList.getSelectedValue();
-                if (selectedValue != null) {
+                List<String> selectedValuesList = servantsList.getSelectedValuesList();
+                if (!selectedValuesList.isEmpty()) {
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
                     fileChooser.setDialogTitle("Select " + destFolder + " file");
                     int result = fileChooser.showOpenDialog(FrontEnd.this);
                     if (result == JFileChooser.APPROVE_OPTION) {
                         File selectedFile = fileChooser.getSelectedFile();
-                        System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                        selectedValue = servantsList.getSelectedValue();
-                        if (selectedValue != null) {
-                            Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue));
-                        }
+                        //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                        selectedValuesList.stream().forEach(selectedValue -> {
+                            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue)));
+                        });
+                        servantsList.clearSelection();
                     }
                 }
             }
@@ -275,11 +277,14 @@ public class FrontEnd extends JFrame implements Runnable {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selectedValue = servantsList.getSelectedValue();
-                if (selectedValue != null) {
+                List<String> selectedValuesList = servantsList.getSelectedValuesList();
+                if (!selectedValuesList.isEmpty() && list.getSelectedValue() != null) {
                     String fileName = list.getSelectedValue();
                     if (fileName != null) {
-                        Globals.get().addToTasksIfNotExists(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue));
+                        selectedValuesList.stream().forEach(selectedValue -> {
+                            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
+                        });
+                        servantsList.clearSelection();
                     }
                 }
             }
