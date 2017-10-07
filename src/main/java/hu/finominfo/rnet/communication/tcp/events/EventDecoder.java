@@ -5,6 +5,7 @@ import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
+import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -42,6 +43,9 @@ public class EventDecoder extends ByteToMessageDecoder {
                 break;
             case DEL_FILE:
                 out.add(DelFileEvent.create(input));
+                break;
+            case MESSAGE:
+                out.add(MessageEvent.create(input));
                 break;
             case DIR:
                 inputCollector.setEventType(EventType.DIR);

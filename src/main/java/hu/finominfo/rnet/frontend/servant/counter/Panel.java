@@ -1,4 +1,4 @@
-package hu.finominfo.counter;
+package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.audio.AudioPlayer;
 import hu.finominfo.audio.AudioPlayerWrapper;
@@ -174,7 +174,7 @@ public class Panel extends JPanel {
         timer = new JLabel();
         timer.setBackground(Color.BLACK);
         timer.setForeground(Color.YELLOW);
-//        timer.setFont(FrontEnd.customFont.deriveFont(Font.ITALIC + Font.BOLD, (float) (670d * diff)));
+//        timer.setFont(Counter.customFont.deriveFont(Font.ITALIC + Font.BOLD, (float) (670d * diff)));
         timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (850d * diff)));
         timer.setHorizontalAlignment(JLabel.LEFT);
         timer.setText(getTime(milliseconds));

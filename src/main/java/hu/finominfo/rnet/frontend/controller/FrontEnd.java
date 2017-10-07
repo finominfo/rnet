@@ -114,8 +114,7 @@ public class FrontEnd extends JFrame implements Runnable {
                     int option = JOptionPane.showOptionDialog(null, panel, "Rename",
                             JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
                             null, options, options[1]);
-                    if (option == 0) // pressing OK button
-                    {
+                    if (option == 0) { // pressing OK button
                         String newName = text.getText();
                         if (!Globals.get().clientNameAddress.keySet().contains(newName)) {
                             ClientParam clientParam = Utils.getClientParam(selectedValue);
@@ -132,6 +131,34 @@ public class FrontEnd extends JFrame implements Runnable {
                 }
             }
         });
+
+        sendTextBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (servantsList.getSelectedValuesList().size() > 0) {
+                    JPanel panel = new JPanel();
+                    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+                    JLabel label = new JLabel("Enter the message: ");
+                    JTextField text = new JTextField();
+                    panel.add(label);
+                    panel.add(text);
+                    String[] options = new String[]{"OK", "Cancel"};
+                    int option = JOptionPane.showOptionDialog(null, panel, "Message",
+                            JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                            null, options, options[1]);
+                    if (option == 0) { // pressing OK button
+                        String message = text.getText();
+                        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+                        if (!selectedValuesList.isEmpty()) {
+                            selectedValuesList.stream().forEach(selectedValue -> {
+                                Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_MESSAGE, message, null, Utils.getIp(selectedValue)));
+                            });
+                        }
+                    }
+                }
+            }
+        });
+
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
@@ -290,7 +317,6 @@ public class FrontEnd extends JFrame implements Runnable {
             }
         };
     }
-
 
     public static void main(String[] args) {
         new FrontEnd();

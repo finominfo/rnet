@@ -10,7 +10,8 @@ public enum EventType {
     START(4),
     STOP(5),
     DIR(6),
-    DEL_FILE(7);
+    DEL_FILE(7),
+    MESSAGE(8);
 
     private final byte number;
 

@@ -1,4 +1,4 @@
-package hu.finominfo.counter;
+package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.properties.Props;
 import hu.finominfo.rpi.io.HandlingIO;
@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
-public class FrontEnd extends JPanel {
+public class Counter extends JPanel {
 
     private static final int ROW = 1;
     private static final int COLUMN = 1;
@@ -39,7 +39,7 @@ public class FrontEnd extends JPanel {
     private final List<String> animalVoices = new ArrayList<>();
     private final Random random = new Random(0xdf435fa2187L);
 
-    public FrontEnd(Font customFont) {
+    public Counter(Font customFont) {
         this.customFont = customFont;
         Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         diff = ((double) screenSize.width) / 1920;
@@ -139,7 +139,7 @@ public class FrontEnd extends JPanel {
         } catch (IOException | FontFormatException e) {
             throw new RuntimeException(e);
         }
-        FrontEnd gameFrontEnd = new FrontEnd(customFont);
+        Counter gameFrontEnd = new Counter(customFont);
         gameFrontEnd.start();
         JFrame frame = new JFrame("Game Panel");
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);

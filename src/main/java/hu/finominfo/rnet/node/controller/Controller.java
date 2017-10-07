@@ -6,6 +6,7 @@ import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
+import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
@@ -89,6 +90,19 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                         Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
                                 .writeAndFlush(new DelFileEvent(currentTask.getPathFromFileType(), currentTask.getName()));
                         logger.info("DEL_FILE sending, delete file name: " + currentTask.getName());
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                } finally {
+                    currentTaskFinished();
+                }
+                break;
+            case SEND_MESSAGE:
+                try {
+                    if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
+                        Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
+                                .writeAndFlush(new MessageEvent(currentTask.getName()));
+                        logger.info("MESSAGE sending, text: " + currentTask.getName());
                     }
                 } catch (Exception e) {
                     logger.error(e);

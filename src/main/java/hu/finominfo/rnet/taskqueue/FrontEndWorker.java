@@ -1,9 +1,7 @@
-package hu.finominfo.rnet.frontend;
+package hu.finominfo.rnet.taskqueue;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
-import hu.finominfo.rnet.taskqueue.Task;
-import hu.finominfo.rnet.taskqueue.Worker;
 import org.apache.log4j.Logger;
 
 import java.io.FileNotFoundException;

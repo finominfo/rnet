@@ -21,7 +21,7 @@ public class DelFileEventHandler extends SimpleChannelInboundHandler<DelFileEven
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
         String fullFileName = System.getProperty("user.dir") + File.separator + msg.getPathAndName();
-        logger.info("DelFileEvent arrived from: " + ip + " filename: " + fullFileName);
+        logger.info("MessageEvent arrived from: " + ip + " filename: " + fullFileName);
         try {
             File file = new File(fullFileName);
             Files.deleteIfExists(file.toPath());
