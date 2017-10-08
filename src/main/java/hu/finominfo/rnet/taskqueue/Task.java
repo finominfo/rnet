@@ -19,6 +19,7 @@ public class Task {
     private final AtomicInteger currentLength = new AtomicInteger(0);
     private final AtomicInteger counter = new AtomicInteger(0);
     private final AtomicInteger parallelSending = new AtomicInteger(0);
+    private final AtomicInteger time = new AtomicInteger(0);
     private final AtomicBoolean isLast = new AtomicBoolean(false);
     private final AtomicBoolean taskSendingFinished = new AtomicBoolean(true);
 
@@ -65,6 +66,15 @@ public class Task {
         this.toSend = toSend;
     }
 
+    public Task(TaskToDo taskToDo, String name, FileType fileType, String toSend, int time) {
+        this.taskToDo = taskToDo;
+        this.frontEndTaskToDo = null;
+        this.name = name;
+        this.fileType = fileType;
+        this.toSend = toSend;
+        this.time.set(time);
+    }
+
     public String getPathFromFileType() {
         String path = "";
         switch (getFileType()) {
@@ -82,6 +92,10 @@ public class Task {
                 break;
         }
         return path;
+    }
+
+    public int getTime() {
+        return this.time.get();
     }
 
     public AtomicInteger getParallelSending() {

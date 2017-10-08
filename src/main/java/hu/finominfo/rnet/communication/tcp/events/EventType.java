@@ -4,23 +4,19 @@ package hu.finominfo.rnet.communication.tcp.events;
  * Created by kalman.kovacs@gmail.com on 2017.09.19..
  */
 public enum EventType {
-    FILE(1),
-    WAIT(2),
-    ADDRESS(3),
-    START(4),
-    STOP(5),
-    DIR(6),
-    DEL_FILE(7),
-    MESSAGE(8);
+    FILE,
+    WAIT,
+    ADDRESS,
+    START,
+    STOP,
+    DIR,
+    DEL_FILE,
+    MESSAGE,
+    PICTURE;
 
-    private final byte number;
-
-    EventType(int b) {
-        number = (byte) b;
-    }
 
     public byte getNumber() {
-        return number;
+        return (byte) ordinal();
     }
 
     public static EventType get(byte num) {

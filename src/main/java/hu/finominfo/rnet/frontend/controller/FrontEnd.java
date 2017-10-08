@@ -6,7 +6,6 @@ import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
-import javafx.concurrent.Task;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -26,152 +25,44 @@ import static javax.swing.ScrollPaneConstants.*;
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.25.
  */
-public class FrontEnd extends JFrame implements Runnable {
+public class FrontEnd extends FrontEndUtils {
 
-    private final static Logger logger = Logger.getLogger(FrontEnd.class);
-
-    @Override
-    public void run() {
-        try {
-            refreshDirs();
-            taskNumber.setText(String.valueOf(Globals.get().tasks.size()));
-        } catch (Exception e) {
-            logger.error(e);
-        }
-
-        Globals.get().executor.schedule(this, 2, TimeUnit.SECONDS);
-
-    }
-
-    private final JLabel servantsLabel = new JLabel("SERVANTS");
-    public final DefaultListModel<String> servantsListModel = new DefaultListModel();
-    private final JList<String> servantsList = new JList<>(servantsListModel);
-    private final JScrollPane servantsPane = new JScrollPane(servantsList, VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    private final JButton renameBtn = new JButton("RENAME");
-    private final JButton sendTextBtn = new JButton("SEND TEXT");
-
-    private final JLabel counterLabel = new JLabel("COUNTER");
-    private final JButton startBtn = new JButton("START");
-    private final JButton stopBtn = new JButton("STOP");
-    private final JButton resetBtn = new JButton("RESET");
-
-
-    private final JLabel audioLabel = new JLabel("AUDIO");
-    public final DefaultListModel<String> audioListModel = new DefaultListModel();
-    private final JList<String> audioList = new JList<>(audioListModel);
-    private final JScrollPane audioPane = new JScrollPane(audioList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    private final JButton audioPlay = new JButton("PLAY");
-    private final JButton audioAdd = new JButton("ADD");
-    private final JButton audioDel = new JButton("DEL");
-    private final JButton audioContinuousPlay = new JButton("CONT PLAY");
-    private final JButton audioStop = new JButton("STOP");
-
-    private final JLabel videoLabel = new JLabel("VIDEO");
-    public final DefaultListModel<String> videoListModel = new DefaultListModel();
-    private final JList<String> videoList = new JList<>(videoListModel);
-    private final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    private final JButton videoPlay = new JButton("PLAY");
-    private final JButton videoAdd = new JButton("ADD");
-    private final JButton videoDel = new JButton("DEL");
-
-
-    private final JLabel pictureLabel = new JLabel("PICTURE");
-    public final DefaultListModel<String> pictureListModel = new DefaultListModel();
-    private final JList<String> pictureList = new JList<>(pictureListModel);
-    private final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    private final JButton pictureShow = new JButton("SHOW");
-    private final JButton pictureAdd = new JButton("ADD");
-    private final JButton pictureDel = new JButton("DEL");
-
-    private final JLabel taskTextLabel = new JLabel("Remaining tasks:");
-    private final JLabel taskNumber = new JLabel();
 
     public FrontEnd() {
+        super();
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("RNET Controller - version " + Globals.getVersion());
 
         Globals.get().executor.schedule(this, 2, TimeUnit.SECONDS);
 
-        servantsList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                refreshDirs();
-            }
-        });
+        servantsList.addListSelectionListener(e -> refreshDirs());
 
-        renameBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedValue = servantsList.getSelectedValue();
-                if (servantsList.getSelectedValuesList().size() == 1 && selectedValue != null) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
-                    JLabel label = new JLabel("Enter a new name:");
-                    JTextField text = new JTextField();
-                    panel.add(label);
-                    panel.add(text);
-                    String[] options = new String[]{"OK", "Cancel"};
-                    int option = JOptionPane.showOptionDialog(null, panel, "Rename",
-                            JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                            null, options, options[1]);
-                    if (option == 0) { // pressing OK button
-                        String newName = text.getText();
-                        if (!Globals.get().clientNameAddress.keySet().contains(newName)) {
-                            ClientParam clientParam = Utils.getClientParam(selectedValue);
-                            String oldName = clientParam.getName();
-                            List<Long> address = Globals.get().clientNameAddress.remove(oldName);
-                            Globals.get().clientNameAddress.put(newName, address);
-                            clientParam.setName(newName);
-                            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
-                        } else {
-                            String message = newName + " already exists.";
-                            JOptionPane.showMessageDialog(new JFrame(), message, "Dialog", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                }
-            }
-        });
+        renameBtn.addActionListener(e -> rename());
 
-        sendTextBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (servantsList.getSelectedValuesList().size() > 0) {
-                    JPanel panel = new JPanel();
-                    panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-                    JLabel label = new JLabel("Enter the message: ");
-                    JTextField text = new JTextField();
-                    panel.add(label);
-                    panel.add(text);
-                    String[] options = new String[]{"OK", "Cancel"};
-                    int option = JOptionPane.showOptionDialog(null, panel, "Message",
-                            JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                            null, options, options[1]);
-                    if (option == 0) { // pressing OK button
-                        String message = text.getText();
-                        List<String> selectedValuesList = servantsList.getSelectedValuesList();
-                        if (!selectedValuesList.isEmpty()) {
-                            selectedValuesList.stream().forEach(selectedValue -> {
-                                Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_MESSAGE, message, null, Utils.getIp(selectedValue)));
-                            });
-                        }
-                    }
-                }
-            }
-        });
+        sendTextBtn.addActionListener(e -> sendText());
 
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
         servantsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         servantsLabel.setBounds(30, 5, 170, 30);
-        servantsList.setBounds(30, 40, 170, 365);
-        servantsPane.setBounds(30, 40, 170, 365);
+        servantsList.setBounds(30, 40, 190, 365);
+        servantsPane.setBounds(30, 40, 190, 365);
         getContentPane().add(servantsPane);
-        renameBtn.setBounds(30, 420, 120, 30);
+        renameBtn.setBounds(30, 420, 85, 30);
         add(renameBtn);
-        sendTextBtn.setBounds(30, 460, 120, 30);
+        sendTextBtn.setBounds(120, 420, 100, 30);
         add(sendTextBtn);
 
+        showPeriod.setFont(new Font(showPeriod.getFont().getName(), Font.BOLD, 14));
+        showPeriod.setBounds(30, 460, 150, 30);
+        add(showPeriod);
+        showSeconds.setFont(new Font(showPeriod.getFont().getName(), Font.BOLD, 16));
+        showSeconds.setBounds(180, 460, 40, 30);
+        showSeconds.setHorizontalAlignment(JTextField.RIGHT);
+        showSeconds.setText("30");
+        add(showSeconds);
 
         counterLabel.setFont(new Font(counterLabel.getFont().getName(), Font.BOLD, 25));
         counterLabel.setBounds(30, 530, 180, 30);
@@ -182,6 +73,7 @@ public class FrontEnd extends JFrame implements Runnable {
         add(stopBtn);
         resetBtn.setBounds(30, 650, 80, 30);
         add(resetBtn);
+
 
 
         audioLabel.setFont(new Font(audioLabel.getFont().getName(), Font.BOLD, 25));
@@ -200,8 +92,8 @@ public class FrontEnd extends JFrame implements Runnable {
         audioStop.setBounds(410, 460, 70, 30);
         add(audioContinuousPlay);
         add(audioStop);
-        audioAdd.addActionListener(addFileSelectAction(Globals.audioFolder, FileType.AUDIO));
-        audioDel.addActionListener(delFileSelectAction(Globals.audioFolder, FileType.AUDIO, audioList));
+        audioAdd.addActionListener(e -> sendFile(Globals.audioFolder, FileType.AUDIO));
+        audioDel.addActionListener(e -> deleteFile(Globals.audioFolder, FileType.AUDIO, audioList));
 
 
         videoLabel.setFont(new Font(videoLabel.getFont().getName(), Font.BOLD, 25));
@@ -216,8 +108,8 @@ public class FrontEnd extends JFrame implements Runnable {
         add(videoAdd);
         videoDel.setBounds(670, 420, 60, 30);
         add(videoDel);
-        videoAdd.addActionListener(addFileSelectAction(Globals.videoFolder, FileType.VIDEO));
-        videoDel.addActionListener(delFileSelectAction(Globals.videoFolder, FileType.VIDEO, videoList));
+        videoAdd.addActionListener(e -> sendFile(Globals.videoFolder, FileType.VIDEO));
+        videoDel.addActionListener(e -> deleteFile(Globals.videoFolder, FileType.VIDEO, videoList));
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
@@ -232,8 +124,8 @@ public class FrontEnd extends JFrame implements Runnable {
         add(pictureAdd);
         pictureDel.setBounds(927, 420, 58, 30);
         add(pictureDel);
-        pictureAdd.addActionListener(addFileSelectAction(Globals.pictureFolder, FileType.PICTURE));
-        pictureDel.addActionListener(delFileSelectAction(Globals.pictureFolder, FileType.PICTURE, pictureList));
+        pictureAdd.addActionListener(e -> sendFile(Globals.pictureFolder, FileType.PICTURE));
+        pictureDel.addActionListener(e -> deleteFile(Globals.pictureFolder, FileType.PICTURE, pictureList));
 
 
         add(taskTextLabel);
@@ -246,77 +138,6 @@ public class FrontEnd extends JFrame implements Runnable {
         setVisible(true);
     }
 
-    private void refreshDirs() {
-        if (servantsList.getSelectedValuesList().size() < 2) {
-            String selectedValue = servantsList.getSelectedValue();
-            if (selectedValue != null) {
-                Map<String, List<String>> dirs = Utils.getClientParam(selectedValue).getDirs();
-                if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
-                        !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
-
-                    videoListModel.clear();
-                    dirs.get(Globals.videoFolder).stream().forEach(str -> videoListModel.addElement(str));
-                }
-                if (audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
-                        !dirs.get(Globals.audioFolder).stream().allMatch(str -> audioListModel.contains(str))) {
-                    audioListModel.clear();
-                    dirs.get(Globals.audioFolder).stream().forEach(str -> audioListModel.addElement(str));
-                }
-                if (pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
-                        !dirs.get(Globals.pictureFolder).stream().allMatch(str -> pictureListModel.contains(str))) {
-                    pictureListModel.clear();
-                    dirs.get(Globals.pictureFolder).stream().forEach(str -> pictureListModel.addElement(str));
-                }
-            } else {
-                videoListModel.clear();
-                audioListModel.clear();
-                pictureListModel.clear();
-            }
-        }
-    }
-
-
-    private ActionListener addFileSelectAction(final String destFolder, final FileType fileType) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                List<String> selectedValuesList = servantsList.getSelectedValuesList();
-                if (!selectedValuesList.isEmpty()) {
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-                    fileChooser.setDialogTitle("Select " + destFolder + " file");
-                    int result = fileChooser.showOpenDialog(FrontEnd.this);
-                    if (result == JFileChooser.APPROVE_OPTION) {
-                        File selectedFile = fileChooser.getSelectedFile();
-                        //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-                        selectedValuesList.stream().forEach(selectedValue -> {
-                            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue)));
-                        });
-                        servantsList.clearSelection();
-                    }
-                }
-            }
-        };
-    }
-
-
-    private ActionListener delFileSelectAction(final String destFolder, final FileType fileType, JList<String> list) {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                List<String> selectedValuesList = servantsList.getSelectedValuesList();
-                if (!selectedValuesList.isEmpty() && list.getSelectedValue() != null) {
-                    String fileName = list.getSelectedValue();
-                    if (fileName != null) {
-                        selectedValuesList.stream().forEach(selectedValue -> {
-                            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
-                        });
-                        servantsList.clearSelection();
-                    }
-                }
-            }
-        };
-    }
 
     public static void main(String[] args) {
         new FrontEnd();

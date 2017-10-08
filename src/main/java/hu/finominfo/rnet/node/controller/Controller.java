@@ -7,6 +7,7 @@ import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
+import hu.finominfo.rnet.communication.tcp.events.picture.PictureEvent;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
@@ -101,8 +102,21 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                 try {
                     if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                         Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
-                                .writeAndFlush(new MessageEvent(currentTask.getName()));
+                                .writeAndFlush(new MessageEvent(currentTask.getName(), currentTask.getTime()));
                         logger.info("MESSAGE sending, text: " + currentTask.getName());
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                } finally {
+                    currentTaskFinished();
+                }
+                break;
+            case SEND_PICTURE:
+                try {
+                    if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
+                        Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
+                                .writeAndFlush(new PictureEvent(currentTask.getPathFromFileType(), currentTask.getName(), currentTask.getTime()));
+                        logger.info("PICTURE sending, name: " + currentTask.getName());
                     }
                 } catch (Exception e) {
                     logger.error(e);

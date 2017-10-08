@@ -7,6 +7,7 @@ import hu.finominfo.rnet.communication.tcp.events.del.DelFileEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEventHandler;
+import hu.finominfo.rnet.communication.tcp.events.picture.PictureEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -52,6 +53,7 @@ public class Server {
                                 pipeline.addLast(new DirEventHandler());
                                 pipeline.addLast(new DelFileEventHandler());
                                 pipeline.addLast(new MessageEventHandler());
+                                pipeline.addLast(new PictureEventHandler());
                             }
                         }
                 )
