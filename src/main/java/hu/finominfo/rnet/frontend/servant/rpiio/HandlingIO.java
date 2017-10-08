@@ -1,4 +1,4 @@
-package hu.finominfo.rpi.io;
+package hu.finominfo.rnet.frontend.servant.rpiio;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
@@ -18,20 +18,26 @@ public abstract class HandlingIO {
     private final static Logger logger = Logger.getLogger(HandlingIO.class);
 
     private static final Pin START_PIN = RaspiPin.GPIO_09;
-    private final GpioController gpio = GpioFactory.getInstance();
-    private final GpioPinDigitalInput stopButton = gpio.provisionDigitalInputPin(START_PIN, PinPullResistance.PULL_UP);
+    private volatile GpioController gpio = null;
+    private volatile GpioPinDigitalInput stopButton = null;
 
 
     public HandlingIO() {
-        stopButton.setShutdownOptions(true);
-        stopButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
-            if (event.getPin().getPin().equals(START_PIN) && event.getState().equals(PinState.LOW)) {
-                if (checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile()) {
-                    logger.info("Pressed stop button");
-                    stopButtonPressed();
+        try {
+            gpio = GpioFactory.getInstance();
+            stopButton = gpio.provisionDigitalInputPin(START_PIN, PinPullResistance.PULL_UP);
+            stopButton.setShutdownOptions(true);
+            stopButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
+                if (event.getPin().getPin().equals(START_PIN) && event.getState().equals(PinState.LOW)) {
+                    if (checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile()) {
+                        logger.info("Pressed stop button");
+                        stopButtonPressed();
+                    }
                 }
-            }
-        });
+            });
+        } catch (Exception e) {
+            logger.error(e);
+        }
     }
 
     private boolean checkAfterAWhile() {
@@ -45,7 +51,7 @@ public abstract class HandlingIO {
         }
         return stopButton.getState().equals(PinState.LOW);
     }
-    
+
     public abstract void stopButtonPressed();
 
 }

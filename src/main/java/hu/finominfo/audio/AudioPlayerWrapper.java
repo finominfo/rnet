@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AudioPlayerWrapper {
 
-    private static final int NUM_OF_PLAYERS = 3;
+    private static final int NUM_OF_PLAYERS = 2;
     private final AudioPlayer[] audioPlayers;
     private final AtomicInteger currentPlayer;
 

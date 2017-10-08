@@ -1,10 +1,12 @@
 package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.properties.Props;
-import hu.finominfo.rpi.io.HandlingIO;
+import hu.finominfo.rnet.frontend.servant.rpiio.HandlingIO;
 import hu.finominfo.audio.AudioPlayer;
 import hu.finominfo.audio.AudioPlayerContinuous;
 import hu.finominfo.audio.AudioPlayerWrapper;
+import org.apache.log4j.Logger;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -25,6 +27,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class Counter extends JPanel {
+
+    private final static Logger logger = Logger.getLogger(Counter.class);
 
     private static final int ROW = 1;
     private static final int COLUMN = 1;
@@ -51,21 +55,28 @@ public class Counter extends JPanel {
     public void start() {
         mainPanel.setBackground(BG);
         mainPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-        AudioPlayerWrapper beep = new AudioPlayerWrapper(executor, props.getBeep());
-        AudioPlayer success = new AudioPlayer(executor, props.getSuccess());
-        AudioPlayer failed = new AudioPlayer(executor, props.getFailed());
-        for (String name : props.getBaseAudio()) {
-            AudioPlayerContinuous ap = new AudioPlayerContinuous(executor, name);
-            ap.play(null);
-            continuousPlayers.add(ap);
-        }
-        for (String name : props.getAnimalVoices()) {
-            try {
-                animalVoices.add(name);
-                System.out.println(name);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        AudioPlayerWrapper beep = null;
+        AudioPlayer success = null;
+        AudioPlayer failed = null;
+        try {
+            beep = new AudioPlayerWrapper(executor, props.getBeep());
+            success = new AudioPlayer(executor, props.getSuccess());
+            failed = new AudioPlayer(executor, props.getFailed());
+            for (String name : props.getBaseAudio()) {
+                AudioPlayerContinuous ap = new AudioPlayerContinuous(executor, name);
+                ap.play(null);
+                continuousPlayers.add(ap);
             }
+            for (String name : props.getAnimalVoices()) {
+                try {
+                    animalVoices.add(name);
+                    System.out.println(name);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e);
         }
         executor.submit(new Runnable() {
             private volatile AudioPlayer player = null;
@@ -76,7 +87,9 @@ public class Counter extends JPanel {
                     if (player != null) {
                         player.close();
                     }
-                    player = new AudioPlayer(executor, animalVoices.get(random.nextInt(animalVoices.size())));
+                    if (!animalVoices.isEmpty()) {
+                        player = new AudioPlayer(executor, animalVoices.get(random.nextInt(animalVoices.size())));
+                    }
                     player.play(null);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -113,16 +126,20 @@ public class Counter extends JPanel {
                         panel.refresh.run();
                     }
                 }
-                new HandlingIO() {
-                    @Override
-                    public void stopButtonPressed() {
-                        for (Panel[] panelRow : panels) {
-                            for (Panel panel : panelRow) {
-                                panel.makeStop();
+                try {
+                    new HandlingIO() {
+                        @Override
+                        public void stopButtonPressed() {
+                            for (Panel[] panelRow : panels) {
+                                for (Panel panel : panelRow) {
+                                    panel.makeStop();
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                } catch (Exception e) {
+                    logger.error(e);
+                }
 //                if (running) {
 //                    executor.schedule(this, 1, TimeUnit.SECONDS);
 //                }
