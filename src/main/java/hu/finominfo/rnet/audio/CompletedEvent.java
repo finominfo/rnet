@@ -1,5 +1,5 @@
 
-package hu.finominfo.audio;
+package hu.finominfo.rnet.audio;
 
 /**
  *

@@ -1,7 +1,7 @@
 package hu.finominfo.rnet.frontend.servant.counter;
 
-import hu.finominfo.audio.AudioPlayer;
-import hu.finominfo.audio.AudioPlayerWrapper;
+import hu.finominfo.rnet.audio.AudioPlayer;
+import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;

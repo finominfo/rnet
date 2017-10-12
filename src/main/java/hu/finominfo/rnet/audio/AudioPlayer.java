@@ -1,4 +1,4 @@
-package hu.finominfo.audio;
+package hu.finominfo.rnet.audio;
 
 import java.io.File;
 import java.nio.channels.CompletionHandler;

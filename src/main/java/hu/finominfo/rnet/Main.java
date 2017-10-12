@@ -1,6 +1,6 @@
-package hu.finominfo;
+package hu.finominfo.rnet;
 
-import hu.finominfo.properties.Props;
+import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.taskqueue.FrontEndWorker;
 import hu.finominfo.rnet.node.controller.Controller;

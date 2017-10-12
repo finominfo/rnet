@@ -1,6 +1,6 @@
 package hu.finominfo.rnet.node.servant;
 
-import hu.finominfo.properties.Props;
+import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;

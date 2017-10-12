@@ -1,10 +1,10 @@
 package hu.finominfo.rnet.frontend.servant.counter;
 
-import hu.finominfo.properties.Props;
-import hu.finominfo.rnet.frontend.servant.rpiio.HandlingIO;
-import hu.finominfo.audio.AudioPlayer;
-import hu.finominfo.audio.AudioPlayerContinuous;
-import hu.finominfo.audio.AudioPlayerWrapper;
+import hu.finominfo.rnet.properties.Props;
+import hu.finominfo.rnet.frontend.servant.counter.io.HandlingIO;
+import hu.finominfo.rnet.audio.AudioPlayer;
+import hu.finominfo.rnet.audio.AudioPlayerContinuous;
+import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import org.apache.log4j.Logger;
 
 import java.awt.BorderLayout;

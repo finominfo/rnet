@@ -1,4 +1,4 @@
-package hu.finominfo.audio;
+package hu.finominfo.rnet.audio;
 
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.ScheduledExecutorService;

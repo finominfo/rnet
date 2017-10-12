@@ -1,4 +1,4 @@
-package hu.finominfo.properties;
+package hu.finominfo.rnet.properties;
 
 import java.util.Arrays;
 import java.util.List;

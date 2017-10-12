@@ -1,6 +1,6 @@
 package hu.finominfo.rnet.node.controller;
 
-import hu.finominfo.properties.Props;
+import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.Event;
