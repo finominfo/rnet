@@ -1,0 +1,85 @@
+2017-10-07 21:00:19 DEBUG InternalLoggerFactory:47 - Using Log4J as the default logging framework
+2017-10-07 21:00:19 DEBUG MultithreadEventLoopGroup:44 - -Dio.netty.eventLoopThreads: 8
+2017-10-07 21:00:19 DEBUG PlatformDependent:930 - Platform: Windows
+2017-10-07 21:00:19 DEBUG PlatformDependent0:361 - -Dio.netty.noUnsafe: false
+2017-10-07 21:00:19 DEBUG PlatformDependent0:797 - Java version: 8
+2017-10-07 21:00:19 DEBUG PlatformDependent0:109 - sun.misc.Unsafe.theUnsafe: available
+2017-10-07 21:00:19 DEBUG PlatformDependent0:133 - sun.misc.Unsafe.copyMemory: available
+2017-10-07 21:00:19 DEBUG PlatformDependent0:170 - java.nio.Buffer.address: available
+2017-10-07 21:00:19 DEBUG PlatformDependent0:228 - direct buffer constructor: available
+2017-10-07 21:00:19 DEBUG PlatformDependent0:279 - java.nio.Bits.unaligned: available, true
+2017-10-07 21:00:19 DEBUG PlatformDependent0:344 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
+2017-10-07 21:00:19 DEBUG PlatformDependent0:351 - java.nio.DirectByteBuffer.<init>(long, int): available
+2017-10-07 21:00:19 DEBUG PlatformDependent:967 - sun.misc.Unsafe: available
+2017-10-07 21:00:19 DEBUG PlatformDependent:1049 - -Dio.netty.tmpdir: C:\Users\User\AppData\Local\Temp (java.io.tmpdir)
+2017-10-07 21:00:19 DEBUG PlatformDependent:1128 - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+2017-10-07 21:00:19 DEBUG PlatformDependent:130 - -Dio.netty.noPreferDirect: false
+2017-10-07 21:00:19 DEBUG PlatformDependent:170 - -Dio.netty.maxDirectMemory: 934281216 bytes
+2017-10-07 21:00:19 DEBUG PlatformDependent:176 - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+2017-10-07 21:00:19 DEBUG CleanerJava6:60 - java.nio.ByteBuffer.cleaner(): available
+2017-10-07 21:00:19 DEBUG NioEventLoop:111 - -Dio.netty.noKeySetOptimization: false
+2017-10-07 21:00:19 DEBUG NioEventLoop:112 - -Dio.netty.selectorAutoRebuildThreshold: 512
+2017-10-07 21:00:19 DEBUG PlatformDependent:835 - org.jctools-core.MpscChunkedArrayQueue: available
+2017-10-07 21:00:19 DEBUG DefaultChannelId:79 - -Dio.netty.processId: 3628 (auto-detected)
+2017-10-07 21:00:19 DEBUG NetUtil:137 - -Djava.net.preferIPv4Stack: false
+2017-10-07 21:00:19 DEBUG NetUtil:138 - -Djava.net.preferIPv6Addresses: false
+2017-10-07 21:00:20 DEBUG NetUtil:222 - Loopback interface: lo (Software Loopback Interface 1, 127.0.0.1)
+2017-10-07 21:00:20 DEBUG NetUtil:287 - Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
+2017-10-07 21:00:20 DEBUG DefaultChannelId:101 - -Dio.netty.machineId: c8:3a:35:ff:fe:c8:22:23 (auto-detected)
+2017-10-07 21:00:20 DEBUG InternalThreadLocalMap:51 - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+2017-10-07 21:00:20 DEBUG InternalThreadLocalMap:54 - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+2017-10-07 21:00:20 DEBUG ResourceLeakDetector:114 - -Dio.netty.leakDetection.level: simple
+2017-10-07 21:00:20 DEBUG ResourceLeakDetector:115 - -Dio.netty.leakDetection.maxRecords: 4
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:120 - -Dio.netty.allocator.numHeapArenas: 8
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:121 - -Dio.netty.allocator.numDirectArenas: 8
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:123 - -Dio.netty.allocator.pageSize: 8192
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:128 - -Dio.netty.allocator.maxOrder: 11
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:132 - -Dio.netty.allocator.chunkSize: 16777216
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:133 - -Dio.netty.allocator.tinyCacheSize: 512
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:134 - -Dio.netty.allocator.smallCacheSize: 256
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:135 - -Dio.netty.allocator.normalCacheSize: 64
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:136 - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:137 - -Dio.netty.allocator.cacheTrimInterval: 8192
+2017-10-07 21:00:20 DEBUG PooledByteBufAllocator:138 - -Dio.netty.allocator.useCacheForAllThreads: true
+2017-10-07 21:00:20 DEBUG ByteBufUtil:80 - -Dio.netty.allocator.type: pooled
+2017-10-07 21:00:20 DEBUG ByteBufUtil:89 - -Dio.netty.threadLocalDirectBufferSize: 65536
+2017-10-07 21:00:20 DEBUG ByteBufUtil:92 - -Dio.netty.maxThreadLocalCharBufferSize: 16384
+2017-10-07 21:00:20 INFO  Controller:164 - Server successful created at port: 10002
+2017-10-07 21:00:20 ERROR FrontEndWorker:80 - java.nio.file.NoSuchFileException: addresses.txt
+2017-10-07 21:00:20 DEBUG Recycler:96 - -Dio.netty.recycler.maxCapacityPerThread: 32768
+2017-10-07 21:00:20 DEBUG Recycler:97 - -Dio.netty.recycler.maxSharedCapacityFactor: 2
+2017-10-07 21:00:20 DEBUG Recycler:98 - -Dio.netty.recycler.linkCapacity: 16
+2017-10-07 21:00:20 DEBUG Recycler:99 - -Dio.netty.recycler.ratio: 8
+2017-10-07 21:00:20 DEBUG AbstractByteBuf:52 - -Dio.netty.buffer.bytebuf.checkAccessible: true
+2017-10-07 21:00:20 DEBUG ResourceLeakDetectorFactory:202 - Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@3370ca37
+2017-10-07 21:00:20 INFO  MyChannelHandler:17 - /192.168.0.12:52967 connected.
+2017-10-07 21:00:20 INFO  MyChannelHandler:17 - /192.168.0.111:45564 connected.
+2017-10-07 21:00:20 INFO  EventDecoder:38 - ADDRESS event arrived
+2017-10-07 21:00:20 INFO  AddressEventHandler:24 - AddressEvent arrived: 207120316911589
+2017-10-07 21:00:21 INFO  EventDecoder:38 - ADDRESS event arrived
+2017-10-07 21:00:21 INFO  AddressEventHandler:24 - AddressEvent arrived: 213451451555816
+2017-10-07 21:00:21 INFO  Controller:169 - Client successful connected back: 192.168.0.12 10001
+2017-10-07 21:00:21 INFO  Controller:169 - Client successful connected back: 192.168.0.111 10001
+2017-10-07 21:00:23 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-4-1
+2017-10-07 21:00:23 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:00:23 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.12
+2017-10-07 21:00:23 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:00:23 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.111
+2017-10-07 21:00:25 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:00:25 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.12
+2017-10-07 21:00:25 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:00:25 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.111
+2017-10-07 21:00:42 INFO  Controller:105 - MESSAGE sending, text: Hailihó Dávid!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+2017-10-07 21:00:42 INFO  EventEncoder:25 - MESSAGE event sent
+2017-10-07 21:00:54 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-07 21:00:57 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:00:57 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.111
+2017-10-07 21:00:57 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:00:57 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.12
+2017-10-07 21:00:57 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-8-1
+2017-10-07 21:01:26 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-07 21:01:29 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:01:29 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.12
+2017-10-07 21:01:29 INFO  EventDecoder:38 - DIR event arrived
+2017-10-07 21:01:29 INFO  DirEventHandler:19 - DirEvent arrived: 192.168.0.111
+2017-10-07 21:01:29 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-9-1

@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.taskqueue;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,8 +23,22 @@ public class Task {
     private final AtomicInteger time = new AtomicInteger(0);
     private final AtomicBoolean isLast = new AtomicBoolean(false);
     private final AtomicBoolean taskSendingFinished = new AtomicBoolean(true);
+    private volatile Event event = null;
 
 
+
+    public Task(TaskToDo taskToDo, Event event) {
+        this.taskToDo = taskToDo;
+        this.frontEndTaskToDo = null;
+        this.name = null;
+        this.fileType = null;
+        this.toSend = null;
+        this.event = event;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
 
     public Task(TaskToDo taskToDo, String name) {
         this.taskToDo = taskToDo;
