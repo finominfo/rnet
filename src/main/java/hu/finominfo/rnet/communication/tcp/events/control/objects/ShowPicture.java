@@ -1,23 +1,20 @@
-package hu.finominfo.rnet.communication.tcp.events.picture;
+package hu.finominfo.rnet.communication.tcp.events.control.objects;
 
-import hu.finominfo.rnet.communication.tcp.events.Event;
-import hu.finominfo.rnet.communication.tcp.events.EventType;
+import hu.finominfo.rnet.communication.tcp.events.control.ControlObject;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 
 import java.io.File;
 
 /**
- * Created by kalman.kovacs@gmail.com on 2017.09.29.
+ * Created by kalman.kovacs@gmail.com on 2017.10.12.
  */
-public class PictureEvent extends Event {
-
+public class ShowPicture implements ControlObject{
     private final String contentType;
     private final String shortName;
     private final int seconds;
 
-    public PictureEvent(String contentType, String shortName, int seconds) {
-        super(EventType.PICTURE);
+    public ShowPicture(String contentType, String shortName, int seconds) {
         this.contentType = contentType;
         this.shortName = shortName;
         this.seconds = seconds;
@@ -40,7 +37,7 @@ public class PictureEvent extends Event {
     }
 
     @Override
-    public void getRemainingData(ByteBuf buf) {
+    public void getData(ByteBuf buf) {
         buf.writeInt(seconds);
         byte[] bytes1 = getContentType().getBytes(CharsetUtil.UTF_8);
         byte[] bytes2 = getShortName().getBytes(CharsetUtil.UTF_8);
@@ -50,7 +47,7 @@ public class PictureEvent extends Event {
         buf.writeBytes(bytes2);
     }
 
-    public static PictureEvent create(ByteBuf msg) {
+    public static ShowPicture create(ByteBuf msg) {
         int seconds = msg.readInt();
         int size1 = msg.readInt();
         int size2 = msg.readInt();
@@ -60,8 +57,6 @@ public class PictureEvent extends Event {
         msg.readBytes(bytes2);
         String contentType = new String(bytes1, CharsetUtil.UTF_8);
         String shortName = new String(bytes2, CharsetUtil.UTF_8);
-        return new PictureEvent(contentType, shortName, seconds);
+        return new ShowPicture(contentType, shortName, seconds);
     }
-
-
 }

@@ -61,7 +61,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton videoDel = new JButton("DEL");
 
 
-    protected final JLabel pictureLabel = new JLabel("PICTURE");
+    protected final JLabel pictureLabel = new JLabel("CONTROL");
     public final DefaultListModel<String> pictureListModel = new DefaultListModel();
     protected final JList<String> pictureList = new JList<>(pictureListModel);
     protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);

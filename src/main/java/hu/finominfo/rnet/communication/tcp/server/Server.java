@@ -2,19 +2,18 @@ package hu.finominfo.rnet.communication.tcp.server;
 
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventDecoder;
-import hu.finominfo.rnet.communication.tcp.events.address.AddressEventHandler;
+import hu.finominfo.rnet.communication.tcp.events.status.StatusEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEventHandler;
-import hu.finominfo.rnet.communication.tcp.events.picture.PictureEventHandler;
+import hu.finominfo.rnet.communication.tcp.events.control.ControllEventHandler;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.memcache.binary.BinaryMemcacheObjectAggregator;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.apache.log4j.Logger;
 
@@ -47,13 +46,13 @@ public class Server {
                                 pipeline.addLast(new IdleStateHandler(300, 0, 0));
                                 pipeline.addLast(new MyChannelHandler());
                                 pipeline.addLast(new EventDecoder());
-                                pipeline.addLast(new AddressEventHandler());
+                                pipeline.addLast(new StatusEventHandler());
                                 pipeline.addLast(new WaitEventHandler());
                                 pipeline.addLast(new FileEventHandler());
                                 pipeline.addLast(new DirEventHandler());
                                 pipeline.addLast(new DelFileEventHandler());
                                 pipeline.addLast(new MessageEventHandler());
-                                pipeline.addLast(new PictureEventHandler());
+                                pipeline.addLast(new ControllEventHandler());
                             }
                         }
                 )

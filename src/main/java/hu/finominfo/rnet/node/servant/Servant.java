@@ -4,7 +4,7 @@ import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
-import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.status.StatusEvent;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import hu.finominfo.rnet.communication.udp.Connection;
@@ -100,7 +100,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                 while (serverIterator.hasNext()) {
                     currentServerParam = serverIterator.next();
                     if (currentServerParam.getValue().getSentAddresses().compareAndSet(false, true)) {
-                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new AddressEvent(Interface.addresses, Globals.VERSION)).addListener(this);
+                        currentServerParam.getValue().getFuture().channel().writeAndFlush(new StatusEvent(Interface.addresses, Globals.VERSION)).addListener(this);
                         shouldSend = true;
                         break;
                     }

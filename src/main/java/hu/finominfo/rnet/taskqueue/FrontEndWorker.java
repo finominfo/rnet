@@ -74,7 +74,7 @@ public class FrontEndWorker extends Worker {
                     value.add(Long.parseLong(s));
                 }
                 Globals.get().clientNameAddress.put(key, value);
-                logger.info("Loaded address: " + key + " -> " + value.stream().map(Object::toString).collect(Collectors.joining(",")));
+                logger.info("Loaded status: " + key + " -> " + value.stream().map(Object::toString).collect(Collectors.joining(",")));
             });
         } catch (Exception e) {
             logger.error(e);

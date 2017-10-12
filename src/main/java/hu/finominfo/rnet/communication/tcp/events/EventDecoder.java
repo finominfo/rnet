@@ -1,7 +1,8 @@
 package hu.finominfo.rnet.communication.tcp.events;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.communication.tcp.events.address.AddressEvent;
+import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
+import hu.finominfo.rnet.communication.tcp.events.status.StatusEvent;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
@@ -38,8 +39,11 @@ public class EventDecoder extends ByteToMessageDecoder {
             logger.info(eventType.name() + " event arrived");
         }
         switch (eventType) {
-            case ADDRESS:
-                out.add(AddressEvent.create(input));
+            case STATUS:
+                out.add(StatusEvent.create(input));
+                break;
+            case CONTROL:
+                out.add(ControlEvent.create(input));
                 break;
             case DEL_FILE:
                 out.add(DelFileEvent.create(input));

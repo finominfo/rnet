@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.node.controller;
 
+import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
@@ -7,7 +8,6 @@ import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
-import hu.finominfo.rnet.communication.tcp.events.picture.PictureEvent;
 import hu.finominfo.rnet.communication.udp.Broadcaster;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
@@ -115,8 +115,8 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                 try {
                     if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                         Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
-                                .writeAndFlush(new PictureEvent(currentTask.getPathFromFileType(), currentTask.getName(), currentTask.getTime()));
-                        logger.info("PICTURE sending, name: " + currentTask.getName());
+                                .writeAndFlush(new ControlEvent(currentTask.getPathFromFileType(), currentTask.getName(), currentTask.getTime()));
+                        logger.info("CONTROL sending, name: " + currentTask.getName());
                     }
                 } catch (Exception e) {
                     logger.error(e);

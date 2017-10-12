@@ -6,13 +6,13 @@ package hu.finominfo.rnet.communication.tcp.events;
 public enum EventType {
     FILE,
     WAIT,
-    ADDRESS,
+    STATUS,
     START,
     STOP,
     DIR,
     DEL_FILE,
     MESSAGE,
-    PICTURE;
+    CONTROL;
 
 
     public byte getNumber() {

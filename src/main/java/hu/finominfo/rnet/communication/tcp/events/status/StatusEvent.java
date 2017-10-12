@@ -1,4 +1,4 @@
-package hu.finominfo.rnet.communication.tcp.events.address;
+package hu.finominfo.rnet.communication.tcp.events.status;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.Event;
@@ -11,12 +11,12 @@ import java.util.List;
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21..
  */
-public class AddressEvent extends Event {
+public class StatusEvent extends Event {
     private final int version;
     private final List<Long> addresses;
 
-    public AddressEvent(List<Long> addresses, int version) {
-        super(EventType.ADDRESS);
+    public StatusEvent(List<Long> addresses, int version) {
+        super(EventType.STATUS);
         this.version = version;
         this.addresses = addresses;
     }
@@ -36,13 +36,13 @@ public class AddressEvent extends Event {
         getAddresses().stream().forEach(address -> buf.writeLong(address));
     }
 
-    public static AddressEvent create(ByteBuf msg) {
+    public static StatusEvent create(ByteBuf msg) {
         int version = msg.readInt();
         int size = msg.readInt();
         List<Long> addresses = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             addresses.add(msg.readLong());
         }
-        return new AddressEvent(addresses, version);
+        return new StatusEvent(addresses, version);
     }
 }
