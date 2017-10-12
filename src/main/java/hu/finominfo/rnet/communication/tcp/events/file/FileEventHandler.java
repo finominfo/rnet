@@ -108,21 +108,7 @@ public class FileEventHandler extends SimpleChannelInboundHandler<FileEvent> imp
     }
 
     private void saveFile(FileEvent msg) throws Exception {
-        String path = null;
-        switch (msg.getFileType()) {
-            case MAIN:
-                path = ".";
-                break;
-            case VIDEO:
-                path = Globals.videoFolder;
-                break;
-            case AUDIO:
-                path = Globals.audioFolder;
-                break;
-            case PICTURE:
-                path = Globals.pictureFolder;
-                break;
-        }
+        String path = Utils.getFileType(msg.getFileType());
         String fullName = path + File.separator + msg.getName();
         if (msg.isFirstPart()) {
             try {

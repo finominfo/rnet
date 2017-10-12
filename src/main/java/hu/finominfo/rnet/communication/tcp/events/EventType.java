@@ -7,8 +7,6 @@ public enum EventType {
     FILE,
     WAIT,
     STATUS,
-    START,
-    STOP,
     DIR,
     DEL_FILE,
     MESSAGE,

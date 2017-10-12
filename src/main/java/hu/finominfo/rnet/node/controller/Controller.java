@@ -111,12 +111,11 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                     currentTaskFinished();
                 }
                 break;
-            case SEND_PICTURE:
+            case SEND_CONTROL:
                 try {
                     if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
-                        Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel()
-                                .writeAndFlush(new ControlEvent(currentTask.getPathFromFileType(), currentTask.getName(), currentTask.getTime()));
-                        logger.info("CONTROL sending, name: " + currentTask.getName());
+                        Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel().writeAndFlush(currentTask.getEvent());
+                        logger.info("CONTROL sending, type: " + ((ControlEvent)currentTask.getEvent()).getControlType().name());
                     }
                 } catch (Exception e) {
                     logger.error(e);

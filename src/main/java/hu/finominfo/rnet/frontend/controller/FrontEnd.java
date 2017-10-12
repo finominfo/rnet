@@ -126,6 +126,7 @@ public class FrontEnd extends FrontEndUtils {
         add(pictureDel);
         pictureAdd.addActionListener(e -> sendFile(Globals.pictureFolder, FileType.PICTURE));
         pictureDel.addActionListener(e -> deleteFile(Globals.pictureFolder, FileType.PICTURE, pictureList));
+        pictureShow.addActionListener(e -> showPicture());
 
 
         add(taskTextLabel);

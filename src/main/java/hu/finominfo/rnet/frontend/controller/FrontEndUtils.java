@@ -2,6 +2,9 @@ package hu.finominfo.rnet.frontend.controller;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
+import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
@@ -61,7 +64,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton videoDel = new JButton("DEL");
 
 
-    protected final JLabel pictureLabel = new JLabel("CONTROL");
+    protected final JLabel pictureLabel = new JLabel("PICTURE");
     public final DefaultListModel<String> pictureListModel = new DefaultListModel();
     protected final JList<String> pictureList = new JList<>(pictureListModel);
     protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -206,6 +209,20 @@ public class FrontEndUtils extends JFrame implements Runnable {
             if (fileName != null) {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
+                });
+                servantsList.clearSelection();
+            }
+        }
+    }
+
+    protected void showPicture() {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        if (!selectedValuesList.isEmpty() && pictureList.getSelectedValue() != null) {
+            String fileName = pictureList.getSelectedValue();
+            if (fileName != null) {
+                selectedValuesList.stream().forEach(selectedValue -> {
+                    ShowPicture showPicture = new ShowPicture(Utils.getFileType(FileType.PICTURE), fileName, Integer.valueOf(showSeconds.getText()));
+                    Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(ControlType.SHOW_PICTURE, showPicture)));
                 });
                 servantsList.clearSelection();
             }

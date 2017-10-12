@@ -93,10 +93,6 @@ public class EventDecoder extends ByteToMessageDecoder {
                     fileBuffer.discardReadBytes();
                 }
                 return;
-            case START:
-                break;
-            case STOP:
-                break;
         }
 
         input.discardReadBytes();

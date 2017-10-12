@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import org.apache.log4j.Logger;
 
@@ -39,6 +40,24 @@ public class Utils {
         return Globals.get().serverClients.entrySet().stream().filter(entry -> entry.getValue().getName().equals(name)).findFirst().get();
     }
 
+    public static String getFileType(FileType fileType) {
+        String path = null;
+        switch (fileType) {
+            case MAIN:
+                path = ".";
+                break;
+            case VIDEO:
+                path = Globals.videoFolder;
+                break;
+            case AUDIO:
+                path = Globals.audioFolder;
+                break;
+            case PICTURE:
+                path = Globals.pictureFolder;
+                break;
+        }
+        return path;
+    }
 
     public static final String getStackTrace(Exception e) {
         StringWriter sw = new StringWriter();
