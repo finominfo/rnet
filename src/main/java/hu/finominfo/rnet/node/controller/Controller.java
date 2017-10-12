@@ -118,7 +118,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                         logger.info("CONTROL sending, type: " + ((ControlEvent)currentTask.getEvent()).getControlType().name());
                     }
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(Utils.getStackTrace(e));
                 } finally {
                     currentTaskFinished();
                 }

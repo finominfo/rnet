@@ -28,7 +28,7 @@ public class EventDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        //logger.info("something arrived, size is : " + in.readableBytes());
+        logger.info("something arrived, size is : " + in.readableBytes());
         InputCollector inputCollector = getInputCollector(ctx);
         ByteBuf input = inputCollector.getByteBuf();
         input.writeBytes(in);

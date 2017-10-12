@@ -46,13 +46,13 @@ public class Server {
                                 pipeline.addLast(new IdleStateHandler(300, 0, 0));
                                 pipeline.addLast(new MyChannelHandler());
                                 pipeline.addLast(new EventDecoder());
-                                pipeline.addLast(new StatusEventHandler());
-                                pipeline.addLast(new WaitEventHandler());
                                 pipeline.addLast(new FileEventHandler());
+                                pipeline.addLast(new ControllEventHandler());
                                 pipeline.addLast(new DirEventHandler());
                                 pipeline.addLast(new DelFileEventHandler());
                                 pipeline.addLast(new MessageEventHandler());
-                                pipeline.addLast(new ControllEventHandler());
+                                pipeline.addLast(new StatusEventHandler());
+                                pipeline.addLast(new WaitEventHandler());
                             }
                         }
                 )

@@ -16,7 +16,7 @@ public class MessageEventHandler extends SimpleChannelInboundHandler<MessageEven
     protected void channelRead0(ChannelHandlerContext ctx, MessageEvent msg) throws Exception {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
-        logger.info("ControlEvent arrived from: " + ip + " message: " + msg.getText());
+        logger.info("MessageEvent arrived from: " + ip + " message: " + msg.getText());
         new MessageDisplay(msg.getText(), msg.getSeconds()).show();
     }
 }

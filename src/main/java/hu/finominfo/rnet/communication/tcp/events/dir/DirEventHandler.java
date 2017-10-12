@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.dir;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -17,7 +18,11 @@ public class DirEventHandler extends SimpleChannelInboundHandler<DirEvent> {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
         logger.info("DirEvent arrived: " + ip);
-        ClientParam clientParam = Globals.get().serverClients.get(ip);
-        msg.getDirs().entrySet().stream().forEach(entry -> clientParam.getDirs().put(entry.getKey(), entry.getValue()));
+        try {
+            ClientParam clientParam = Globals.get().serverClients.get(ip);
+            msg.getDirs().entrySet().stream().forEach(entry -> clientParam.getDirs().put(entry.getKey(), entry.getValue()));
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
+        }
     }
 }

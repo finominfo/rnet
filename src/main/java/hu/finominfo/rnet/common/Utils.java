@@ -108,8 +108,9 @@ public class Utils {
         final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         final File currentJar = new File(Globals.JAR_NAME);
 
-        if (!currentJar.getName().endsWith(".jar"))
+        if (!currentJar.getName().endsWith(".jar")) {
             return;
+        }
 
         final ArrayList<String> command = new ArrayList<String>();
         command.add(javaBin);

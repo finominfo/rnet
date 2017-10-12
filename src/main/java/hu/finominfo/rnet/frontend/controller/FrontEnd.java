@@ -110,6 +110,7 @@ public class FrontEnd extends FrontEndUtils {
         add(videoDel);
         videoAdd.addActionListener(e -> sendFile(Globals.videoFolder, FileType.VIDEO));
         videoDel.addActionListener(e -> deleteFile(Globals.videoFolder, FileType.VIDEO, videoList));
+        videoPlay.addActionListener(e -> playVideo());
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));

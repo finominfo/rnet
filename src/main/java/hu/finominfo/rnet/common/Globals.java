@@ -37,7 +37,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 15;
+    public final static int VERSION = 29;
     public final static String JAR_NAME = "rnet.jar";
     public volatile Task currentTask = null;
     public volatile Worker controller = null;
@@ -54,7 +54,7 @@ public class Globals {
     public final static String ADDRESS = "status.txt";
     public final static String videoFolder = "video";
     public final static String audioFolder = "audio";
-    public final static String pictureFolder = "control";
+    public final static String pictureFolder = "picture";
     public final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(4);
     public final Queue<Event> events = new ConcurrentLinkedQueue<>();
     public final ConcurrentHashMap.KeySetView<Connection, Boolean> connections = ConcurrentHashMap.newKeySet();

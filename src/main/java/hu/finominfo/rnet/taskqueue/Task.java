@@ -27,12 +27,12 @@ public class Task {
 
 
 
-    public Task(TaskToDo taskToDo, Event event) {
+    public Task(TaskToDo taskToDo, Event event, String toSend) {
         this.taskToDo = taskToDo;
         this.frontEndTaskToDo = null;
         this.name = null;
         this.fileType = null;
-        this.toSend = null;
+        this.toSend = toSend;
         this.event = event;
     }
 
