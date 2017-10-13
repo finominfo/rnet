@@ -263,7 +263,22 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     }
 
-    protected void sendReset() {
+    protected void playAudio(ControlType controlType) {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        if (!selectedValuesList.isEmpty() && audioList.getSelectedValue() != null) {
+            String fileName = audioList.getSelectedValue();
+            if (fileName != null) {
+                selectedValuesList.stream().forEach(selectedValue -> {
+                    PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.AUDIO), fileName, Integer.valueOf(showSeconds.getText()));
+                    ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
+                    Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
+                });
+                servantsList.clearSelection();
+            }
+        }
+    }
+
+    protected void sendResetCounter() {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         selectedValuesList.stream().forEach(selectedValue -> {
             ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(Integer.valueOf(resetMins.getText())));
@@ -272,7 +287,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         servantsList.clearSelection();
     }
 
-    protected void sendStartStop(ControlType controlType) {
+    protected void sendOnlyControl(ControlType controlType) {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         selectedValuesList.stream().forEach(selectedValue -> {
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType), Utils.getIp(selectedValue)));

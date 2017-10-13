@@ -1,5 +1,7 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.audio.AudioPlayer;
+import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
@@ -36,7 +38,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 52;
+    public final static int VERSION = 53;
     public final static String JAR_NAME = "rnet.jar";
     public volatile Task currentTask = null;
     public volatile Worker controller = null;
@@ -46,6 +48,8 @@ public class Globals {
     public volatile ConnectionBroadcaster broadcaster= null;
     public volatile ConnectionMonitor monitor = null;
     public volatile hu.finominfo.rnet.frontend.servant.counter.Panel counter = null;
+    public volatile AudioPlayer audioPlayer = null;
+    public volatile AudioPlayerContinuous audioPlayerContinuous = null;
 
     private final static Logger logger = Logger.getLogger(Globals.class);
     public final AtomicLong shouldWait = new AtomicLong(0);

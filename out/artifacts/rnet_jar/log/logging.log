@@ -1,355 +1,123 @@
-2017-10-13 16:48:13 DEBUG InternalLoggerFactory:47 - Using Log4J as the default logging framework
-2017-10-13 16:48:13 DEBUG MultithreadEventLoopGroup:44 - -Dio.netty.eventLoopThreads: 8
-2017-10-13 16:48:13 DEBUG PlatformDependent:930 - Platform: Windows
-2017-10-13 16:48:13 DEBUG PlatformDependent0:361 - -Dio.netty.noUnsafe: false
-2017-10-13 16:48:13 DEBUG PlatformDependent0:797 - Java version: 8
-2017-10-13 16:48:13 DEBUG PlatformDependent0:109 - sun.misc.Unsafe.theUnsafe: available
-2017-10-13 16:48:13 DEBUG PlatformDependent0:133 - sun.misc.Unsafe.copyMemory: available
-2017-10-13 16:48:13 DEBUG PlatformDependent0:170 - java.nio.Buffer.address: available
-2017-10-13 16:48:13 DEBUG PlatformDependent0:228 - direct buffer constructor: available
-2017-10-13 16:48:13 DEBUG PlatformDependent0:279 - java.nio.Bits.unaligned: available, true
-2017-10-13 16:48:13 DEBUG PlatformDependent0:344 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
-2017-10-13 16:48:13 DEBUG PlatformDependent0:351 - java.nio.DirectByteBuffer.<init>(long, int): available
-2017-10-13 16:48:13 DEBUG PlatformDependent:967 - sun.misc.Unsafe: available
-2017-10-13 16:48:13 DEBUG PlatformDependent:1049 - -Dio.netty.tmpdir: C:\Users\User\AppData\Local\Temp (java.io.tmpdir)
-2017-10-13 16:48:13 DEBUG PlatformDependent:1128 - -Dio.netty.bitMode: 64 (sun.arch.data.model)
-2017-10-13 16:48:13 DEBUG PlatformDependent:130 - -Dio.netty.noPreferDirect: false
-2017-10-13 16:48:13 DEBUG PlatformDependent:170 - -Dio.netty.maxDirectMemory: 934281216 bytes
-2017-10-13 16:48:13 DEBUG PlatformDependent:176 - -Dio.netty.uninitializedArrayAllocationThreshold: -1
-2017-10-13 16:48:13 DEBUG CleanerJava6:60 - java.nio.ByteBuffer.cleaner(): available
-2017-10-13 16:48:13 DEBUG NioEventLoop:111 - -Dio.netty.noKeySetOptimization: false
-2017-10-13 16:48:13 DEBUG NioEventLoop:112 - -Dio.netty.selectorAutoRebuildThreshold: 512
-2017-10-13 16:48:13 DEBUG PlatformDependent:835 - org.jctools-core.MpscChunkedArrayQueue: available
-2017-10-13 16:48:13 DEBUG DefaultChannelId:79 - -Dio.netty.processId: 6400 (auto-detected)
-2017-10-13 16:48:13 DEBUG NetUtil:137 - -Djava.net.preferIPv4Stack: false
-2017-10-13 16:48:13 DEBUG NetUtil:138 - -Djava.net.preferIPv6Addresses: false
-2017-10-13 16:48:13 DEBUG NetUtil:222 - Loopback interface: lo (Software Loopback Interface 1, 127.0.0.1)
-2017-10-13 16:48:13 DEBUG NetUtil:287 - Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
-2017-10-13 16:48:13 DEBUG DefaultChannelId:101 - -Dio.netty.machineId: c8:3a:35:ff:fe:c8:22:23 (auto-detected)
-2017-10-13 16:48:13 DEBUG InternalThreadLocalMap:51 - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
-2017-10-13 16:48:13 DEBUG InternalThreadLocalMap:54 - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
-2017-10-13 16:48:13 DEBUG ResourceLeakDetector:114 - -Dio.netty.leakDetection.level: simple
-2017-10-13 16:48:13 DEBUG ResourceLeakDetector:115 - -Dio.netty.leakDetection.maxRecords: 4
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:120 - -Dio.netty.allocator.numHeapArenas: 8
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:121 - -Dio.netty.allocator.numDirectArenas: 8
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:123 - -Dio.netty.allocator.pageSize: 8192
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:128 - -Dio.netty.allocator.maxOrder: 11
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:132 - -Dio.netty.allocator.chunkSize: 16777216
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:133 - -Dio.netty.allocator.tinyCacheSize: 512
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:134 - -Dio.netty.allocator.smallCacheSize: 256
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:135 - -Dio.netty.allocator.normalCacheSize: 64
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:136 - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:137 - -Dio.netty.allocator.cacheTrimInterval: 8192
-2017-10-13 16:48:13 DEBUG PooledByteBufAllocator:138 - -Dio.netty.allocator.useCacheForAllThreads: true
-2017-10-13 16:48:14 DEBUG ByteBufUtil:80 - -Dio.netty.allocator.type: pooled
-2017-10-13 16:48:14 DEBUG ByteBufUtil:89 - -Dio.netty.threadLocalDirectBufferSize: 65536
-2017-10-13 16:48:14 DEBUG ByteBufUtil:92 - -Dio.netty.maxThreadLocalCharBufferSize: 16384
-2017-10-13 16:48:14 ERROR FrontEndWorker:80 - java.nio.file.NoSuchFileException: addresses.txt
-2017-10-13 16:48:14 INFO  Controller:177 - Server successful created at port: 10002
-2017-10-13 16:48:14 DEBUG Recycler:96 - -Dio.netty.recycler.maxCapacityPerThread: 32768
-2017-10-13 16:48:14 DEBUG Recycler:97 - -Dio.netty.recycler.maxSharedCapacityFactor: 2
-2017-10-13 16:48:14 DEBUG Recycler:98 - -Dio.netty.recycler.linkCapacity: 16
-2017-10-13 16:48:14 DEBUG Recycler:99 - -Dio.netty.recycler.ratio: 8
-2017-10-13 16:48:14 DEBUG AbstractByteBuf:52 - -Dio.netty.buffer.bytebuf.checkAccessible: true
-2017-10-13 16:48:14 DEBUG ResourceLeakDetectorFactory:202 - Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@68d759f0
-2017-10-13 16:48:15 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:16 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:16 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-4-1
-2017-10-13 16:48:17 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:18 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-6-1
-2017-10-13 16:48:18 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:19 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-7-1
-2017-10-13 16:48:19 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:20 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-8-1
-2017-10-13 16:48:20 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:21 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-9-1
-2017-10-13 16:48:21 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:22 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-10-1
-2017-10-13 16:48:22 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:23 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-11-1
-2017-10-13 16:48:23 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:24 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-12-1
-2017-10-13 16:48:24 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:25 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-13-1
-2017-10-13 16:48:25 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:26 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-14-1
-2017-10-13 16:48:26 INFO  MyChannelHandler:17 - /192.168.0.13:33858 connected.
-2017-10-13 16:48:26 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 16:48:26 INFO  EventDecoder:31 - something arrived, size is : 21
-2017-10-13 16:48:26 INFO  EventDecoder:39 - STATUS event arrived
-2017-10-13 16:48:26 INFO  StatusEventHandler:24 - StatusEvent arrived: 202481586862056
-2017-10-13 16:48:27 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-15-1
-2017-10-13 16:48:27 INFO  Controller:182 - Client successful connected back: 192.168.0.13 10001
-2017-10-13 16:48:27 INFO  Controller:155 - shortName: rnet.jar
-2017-10-13 16:48:27 INFO  EventEncoder:25 - FILE event sent
-2017-10-13 16:48:27 INFO  Controller:186 - FILE sending was successful position from: 0 to: 160404
-2017-10-13 16:48:28 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-16-1
-2017-10-13 16:48:29 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-17-1
-2017-10-13 16:48:31 INFO  MyChannelHandler:32 - /192.168.0.13:33858 disconnected.
-2017-10-13 17:10:40 DEBUG InternalLoggerFactory:47 - Using Log4J as the default logging framework
-2017-10-13 17:10:40 DEBUG MultithreadEventLoopGroup:44 - -Dio.netty.eventLoopThreads: 8
-2017-10-13 17:10:40 DEBUG PlatformDependent:930 - Platform: Windows
-2017-10-13 17:10:40 DEBUG PlatformDependent0:361 - -Dio.netty.noUnsafe: false
-2017-10-13 17:10:40 DEBUG PlatformDependent0:797 - Java version: 8
-2017-10-13 17:10:40 DEBUG PlatformDependent0:109 - sun.misc.Unsafe.theUnsafe: available
-2017-10-13 17:10:40 DEBUG PlatformDependent0:133 - sun.misc.Unsafe.copyMemory: available
-2017-10-13 17:10:40 DEBUG PlatformDependent0:170 - java.nio.Buffer.address: available
-2017-10-13 17:10:40 DEBUG PlatformDependent0:228 - direct buffer constructor: available
-2017-10-13 17:10:40 DEBUG PlatformDependent0:279 - java.nio.Bits.unaligned: available, true
-2017-10-13 17:10:40 DEBUG PlatformDependent0:344 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
-2017-10-13 17:10:40 DEBUG PlatformDependent0:351 - java.nio.DirectByteBuffer.<init>(long, int): available
-2017-10-13 17:10:40 DEBUG PlatformDependent:967 - sun.misc.Unsafe: available
-2017-10-13 17:10:40 DEBUG PlatformDependent:1049 - -Dio.netty.tmpdir: C:\Users\User\AppData\Local\Temp (java.io.tmpdir)
-2017-10-13 17:10:40 DEBUG PlatformDependent:1128 - -Dio.netty.bitMode: 64 (sun.arch.data.model)
-2017-10-13 17:10:40 DEBUG PlatformDependent:130 - -Dio.netty.noPreferDirect: false
-2017-10-13 17:10:40 DEBUG PlatformDependent:170 - -Dio.netty.maxDirectMemory: 934281216 bytes
-2017-10-13 17:10:40 DEBUG PlatformDependent:176 - -Dio.netty.uninitializedArrayAllocationThreshold: -1
-2017-10-13 17:10:40 DEBUG CleanerJava6:60 - java.nio.ByteBuffer.cleaner(): available
-2017-10-13 17:10:40 DEBUG NioEventLoop:111 - -Dio.netty.noKeySetOptimization: false
-2017-10-13 17:10:40 DEBUG NioEventLoop:112 - -Dio.netty.selectorAutoRebuildThreshold: 512
-2017-10-13 17:10:40 DEBUG PlatformDependent:835 - org.jctools-core.MpscChunkedArrayQueue: available
-2017-10-13 17:10:40 DEBUG DefaultChannelId:79 - -Dio.netty.processId: 4544 (auto-detected)
-2017-10-13 17:10:40 DEBUG NetUtil:137 - -Djava.net.preferIPv4Stack: false
-2017-10-13 17:10:40 DEBUG NetUtil:138 - -Djava.net.preferIPv6Addresses: false
-2017-10-13 17:10:41 DEBUG NetUtil:222 - Loopback interface: lo (Software Loopback Interface 1, 127.0.0.1)
-2017-10-13 17:10:41 DEBUG NetUtil:287 - Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
-2017-10-13 17:10:41 DEBUG DefaultChannelId:101 - -Dio.netty.machineId: c8:3a:35:ff:fe:c8:22:23 (auto-detected)
-2017-10-13 17:10:41 DEBUG InternalThreadLocalMap:51 - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
-2017-10-13 17:10:41 DEBUG InternalThreadLocalMap:54 - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
-2017-10-13 17:10:41 DEBUG ResourceLeakDetector:114 - -Dio.netty.leakDetection.level: simple
-2017-10-13 17:10:41 DEBUG ResourceLeakDetector:115 - -Dio.netty.leakDetection.maxRecords: 4
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:120 - -Dio.netty.allocator.numHeapArenas: 8
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:121 - -Dio.netty.allocator.numDirectArenas: 8
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:123 - -Dio.netty.allocator.pageSize: 8192
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:128 - -Dio.netty.allocator.maxOrder: 11
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:132 - -Dio.netty.allocator.chunkSize: 16777216
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:133 - -Dio.netty.allocator.tinyCacheSize: 512
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:134 - -Dio.netty.allocator.smallCacheSize: 256
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:135 - -Dio.netty.allocator.normalCacheSize: 64
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:136 - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:137 - -Dio.netty.allocator.cacheTrimInterval: 8192
-2017-10-13 17:10:41 DEBUG PooledByteBufAllocator:138 - -Dio.netty.allocator.useCacheForAllThreads: true
-2017-10-13 17:10:41 DEBUG ByteBufUtil:80 - -Dio.netty.allocator.type: pooled
-2017-10-13 17:10:41 DEBUG ByteBufUtil:89 - -Dio.netty.threadLocalDirectBufferSize: 65536
-2017-10-13 17:10:41 DEBUG ByteBufUtil:92 - -Dio.netty.maxThreadLocalCharBufferSize: 16384
-2017-10-13 17:10:41 INFO  Controller:177 - Server successful created at port: 10002
-2017-10-13 17:10:41 INFO  FrontEndWorker:77 - Loaded status: 192.168.0.13 -> 202481586862056
-2017-10-13 17:10:41 DEBUG Recycler:96 - -Dio.netty.recycler.maxCapacityPerThread: 32768
-2017-10-13 17:10:41 DEBUG Recycler:97 - -Dio.netty.recycler.maxSharedCapacityFactor: 2
-2017-10-13 17:10:41 DEBUG Recycler:98 - -Dio.netty.recycler.linkCapacity: 16
-2017-10-13 17:10:41 DEBUG Recycler:99 - -Dio.netty.recycler.ratio: 8
-2017-10-13 17:10:41 DEBUG AbstractByteBuf:52 - -Dio.netty.buffer.bytebuf.checkAccessible: true
-2017-10-13 17:10:41 DEBUG ResourceLeakDetectorFactory:202 - Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@e9ba4b
-2017-10-13 17:10:42 INFO  MyChannelHandler:17 - /192.168.0.13:38110 connected.
-2017-10-13 17:10:42 INFO  EventDecoder:31 - something arrived, size is : 21
-2017-10-13 17:10:42 INFO  EventDecoder:39 - STATUS event arrived
-2017-10-13 17:10:42 INFO  StatusEventHandler:24 - StatusEvent arrived: 202481586862056
-2017-10-13 17:10:42 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:10:43 INFO  Controller:182 - Client successful connected back: 192.168.0.13 10001
-2017-10-13 17:10:44 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-4-1
-2017-10-13 17:10:45 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:10:45 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:10:45 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:10:45 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-6-1
-2017-10-13 17:10:49 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:10:49 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:10:49 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:10:49 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:10:49 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:10:49 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:10:57 INFO  Controller:118 - CONTROL sending, type: SHOW_PICTURE
-2017-10-13 17:10:57 INFO  EventEncoder:25 - CONTROL event sent
-2017-10-13 17:11:15 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:11:18 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:11:18 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:11:18 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:11:18 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-8-1
-2017-10-13 17:11:47 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:11:50 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:11:50 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:11:50 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:11:50 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-9-1
-2017-10-13 17:12:19 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:12:22 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:12:22 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:12:22 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:12:22 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-10-1
-2017-10-13 17:12:51 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:12:54 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:12:54 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:12:54 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:12:54 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-11-1
-2017-10-13 17:13:23 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:13:26 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:13:26 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:13:26 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:13:26 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-12-1
-2017-10-13 17:13:35 INFO  Controller:106 - MESSAGE sending, text: rtsedfsdf432rewrwe
-2017-10-13 17:13:35 INFO  EventEncoder:25 - MESSAGE event sent
-2017-10-13 17:13:55 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:13:58 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:13:58 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:13:58 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:13:58 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-13-1
-2017-10-13 17:14:27 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:14:30 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:14:30 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:14:30 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:14:30 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-14-1
-2017-10-13 17:15:02 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:15:02 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:15:02 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:15:02 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-15-1
-2017-10-13 17:15:31 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:15:34 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:15:34 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:15:34 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:15:34 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-16-1
-2017-10-13 17:16:03 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:16:06 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:16:06 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:16:06 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:16:06 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-17-1
-2017-10-13 17:16:35 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:16:38 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:16:38 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:16:38 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:16:38 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-18-1
-2017-10-13 17:17:07 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:17:10 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:17:10 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:17:10 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:17:10 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-19-1
-2017-10-13 17:17:39 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:17:42 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:17:42 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:17:42 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:17:42 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-20-1
-2017-10-13 17:18:11 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:18:14 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:18:14 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:18:14 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:18:14 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-21-1
-2017-10-13 17:18:44 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:18:46 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:18:46 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:18:46 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:18:46 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-22-1
-2017-10-13 17:19:15 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:19:18 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:19:18 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:19:18 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:19:18 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-23-1
-2017-10-13 17:19:47 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:19:50 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:19:50 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:19:50 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:19:50 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-24-1
-2017-10-13 17:20:20 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:20:22 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:20:22 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:20:22 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:20:22 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-25-1
-2017-10-13 17:20:52 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:20:54 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:20:54 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:20:54 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:20:54 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-26-1
-2017-10-13 17:21:24 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:21:26 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:21:26 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:21:26 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:21:26 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-27-1
-2017-10-13 17:21:56 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:21:58 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:21:58 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:21:58 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:21:58 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-28-1
-2017-10-13 17:22:28 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:22:31 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-29-1
-2017-10-13 17:23:00 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:23:02 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:23:02 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:23:02 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:23:03 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-30-1
-2017-10-13 17:23:32 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:23:34 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:23:34 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:23:34 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:23:34 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-31-1
-2017-10-13 17:24:04 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:24:06 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:24:06 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:24:06 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:24:07 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-32-1
-2017-10-13 17:24:36 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:24:38 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:24:38 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:24:38 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:24:39 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-33-1
-2017-10-13 17:25:08 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:25:10 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:25:10 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:25:10 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:25:11 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-34-1
-2017-10-13 17:25:40 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:25:42 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:25:42 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:25:42 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:25:43 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-35-1
-2017-10-13 17:26:12 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:26:14 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:26:14 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:26:14 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:26:15 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-36-1
-2017-10-13 17:26:44 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:26:46 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:26:46 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:26:46 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:26:47 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-37-1
-2017-10-13 17:27:16 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:27:18 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:27:18 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:27:18 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:27:19 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-38-1
-2017-10-13 17:27:48 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:27:50 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:27:50 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:27:50 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:27:51 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-39-1
-2017-10-13 17:28:20 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:28:22 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:28:22 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:28:22 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:28:23 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-40-1
-2017-10-13 17:28:52 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:28:54 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:28:54 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:28:54 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:28:55 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-41-1
-2017-10-13 17:29:26 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:29:26 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:29:26 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:29:26 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-42-1
-2017-10-13 17:29:56 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:29:58 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:29:58 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:29:58 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:29:59 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-43-1
-2017-10-13 17:30:28 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:30:31 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-44-1
-2017-10-13 17:31:00 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:31:02 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:31:02 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:31:02 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:31:03 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-45-1
-2017-10-13 17:31:32 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:31:35 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:31:35 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:31:35 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:31:35 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-46-1
-2017-10-13 17:32:04 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
-2017-10-13 17:32:06 INFO  EventDecoder:31 - something arrived, size is : 49
-2017-10-13 17:32:06 INFO  EventDecoder:39 - DIR event arrived
-2017-10-13 17:32:06 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
-2017-10-13 17:32:07 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-47-1
+2017-10-13 18:30:44 DEBUG InternalLoggerFactory:47 - Using Log4J as the default logging framework
+2017-10-13 18:30:44 DEBUG MultithreadEventLoopGroup:44 - -Dio.netty.eventLoopThreads: 8
+2017-10-13 18:30:44 DEBUG PlatformDependent:930 - Platform: Windows
+2017-10-13 18:30:44 DEBUG PlatformDependent0:361 - -Dio.netty.noUnsafe: false
+2017-10-13 18:30:44 DEBUG PlatformDependent0:797 - Java version: 8
+2017-10-13 18:30:44 DEBUG PlatformDependent0:109 - sun.misc.Unsafe.theUnsafe: available
+2017-10-13 18:30:44 DEBUG PlatformDependent0:133 - sun.misc.Unsafe.copyMemory: available
+2017-10-13 18:30:44 DEBUG PlatformDependent0:170 - java.nio.Buffer.address: available
+2017-10-13 18:30:44 DEBUG PlatformDependent0:228 - direct buffer constructor: available
+2017-10-13 18:30:44 DEBUG PlatformDependent0:279 - java.nio.Bits.unaligned: available, true
+2017-10-13 18:30:44 DEBUG PlatformDependent0:344 - jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable prior to Java9
+2017-10-13 18:30:44 DEBUG PlatformDependent0:351 - java.nio.DirectByteBuffer.<init>(long, int): available
+2017-10-13 18:30:44 DEBUG PlatformDependent:967 - sun.misc.Unsafe: available
+2017-10-13 18:30:44 DEBUG PlatformDependent:1049 - -Dio.netty.tmpdir: C:\Users\User\AppData\Local\Temp (java.io.tmpdir)
+2017-10-13 18:30:44 DEBUG PlatformDependent:1128 - -Dio.netty.bitMode: 64 (sun.arch.data.model)
+2017-10-13 18:30:44 DEBUG PlatformDependent:130 - -Dio.netty.noPreferDirect: false
+2017-10-13 18:30:44 DEBUG PlatformDependent:170 - -Dio.netty.maxDirectMemory: 934281216 bytes
+2017-10-13 18:30:44 DEBUG PlatformDependent:176 - -Dio.netty.uninitializedArrayAllocationThreshold: -1
+2017-10-13 18:30:44 DEBUG CleanerJava6:60 - java.nio.ByteBuffer.cleaner(): available
+2017-10-13 18:30:44 DEBUG NioEventLoop:111 - -Dio.netty.noKeySetOptimization: false
+2017-10-13 18:30:44 DEBUG NioEventLoop:112 - -Dio.netty.selectorAutoRebuildThreshold: 512
+2017-10-13 18:30:44 DEBUG PlatformDependent:835 - org.jctools-core.MpscChunkedArrayQueue: available
+2017-10-13 18:30:44 DEBUG DefaultChannelId:79 - -Dio.netty.processId: 5236 (auto-detected)
+2017-10-13 18:30:44 DEBUG NetUtil:137 - -Djava.net.preferIPv4Stack: false
+2017-10-13 18:30:44 DEBUG NetUtil:138 - -Djava.net.preferIPv6Addresses: false
+2017-10-13 18:30:45 DEBUG NetUtil:222 - Loopback interface: lo (Software Loopback Interface 1, 127.0.0.1)
+2017-10-13 18:30:45 DEBUG NetUtil:287 - Failed to get SOMAXCONN from sysctl and file \proc\sys\net\core\somaxconn. Default: 200
+2017-10-13 18:30:45 DEBUG DefaultChannelId:101 - -Dio.netty.machineId: c8:3a:35:ff:fe:c8:22:23 (auto-detected)
+2017-10-13 18:30:45 DEBUG InternalThreadLocalMap:51 - -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+2017-10-13 18:30:45 DEBUG InternalThreadLocalMap:54 - -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+2017-10-13 18:30:45 DEBUG ResourceLeakDetector:114 - -Dio.netty.leakDetection.level: simple
+2017-10-13 18:30:45 DEBUG ResourceLeakDetector:115 - -Dio.netty.leakDetection.maxRecords: 4
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:120 - -Dio.netty.allocator.numHeapArenas: 8
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:121 - -Dio.netty.allocator.numDirectArenas: 8
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:123 - -Dio.netty.allocator.pageSize: 8192
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:128 - -Dio.netty.allocator.maxOrder: 11
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:132 - -Dio.netty.allocator.chunkSize: 16777216
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:133 - -Dio.netty.allocator.tinyCacheSize: 512
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:134 - -Dio.netty.allocator.smallCacheSize: 256
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:135 - -Dio.netty.allocator.normalCacheSize: 64
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:136 - -Dio.netty.allocator.maxCachedBufferCapacity: 32768
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:137 - -Dio.netty.allocator.cacheTrimInterval: 8192
+2017-10-13 18:30:45 DEBUG PooledByteBufAllocator:138 - -Dio.netty.allocator.useCacheForAllThreads: true
+2017-10-13 18:30:45 DEBUG ByteBufUtil:80 - -Dio.netty.allocator.type: pooled
+2017-10-13 18:30:45 DEBUG ByteBufUtil:89 - -Dio.netty.threadLocalDirectBufferSize: 65536
+2017-10-13 18:30:45 DEBUG ByteBufUtil:92 - -Dio.netty.maxThreadLocalCharBufferSize: 16384
+2017-10-13 18:30:45 INFO  Controller:177 - Server successful created at port: 10002
+2017-10-13 18:30:45 ERROR FrontEndWorker:80 - java.nio.file.NoSuchFileException: addresses.txt
+2017-10-13 18:30:45 DEBUG Recycler:96 - -Dio.netty.recycler.maxCapacityPerThread: 32768
+2017-10-13 18:30:45 DEBUG Recycler:97 - -Dio.netty.recycler.maxSharedCapacityFactor: 2
+2017-10-13 18:30:45 DEBUG Recycler:98 - -Dio.netty.recycler.linkCapacity: 16
+2017-10-13 18:30:45 DEBUG Recycler:99 - -Dio.netty.recycler.ratio: 8
+2017-10-13 18:30:45 DEBUG AbstractByteBuf:52 - -Dio.netty.buffer.bytebuf.checkAccessible: true
+2017-10-13 18:30:45 DEBUG ResourceLeakDetectorFactory:202 - Loaded default ResourceLeakDetector: io.netty.util.ResourceLeakDetector@23abf039
+2017-10-13 18:30:46 INFO  MyChannelHandler:17 - /192.168.0.13:38154 connected.
+2017-10-13 18:30:46 INFO  EventDecoder:31 - something arrived, size is : 21
+2017-10-13 18:30:46 INFO  EventDecoder:39 - STATUS event arrived
+2017-10-13 18:30:46 INFO  StatusEventHandler:24 - StatusEvent arrived: 202481586862056
+2017-10-13 18:30:46 INFO  Controller:182 - Client successful connected back: 192.168.0.13 10001
+2017-10-13 18:30:48 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-4-1
+2017-10-13 18:30:48 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:30:48 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:30:48 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:30:50 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:30:50 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:30:50 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:31:19 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-13 18:31:22 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:31:22 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:31:22 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:31:22 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-7-1
+2017-10-13 18:31:31 INFO  Controller:106 - MESSAGE sending, text: fkdsfkjkl   jkdjsfkjdkfjdsfk  ksdjfkjdsfkjsdf  jskdfjksdjfksdj f kjsdkfj skjdf k jkjsd fkj ksdjf 
+ dsfkj dkfj dkfj kd jsfk 
+f
+ds
+fds
+f
+fdsgfsfgfgfgfd
+fgdfgdfgdfgddfhgdfghgdfhghfg
+hfghfgjhfjhfgjgfhjgkhjkgjhkgjhkjhkjkgjhkgjhkjghkjkhjkfgh
+ghfghgfhgjhkgjhkjgkhjgkhjkghjkgjhkgjhkjgkhjgkh
+gfhlgkflhkgflhklgkhlkglhkglkhlgkhlkglhg
+gfhélgkhlkglhk
+éghlghlkglhkglhkeriutu4z756475647657435
+
+5
+43
+5
+45
+4565oi6u5865876854786546
+546
+54
+6
+45
+656456546
+
+5645645654
+2017-10-13 18:31:31 INFO  EventEncoder:25 - MESSAGE event sent
+2017-10-13 18:31:51 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-13 18:31:54 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:31:54 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:31:54 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:31:54 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-8-1
+2017-10-13 18:32:23 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-13 18:32:26 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:32:26 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:32:26 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:32:26 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-9-1
+2017-10-13 18:32:55 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-13 18:32:58 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-10-1
+2017-10-13 18:32:58 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:32:58 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:32:58 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:33:27 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-13 18:33:30 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:33:30 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:33:30 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:33:30 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-11-1
+2017-10-13 18:33:59 ERROR Broadcaster:68 - Broadcast sending was unsuccessful
+2017-10-13 18:34:02 INFO  EventDecoder:31 - something arrived, size is : 49
+2017-10-13 18:34:02 INFO  EventDecoder:39 - DIR event arrived
+2017-10-13 18:34:02 INFO  DirEventHandler:20 - DirEvent arrived: 192.168.0.13
+2017-10-13 18:34:02 DEBUG PoolThreadCache:262 - Freed 1 thread-local buffer(s) from thread: nioEventLoopGroup-12-1

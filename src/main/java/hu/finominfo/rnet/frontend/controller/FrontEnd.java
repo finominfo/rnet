@@ -1,27 +1,14 @@
 package hu.finominfo.rnet.frontend.controller;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
-import hu.finominfo.rnet.communication.tcp.server.ClientParam;
-import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
-import hu.finominfo.rnet.taskqueue.TaskToDo;
-import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.*;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
-import static javax.swing.ScrollPaneConstants.*;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.25.
@@ -74,9 +61,9 @@ public class FrontEnd extends FrontEndUtils {
         add(stopBtn);
         resetBtn.setBounds(30, 620, 90, 30);
         add(resetBtn);
-        resetBtn.addActionListener(e -> sendReset());
-        startBtn.addActionListener(e -> sendStartStop(ControlType.START_COUNTER));
-        stopBtn.addActionListener(e -> sendStartStop(ControlType.STOP_COUNTER));
+        resetBtn.addActionListener(e -> sendResetCounter());
+        startBtn.addActionListener(e -> sendOnlyControl(ControlType.START_COUNTER));
+        stopBtn.addActionListener(e -> sendOnlyControl(ControlType.STOP_COUNTER));
         resetLabel.setFont(new Font(resetLabel.getFont().getName(), Font.BOLD, 20));
         resetLabel.setBounds(185, 620, 250, 30);
         add(resetLabel);
@@ -104,6 +91,9 @@ public class FrontEnd extends FrontEndUtils {
         audioStop.setBounds(410, 460, 70, 30);
         add(audioContinuousPlay);
         add(audioStop);
+        audioPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO));
+        audioContinuousPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
+        audioStop.addActionListener(e -> sendOnlyControl(ControlType.STOP_AUDIO));
         audioAdd.addActionListener(e -> sendFile(Globals.audioFolder, FileType.AUDIO));
         audioDel.addActionListener(e -> deleteFile(Globals.audioFolder, FileType.AUDIO, audioList));
 

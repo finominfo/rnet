@@ -1,7 +1,10 @@
 package hu.finominfo.rnet.communication.tcp.events.control;
 
+import hu.finominfo.rnet.audio.AudioPlayer;
+import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
@@ -10,6 +13,8 @@ import hu.finominfo.rnet.frontend.servant.VideoPlayer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.29.
@@ -37,10 +42,22 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     Globals.get().executor.submit(() -> videoPlayer.play());
                     break;
                 case PLAY_AUDIO:
+                    logger.info("PLAY_AUDIO arrived: " + ip);
+                    PlayAudio playAudio = (PlayAudio) msg.getControlObject();
+                    closeAudio();
+                    Globals.get().audioPlayer = new AudioPlayer(Globals.get().executor, playAudio.getPathAndName());
+                    Globals.get().audioPlayer.play(null);
                     break;
                 case PLAY_AUDIO_CONTINUOUS:
+                    logger.info("PLAY_AUDIO_CONTINUOUS arrived: " + ip);
+                    PlayAudio playAudioContinuous = (PlayAudio) msg.getControlObject();
+                    closeAudio();
+                    Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, playAudioContinuous.getPathAndName());
+                    Globals.get().audioPlayerContinuous.play(null);
                     break;
                 case STOP_AUDIO:
+                    logger.info("STOP_AUDIO arrived: " + ip);
+                    closeAudio();
                     break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
@@ -59,8 +76,19 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     Globals.get().counter.makeStop();
                     break;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
+        }
+    }
+
+    private void closeAudio() {
+        AudioPlayer audioPlayer = Globals.get().audioPlayer;
+        if (audioPlayer != null) {
+            audioPlayer.close();
+        }
+        AudioPlayerContinuous audioPlayerContinuous = Globals.get().audioPlayerContinuous;
+        if (audioPlayerContinuous != null) {
+            audioPlayerContinuous.close();
         }
     }
 }
