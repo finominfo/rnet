@@ -86,18 +86,18 @@ public class Utils {
     public static void restartApplication()
     //TODO: Fejleszteni!!!
     {
-        if (Globals.get().server != null) {
-            Globals.get().server.stop();
-        }
-        if (Globals.get().client != null) {
-            Globals.get().client.stop();
-        }
-        if (Globals.get().broadcaster != null) {
-            Globals.get().broadcaster.stop();
-        }
-        if (Globals.get().monitor != null) {
-            Globals.get().monitor.stop();
-        }
+//        if (Globals.get().server != null) {
+//            Globals.get().server.stop();
+//        }
+//        if (Globals.get().client != null) {
+//            Globals.get().client.stop();
+//        }
+//        if (Globals.get().broadcaster != null) {
+//            Globals.get().broadcaster.stop();
+//        }
+//        if (Globals.get().monitor != null) {
+//            Globals.get().monitor.stop();
+//        }
         Globals.get().executor.shutdown();
 
         try {
