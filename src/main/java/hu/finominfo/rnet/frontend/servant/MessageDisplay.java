@@ -1,10 +1,15 @@
 package hu.finominfo.rnet.frontend.servant;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.TextAttribute;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,17 +31,19 @@ public class MessageDisplay {
         try {
             final JOptionPane optionPane = new JOptionPane(message, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
             final JDialog dialog = new JDialog();
+            Map<TextAttribute, Object> attributes = new HashMap<>();
+            //dialog.setFont(Font.createFont(Font.TRUETYPE_FONT, new File("./Crysta.ttf")).deriveFont(Font.ITALIC, (float) (35)));
+            //dialog.setFont(new Font("Serif", Font.BOLD, 30));
             dialog.setTitle("Message from operator");
             dialog.setModal(true);
             dialog.setContentPane(optionPane);
             dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
             dialog.setAlwaysOnTop(true);
-            dialog.setFont(new Font(dialog.getFont().getName(), Font.BOLD, 16));
             dialog.pack();
             Globals.get().executor.schedule(() -> dialog.dispose(), seconds, TimeUnit.SECONDS);
-            Globals.get().executor.schedule(() -> dialog.setVisible(true), 1, TimeUnit.MILLISECONDS);
+            Globals.get().executor.schedule(() -> dialog.setVisible(true), 100, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(Utils.getStackTrace(e));
         }
     }
 

@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -127,9 +128,13 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected void sendText() {
         if (servantsList.getSelectedValuesList().size() > 0) {
             JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.setPreferredSize(new Dimension(500, 400));
             JLabel label = new JLabel("Enter the message: ");
-            JTextField text = new JTextField();
+            //label.setBounds(50, 50, 200, 40);
+            JTextArea text = new JTextArea();
+            text.setRows(10);
+            //text.setBounds(50, 100, 400, 250);
             panel.add(label);
             panel.add(text);
             String[] options = new String[]{"OK", "Cancel"};
