@@ -25,10 +25,9 @@ public class HandlingIO {
     private static final Pin DOOR_PIN = RaspiPin.GPIO_00;
     private static final Pin KNOCK_PIN = RaspiPin.GPIO_02;
     private static final Pin OUT_DOOR_PIN = RaspiPin.GPIO_03;
-    private final GpioController gpio = GpioFactory.getInstance();
-    private final GpioPinDigitalInput knockButton = gpio.provisionDigitalInputPin(KNOCK_PIN, PinPullResistance.PULL_UP);
-    private final GpioPinDigitalOutput outDoorPin = gpio.provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", PinState.LOW);
-    private final GpioPinDigitalOutput outDoorPin2 = gpio.provisionDigitalOutputPin(DOOR_PIN, "FINISHED2", PinState.LOW);
+    private final GpioPinDigitalInput knockButton = GpioFactory.getInstance().provisionDigitalInputPin(KNOCK_PIN, PinPullResistance.PULL_UP);
+    private final GpioPinDigitalOutput outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", PinState.LOW);
+    private final GpioPinDigitalOutput outDoorPin2 = GpioFactory.getInstance().provisionDigitalOutputPin(DOOR_PIN, "FINISHED2", PinState.LOW);
 
     private volatile IOActionType lastAction = null;
     private final ScheduledExecutorService ses;

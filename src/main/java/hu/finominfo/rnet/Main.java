@@ -1,6 +1,7 @@
 package hu.finominfo.rnet;
 
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
+import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.taskqueue.FrontEndWorker;
@@ -47,6 +48,7 @@ public class Main {
                 Servant servant = new Servant();
                 servant.run();
                 Globals.get().servant = servant;
+                Globals.get().executor.submit(new GameKnockSimple());
             }), 3, TimeUnit.SECONDS);
         }
     }

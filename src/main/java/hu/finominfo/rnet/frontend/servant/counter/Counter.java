@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
@@ -37,10 +37,10 @@ public class Counter extends JPanel {
 
     private final JPanel mainPanel;
     public final double diff;
-    public final ScheduledThreadPoolExecutor executor;
+    public final ScheduledExecutorService executor;
     private final Props props = Props.get();
     private final Font customFont;
-    private final Set<AudioPlayerContinuous> continuousPlayers = new HashSet<>();
+    //private final Set<AudioPlayerContinuous> continuousPlayers = new HashSet<>();
     private final List<String> animalVoices = new ArrayList<>();
     private final Random random = new Random(0xdf435fa2187L);
 
@@ -50,7 +50,7 @@ public class Counter extends JPanel {
         diff = ((double) screenSize.width) / 1920;
         System.out.println("diff: " + diff);
         mainPanel = new JPanel(new GridLayout(ROW, COLUMN));
-        executor = new ScheduledThreadPoolExecutor(4);
+        executor = Globals.get().executor;
     }
 
     public void start() {
@@ -63,19 +63,19 @@ public class Counter extends JPanel {
             beep = new AudioPlayerWrapper(executor, props.getBeep());
             success = new AudioPlayer(executor, props.getSuccess());
             failed = new AudioPlayer(executor, props.getFailed());
-            for (String name : props.getBaseAudio()) {
-                AudioPlayerContinuous ap = new AudioPlayerContinuous(executor, name);
-                ap.play(null);
-                continuousPlayers.add(ap);
-            }
-            for (String name : props.getAnimalVoices()) {
-                try {
-                    animalVoices.add(name);
-                    System.out.println(name);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
+//            for (String name : props.getBaseAudio()) {
+//                AudioPlayerContinuous ap = new AudioPlayerContinuous(executor, name);
+//                ap.play(null);
+//                continuousPlayers.add(ap);
+//            }
+//            for (String name : props.getAnimalVoices()) {
+//                try {
+//                    animalVoices.add(name);
+//                    System.out.println(name);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//            }
         } catch (Exception e) {
             logger.error(e);
         }

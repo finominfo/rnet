@@ -9,6 +9,7 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import hu.finominfo.rnet.common.Utils;
 import org.apache.log4j.Logger;
 
 /**
@@ -18,14 +19,12 @@ public abstract class HandlingIO {
     private final static Logger logger = Logger.getLogger(HandlingIO.class);
 
     private static final Pin START_PIN = RaspiPin.GPIO_09;
-    private volatile GpioController gpio = null;
     private volatile GpioPinDigitalInput stopButton = null;
 
 
     public HandlingIO() {
         try {
-            gpio = GpioFactory.getInstance();
-            stopButton = gpio.provisionDigitalInputPin(START_PIN, PinPullResistance.PULL_UP);
+            stopButton = GpioFactory.getInstance().provisionDigitalInputPin(START_PIN, PinPullResistance.PULL_UP);
             stopButton.setShutdownOptions(true);
             stopButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
                 if (event.getPin().getPin().equals(START_PIN) && event.getState().equals(PinState.LOW)) {
@@ -36,7 +35,7 @@ public abstract class HandlingIO {
                 }
             });
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(Utils.getStackTrace(e));
         }
     }
 

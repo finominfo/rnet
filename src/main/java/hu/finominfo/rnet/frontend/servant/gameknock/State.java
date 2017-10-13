@@ -7,7 +7,6 @@ package hu.finominfo.rnet.frontend.servant.gameknock;
 public enum State {
     
     UserRepeating,
-    UserRepeatingKeyPressed,
     UserRepeatingCheck,
     PlayWrongResult,
     PlayGoodResult,

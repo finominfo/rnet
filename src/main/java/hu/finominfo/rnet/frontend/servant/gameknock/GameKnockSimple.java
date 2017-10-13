@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.frontend.servant.gameknock;
 
 import hu.finominfo.rnet.audio.CompletedEvent;
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.IOActionType;
 import hu.finominfo.rnet.audio.AudioPlayer;
@@ -11,6 +12,7 @@ import java.nio.channels.CompletionHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,27 +26,27 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
     private static final int SHORT = 0;
 //    private static final int LONG = 1;
 
-    private final List<Integer> rythms = new ArrayList<>();
+    private final List<Integer> rhythms = new ArrayList<>();
 
     static volatile long lastKnock = 0;
 
-    public final ScheduledThreadPoolExecutor executor;
+    public final ScheduledExecutorService executor;
     private final KnockProps propertiesReader;
     private final HandlingIO handlingIO;
     private final AudioPlayerWrapper knockPlayer;
     private final AudioPlayer successPlayer;
     private final AudioPlayer failedPlayer;
     private final AtomicInteger state;
-    private final List<Integer> rythmsTemplate;
+    private final List<Integer> rhythmsTemplate;
 
     public GameKnockSimple() {
-        executor = new ScheduledThreadPoolExecutor(4);
+        executor = Globals.get().executor;
         propertiesReader = new KnockProps();
         knockPlayer = new AudioPlayerWrapper(executor, propertiesReader.getKnockVoice());
         successPlayer = new AudioPlayer(executor, propertiesReader.getSuccess());
         failedPlayer = new AudioPlayer(executor, propertiesReader.getFailed());
         state = new AtomicInteger(State.UserRepeating.ordinal());
-        rythmsTemplate = propertiesReader.getRythms();
+        rhythmsTemplate = propertiesReader.getRythms();
         handlingIO = new HandlingIO(executor);
         //knockPlayer.play(null);
     }
@@ -66,8 +68,8 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
                             System.out.println("Call knockPlayer");
                             knockPlayer.play(null);
                             if (lastKnock != 0) {
-                                rythms.add((int) (now - lastKnock));
-                                if (rythmsAreOk()) {
+                                rhythms.add((int) (now - lastKnock));
+                                if (rhythmsAreOk()) {
                                     state.set(State.PlayGoodResult.ordinal());
                                     successPlayer.play(this);
                                 }
@@ -90,7 +92,7 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
     public void completed(CompletedEvent result, Object attachment) {
         if (result.equals(CompletedEvent.AudioPlayFinished)) {
             if (state.compareAndSet(State.PlayWrongResult.ordinal(), State.UserRepeating.ordinal())) {
-                rythms.clear();
+                rhythms.clear();
                 lastKnock = 0;
             }
             if (state.compareAndSet(State.PlayGoodResult.ordinal(), State.OpenDoor.ordinal())) {
@@ -100,7 +102,7 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
         }
         if (result.equals(CompletedEvent.DoorOpened)) {
             if (state.compareAndSet(State.OpenDoor.ordinal(), State.UserRepeating.ordinal())) {
-                rythms.clear();
+                rhythms.clear();
                 lastKnock = 0;
             }
         }
@@ -112,7 +114,7 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
     }
 
     private void userRepeatingCheck() {
-        if (rythmsAreOk()) {
+        if (rhythmsAreOk()) {
             state.set(State.PlayGoodResult.ordinal());
             successPlayer.play(this);
         } else {
@@ -121,22 +123,22 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
         }
     }
 
-    private boolean rythmsAreOk() {
-        if (rythms.size() != rythmsTemplate.size()) {
+    private boolean rhythmsAreOk() {
+        if (rhythms.size() != rhythmsTemplate.size()) {
             return false;
         }
-        TreeMap<Integer, Integer> orderedRythms = new TreeMap<>();
-        for (int i = 0; i < rythms.size(); i++) {
-            int key = rythms.get(i);
-            while (orderedRythms.containsKey(key)) {
+        TreeMap<Integer, Integer> orderedRhythms = new TreeMap<>();
+        for (int i = 0; i < rhythms.size(); i++) {
+            int key = rhythms.get(i);
+            while (orderedRhythms.containsKey(key)) {
                 key++; // Itt egy picit muszály vagyunk csalni
             }
-            orderedRythms.put(key, i);
+            orderedRhythms.put(key, i);
         }
         int numOfShorts = 0;
-        numOfShorts = rythmsTemplate.stream().filter((rythm) -> (rythm == SHORT)).map((Integer _item) -> 1).reduce(numOfShorts, Integer::sum);
+        numOfShorts = rhythmsTemplate.stream().filter((rythm) -> (rythm == SHORT)).map((Integer _item) -> 1).reduce(numOfShorts, Integer::sum);
         for (int i = 0; i < numOfShorts; i++) {
-            if (rythmsTemplate.get(orderedRythms.pollFirstEntry().getValue()) != SHORT) {
+            if (rhythmsTemplate.get(orderedRhythms.pollFirstEntry().getValue()) != SHORT) {
                 return false;
             }
         }
