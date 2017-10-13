@@ -4,6 +4,7 @@ import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
@@ -269,7 +270,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
             String fileName = audioList.getSelectedValue();
             if (fileName != null) {
                 selectedValuesList.stream().forEach(selectedValue -> {
-                    PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.AUDIO), fileName, Integer.valueOf(showSeconds.getText()));
+                    PlayAudio playVideo = new PlayAudio(Utils.getFileType(FileType.AUDIO), fileName, Integer.valueOf(showSeconds.getText()));
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });

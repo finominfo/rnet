@@ -47,6 +47,10 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     closeAudio();
                     Globals.get().audioPlayer = new AudioPlayer(Globals.get().executor, playAudio.getPathAndName());
                     Globals.get().audioPlayer.play(null);
+                    Globals.get().executor.schedule(() -> {
+                        Globals.get().audioPlayer.close();
+                        Globals.get().audioPlayer = null;
+                    }, (Globals.get().audioPlayer.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
                     break;
                 case PLAY_AUDIO_CONTINUOUS:
                     logger.info("PLAY_AUDIO_CONTINUOUS arrived: " + ip);
@@ -85,10 +89,13 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
         AudioPlayer audioPlayer = Globals.get().audioPlayer;
         if (audioPlayer != null) {
             audioPlayer.close();
+            Globals.get().audioPlayer = null;
         }
         AudioPlayerContinuous audioPlayerContinuous = Globals.get().audioPlayerContinuous;
         if (audioPlayerContinuous != null) {
+            audioPlayerContinuous.stop();
             audioPlayerContinuous.close();
+            Globals.get().audioPlayerContinuous = null;
         }
     }
 }

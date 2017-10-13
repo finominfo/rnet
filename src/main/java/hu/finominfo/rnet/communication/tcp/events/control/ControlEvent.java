@@ -3,6 +3,7 @@ package hu.finominfo.rnet.communication.tcp.events.control;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventType;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
@@ -58,11 +59,11 @@ public class ControlEvent extends Event {
                 case PLAY_VIDEO:
                     return new ControlEvent(controlType, PlayVideo.create(msg));
                 case PLAY_AUDIO:
-                    break;
+                    return new ControlEvent(controlType, PlayAudio.create(msg));
                 case PLAY_AUDIO_CONTINUOUS:
-                    break;
+                    return new ControlEvent(controlType, PlayAudio.create(msg));
                 case STOP_AUDIO:
-                    break;
+                    return new ControlEvent(controlType);
                 case RESET_COUNTER:
                     return new ControlEvent(controlType, ResetCounter.create(msg));
                 case START_COUNTER:

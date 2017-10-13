@@ -9,15 +9,18 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 /**
- *
  * @author User
  */
 public class AudioPlayer {
 
     final ScheduledExecutorService ses;
-    private final File file;
-    private final AudioInputStream audioIn;
-    private final Clip clip;
+    private volatile File file;
+    private volatile AudioInputStream audioIn;
+    private volatile Clip clip;
+
+    public Clip getClip() {
+        return clip;
+    }
 
     public AudioPlayer(ScheduledExecutorService ses, String audioFile) {
         this.ses = ses;
@@ -47,10 +50,15 @@ public class AudioPlayer {
     }
 
     public void close() {
-        clip.close();
         try {
+            clip.stop();
+            clip.close();
             audioIn.close();
             TimeUnit.SECONDS.sleep(10);
+            clip = null;
+            audioIn = null;
+            file = null;
+            System.gc();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
