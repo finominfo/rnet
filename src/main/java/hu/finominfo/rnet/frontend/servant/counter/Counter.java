@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.frontend.servant.counter;
 
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.frontend.servant.counter.io.HandlingIO;
 import hu.finominfo.rnet.audio.AudioPlayer;
@@ -112,6 +113,7 @@ public class Counter extends JPanel {
                         diff,
                         props.getTimes().get(i),
                         executor).make();
+                Globals.get().counter = panel[j];
                 i++;
                 mainPanel.add(panel[j]);
             }
@@ -147,7 +149,7 @@ public class Counter extends JPanel {
         }, 1, TimeUnit.SECONDS);
     }
 
-    private static void createAndShowGui() {
+    public static void createAndShowGui() {
         Font customFont = null;
         try {
             customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./Crysta.ttf"));

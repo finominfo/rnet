@@ -5,6 +5,7 @@ import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
@@ -44,6 +45,8 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton startBtn = new JButton("START");
     protected final JButton stopBtn = new JButton("STOP");
     protected final JButton resetBtn = new JButton("RESET");
+    protected final JLabel resetLabel = new JLabel("min");
+    protected final JTextField resetMins = new JTextField();
 
 
     protected final JLabel audioLabel = new JLabel("AUDIO");
@@ -152,6 +155,15 @@ public class FrontEndUtils extends JFrame implements Runnable {
     }
 
     protected void refreshDirs() {
+        if (servantsList.getSelectedValuesList().isEmpty()) {
+            startBtn.setEnabled(false);
+            stopBtn.setEnabled(false);
+            resetBtn.setEnabled(false);
+        } else {
+            startBtn.setEnabled(true);
+            stopBtn.setEnabled(true);
+            resetBtn.setEnabled(true);
+        }
         if (servantsList.getSelectedValuesList().size() < 2) {
             String selectedValue = servantsList.getSelectedValue();
             if (selectedValue != null) {
@@ -223,7 +235,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
             if (fileName != null) {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     ShowPicture showPicture = new ShowPicture(Utils.getFileType(FileType.PICTURE), fileName, Integer.valueOf(showSeconds.getText()));
-                    ControlEvent controlEvent  = new ControlEvent(ControlType.SHOW_PICTURE, showPicture);
+                    ControlEvent controlEvent = new ControlEvent(ControlType.SHOW_PICTURE, showPicture);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
                 servantsList.clearSelection();
@@ -238,11 +250,28 @@ public class FrontEndUtils extends JFrame implements Runnable {
             if (fileName != null) {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.VIDEO), fileName, Integer.valueOf(showSeconds.getText()));
-                    ControlEvent controlEvent  = new ControlEvent(ControlType.PLAY_VIDEO, playVideo);
+                    ControlEvent controlEvent = new ControlEvent(ControlType.PLAY_VIDEO, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
                 servantsList.clearSelection();
             }
         }
+    }
+
+    protected void sendReset() {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        selectedValuesList.stream().forEach(selectedValue -> {
+            ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(Integer.valueOf(resetMins.getText())));
+            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
+        });
+        servantsList.clearSelection();
+    }
+
+    protected void sendStartStop(ControlType controlType) {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        selectedValuesList.stream().forEach(selectedValue -> {
+            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType), Utils.getIp(selectedValue)));
+        });
+        servantsList.clearSelection();
     }
 }

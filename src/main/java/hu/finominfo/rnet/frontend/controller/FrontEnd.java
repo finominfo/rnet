@@ -2,6 +2,7 @@ package hu.finominfo.rnet.frontend.controller;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
@@ -58,7 +59,7 @@ public class FrontEnd extends FrontEndUtils {
         showPeriod.setFont(new Font(showPeriod.getFont().getName(), Font.BOLD, 14));
         showPeriod.setBounds(30, 460, 150, 30);
         add(showPeriod);
-        showSeconds.setFont(new Font(showPeriod.getFont().getName(), Font.BOLD, 16));
+        showSeconds.setFont(new Font(showPeriod.getFont().getName(), Font.BOLD, 20));
         showSeconds.setBounds(180, 460, 40, 30);
         showSeconds.setHorizontalAlignment(JTextField.RIGHT);
         showSeconds.setText("30");
@@ -67,12 +68,23 @@ public class FrontEnd extends FrontEndUtils {
         counterLabel.setFont(new Font(counterLabel.getFont().getName(), Font.BOLD, 25));
         counterLabel.setBounds(30, 530, 180, 30);
         add(counterLabel);
-        startBtn.setBounds(30, 570, 80, 30);
+        startBtn.setBounds(30, 570, 90, 30);
         add(startBtn);
-        stopBtn.setBounds(30, 610, 80, 30);
+        stopBtn.setBounds(130, 570, 90, 30);
         add(stopBtn);
-        resetBtn.setBounds(30, 650, 80, 30);
+        resetBtn.setBounds(30, 620, 90, 30);
         add(resetBtn);
+        resetBtn.addActionListener(e -> sendReset());
+        startBtn.addActionListener(e -> sendStartStop(ControlType.START_COUNTER));
+        stopBtn.addActionListener(e -> sendStartStop(ControlType.STOP_COUNTER));
+        resetLabel.setFont(new Font(resetLabel.getFont().getName(), Font.BOLD, 20));
+        resetLabel.setBounds(185, 620, 250, 30);
+        add(resetLabel);
+        resetMins.setFont(new Font(resetMins.getFont().getName(), Font.BOLD, 20));
+        resetMins.setBounds(140, 620, 40, 30);
+        resetMins.setHorizontalAlignment(JTextField.RIGHT);
+        resetMins.setText("25");
+        add(resetMins);
 
 
 

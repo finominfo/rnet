@@ -18,6 +18,9 @@ public class ExceptionHandler extends ChannelDuplexHandler {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         logger.error(ipAndPort + " error.", cause);
         String ip = Globals.get().getIp(ipAndPort);
+        //ctx.channel().close();
+        //ctx.close();
+        //ctx.channel().deregister();
         Globals.get().serverClients.remove(ip);
         Globals.get().connectedServers.remove(ip);
 

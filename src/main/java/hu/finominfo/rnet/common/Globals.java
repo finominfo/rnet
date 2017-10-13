@@ -23,7 +23,6 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -37,7 +36,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 29;
+    public final static int VERSION = 44;
     public final static String JAR_NAME = "rnet.jar";
     public volatile Task currentTask = null;
     public volatile Worker controller = null;
@@ -46,6 +45,7 @@ public class Globals {
     public volatile Client client = null;
     public volatile ConnectionBroadcaster broadcaster= null;
     public volatile ConnectionMonitor monitor = null;
+    public volatile hu.finominfo.rnet.frontend.servant.counter.Panel counter = null;
 
 
     private final static Logger logger = Logger.getLogger(Globals.class);

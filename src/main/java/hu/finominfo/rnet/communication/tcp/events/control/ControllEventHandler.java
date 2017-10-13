@@ -3,6 +3,7 @@ package hu.finominfo.rnet.communication.tcp.events.control;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.frontend.servant.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.VideoPlayer;
@@ -42,10 +43,20 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                 case STOP_AUDIO:
                     break;
                 case RESET_COUNTER:
+                    logger.info("RESET_COUNTER arrived: " + ip);
+                    int minutes = ((ResetCounter) msg.getControlObject()).getMinutes();
+                    Globals.get().counter.makeStart();
+                    Globals.get().counter.makeStop();
+                    Globals.get().counter.milliseconds = minutes * 60_000L;
+                    Globals.get().counter.resetButtonPressed();
                     break;
                 case START_COUNTER:
+                    logger.info("START_COUNTER arrived: " + ip);
+                    Globals.get().counter.makeStart();
                     break;
                 case STOP_COUNTER:
+                    logger.info("STOP_COUNTER arrived: " + ip);
+                    Globals.get().counter.makeStop();
                     break;
             }
         }catch (Exception e) {

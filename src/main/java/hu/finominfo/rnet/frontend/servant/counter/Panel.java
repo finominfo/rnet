@@ -2,9 +2,8 @@ package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerWrapper;
-import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,34 +23,34 @@ import javax.swing.JPanel;
  */
 public class Panel extends JPanel {
 
-    private static final AtomicBoolean beeping = new AtomicBoolean(false);
-    private static final AtomicBoolean starting = new AtomicBoolean(false);
-    private static final AtomicBoolean successPlayed = new AtomicBoolean(false);
-    private static final AtomicBoolean failedPlayed = new AtomicBoolean(false);
-    private static final AtomicBoolean normalTextColor = new AtomicBoolean(true);
-    private static final AtomicLong lastColorChanged = new AtomicLong(0);
+    public static final AtomicBoolean beeping = new AtomicBoolean(false);
+    public static final AtomicBoolean starting = new AtomicBoolean(false);
+    public static final AtomicBoolean successPlayed = new AtomicBoolean(false);
+    public static final AtomicBoolean failedPlayed = new AtomicBoolean(false);
+    public static final AtomicBoolean normalTextColor = new AtomicBoolean(true);
+    public static final AtomicLong lastColorChanged = new AtomicLong(0);
     public final double diff;
-    private final Color backGroundColor;
-    private final Color successBackGroundColor;
-    private final Color failedBackGroundColor;
-    private final ScheduledExecutorService ses;
-    private volatile long milliseconds;
-    private volatile long start;
-    private volatile long finished;
-    private volatile JLabel timer;
-    private volatile JButton stopStartButton;
-    private volatile JButton resetButton;
-    private final String stopStartTexts[] = new String[]{"STOP", "START"};
-    private final String resetButtonText = "RESET";
-    private volatile boolean resetState = true;
-    private volatile long lastMovement;
-    private final AtomicBoolean buttonsAreVisible = new AtomicBoolean(true);
-    private final Font customFont;
-    private final AudioPlayerWrapper beep;
-    private final AudioPlayer success;
-    private final AudioPlayer failed;
-    private static final long DELAY = 10_000;
-    private static final long DELAY_VISIBLE = 5_000;
+    public final Color backGroundColor;
+    public final Color successBackGroundColor;
+    public final Color failedBackGroundColor;
+    public final ScheduledExecutorService ses;
+    public volatile long milliseconds;
+    public volatile long start;
+    public volatile long finished;
+    public volatile JLabel timer;
+    public volatile JButton stopStartButton;
+    public volatile JButton resetButton;
+    public final String stopStartTexts[] = new String[]{"STOP", "START"};
+    public final String resetButtonText = "RESET";
+    public volatile boolean resetState = true;
+    public volatile long lastMovement;
+    public final AtomicBoolean buttonsAreVisible = new AtomicBoolean(true);
+    public final Font customFont;
+    public final AudioPlayerWrapper beep;
+    public final AudioPlayer success;
+    public final AudioPlayer failed;
+    public static final long DELAY = 10_000;
+    public static final long DELAY_VISIBLE = 5_000;
 
     public final Runnable refresh = new Runnable() {
         @Override
@@ -92,12 +91,12 @@ public class Panel extends JPanel {
         }
     };
 
-    private void beepAndFlash() {
+    public void beepAndFlash() {
         beep.play(null);
         flash();
     }
 
-    private void flash() {
+    public void flash() {
         if (normalTextColor.compareAndSet(true, false)) {
             timer.setForeground(Color.BLACK);
             ses.schedule(new Runnable() {
@@ -111,7 +110,7 @@ public class Panel extends JPanel {
         }
     }
 
-    private void moreBeepAndFlash() {
+    public void moreBeepAndFlash() {
         if (beeping.compareAndSet(false, true)) {
             ses.submit(new Runnable() {
                 @Override
@@ -132,7 +131,7 @@ public class Panel extends JPanel {
         }
     }
 
-    private void changeColorIfPossible(Color newColor) {
+    public void changeColorIfPossible(Color newColor) {
         long now = System.currentTimeMillis();
         long last = lastColorChanged.get();
         if (now - last > 700 && lastColorChanged.compareAndSet(last, now)) {
@@ -170,7 +169,7 @@ public class Panel extends JPanel {
         return this;
     }
 
-    private JLabel createTimer() {
+    public JLabel createTimer() {
         timer = new JLabel();
         timer.setBackground(Color.BLACK);
         timer.setForeground(Color.YELLOW);
@@ -219,20 +218,20 @@ public class Panel extends JPanel {
         return timer;
     }
 
-    private String getTime(long millisecs) {
+    public String getTime(long millisecs) {
         int secs = (int) (millisecs / 1000);
         int remSecs = secs % 60;
         int remMins = secs / 60;
         return String.format("%02d:%02d", remMins, remSecs);
     }
 
-    private void start() {
+    public void start() {
         finished = System.currentTimeMillis();
         start = System.currentTimeMillis();
 //        ses.submit(refresh);
     }
 
-    private JButton createStopStartButton() {
+    public JButton createStopStartButton() {
         stopStartButton = new JButton();
         stopStartButton.setFont(stopStartButton.getFont().deriveFont(Font.BOLD, (float) (16d * diff)));
         stopStartButton.setHorizontalAlignment(JLabel.LEFT);
@@ -243,7 +242,7 @@ public class Panel extends JPanel {
         return stopStartButton;
     }
 
-    private void stopStartButtonPressed() {
+    public void stopStartButtonPressed() {
         setVisible();
         if (finished == 0) {
             makeStop();
@@ -261,7 +260,7 @@ public class Panel extends JPanel {
         }
     }
 
-    private void makeStart() {
+    public void makeStart() {
         start = System.currentTimeMillis() - finished + start;
         finished = 0;
         stopStartButton.setText(stopStartTexts[0]);
@@ -281,7 +280,7 @@ public class Panel extends JPanel {
         resetState = false;
     }
 
-    private boolean setVisible() {
+    public boolean setVisible() {
         if (!starting.get()) {
             lastMovement = System.currentTimeMillis();
             boolean becameVisible = buttonsAreVisible.compareAndSet(false, true);
@@ -299,14 +298,14 @@ public class Panel extends JPanel {
         }
     }
 
-    private void setInvisible() {
+    public void setInvisible() {
         if (buttonsAreVisible.compareAndSet(true, false)) {
             stopStartButton.setVisible(false);
             resetButton.setVisible(false);
         }
     }
 
-    private JButton createResetButton() {
+    public JButton createResetButton() {
         resetButton = new JButton();
         resetButton.setFont(resetButton.getFont().deriveFont(Font.BOLD, (float) (16d * diff)));
         resetButton.setHorizontalAlignment(JLabel.LEFT);
@@ -317,7 +316,7 @@ public class Panel extends JPanel {
         return resetButton;
     }
 
-    private void resetButtonPressed() {
+    public void resetButtonPressed() {
         setVisible();
         if (finished != 0) {
             resetState = true;
