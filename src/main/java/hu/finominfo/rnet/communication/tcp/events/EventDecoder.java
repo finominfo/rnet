@@ -53,7 +53,7 @@ public class EventDecoder extends ByteToMessageDecoder {
                 break;
             case DIR:
                 inputCollector.setEventType(EventType.DIR);
-                if (input.readableBytes() < input.getInt(5) + 4) {
+                if (input.readableBytes() < input.getInt(5) + input.getInt(9) + 8) {
                     return;
                 }
                 inputCollector.setEventType(null);
