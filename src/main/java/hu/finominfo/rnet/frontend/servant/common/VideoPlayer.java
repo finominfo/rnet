@@ -1,15 +1,10 @@
-package hu.finominfo.rnet.frontend.servant;
+package hu.finominfo.rnet.frontend.servant.common;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import org.apache.log4j.Logger;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 

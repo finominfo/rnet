@@ -45,7 +45,7 @@ public abstract class HandlingIO {
             try {
                 Thread.sleep(1);
             } catch (InterruptedException ex) {
-                System.out.println(ex.getMessage());
+                logger.error(ex.getMessage());
             }
         }
         return stopButton.getState().equals(PinState.LOW);

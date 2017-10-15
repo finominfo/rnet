@@ -1,13 +1,9 @@
-package hu.finominfo.rnet.frontend.servant;
+package hu.finominfo.rnet.frontend.servant.common;
 
 import hu.finominfo.rnet.common.Globals;
 import org.apache.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**

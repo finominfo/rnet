@@ -12,7 +12,7 @@ import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
-import hu.finominfo.rnet.frontend.servant.VideoPlayer;
+import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
@@ -39,7 +39,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 68;
+    public final static int VERSION = 69;
     public final static String JAR_NAME = "rnet.jar";
     public volatile Task currentTask = null;
     public volatile Worker controller = null;

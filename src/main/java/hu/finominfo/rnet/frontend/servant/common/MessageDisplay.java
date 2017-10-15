@@ -1,13 +1,11 @@
-package hu.finominfo.rnet.frontend.servant;
+package hu.finominfo.rnet.frontend.servant.common;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

@@ -25,7 +25,7 @@ public class KnockProps {
         knockVoice = prop.getProperty("knockVoice", "knock.wav");
         success = prop.getProperty("successMorse", "success.wav");
         failed = prop.getProperty("failedMorse", "failed.wav");
-        List<String> myList = Arrays.asList(prop.getProperty("rythms", "3,1,1").split(","));
+        List<String> myList = Arrays.asList(prop.getProperty("rythms", "1,2,3,2,1,2").split(","));
         List<Integer> intList = myList.stream().map((String s) -> Integer.parseInt(s) - 1).collect(Collectors.toList());
         rythms = new ArrayList<>();
         boolean firstRun = true;

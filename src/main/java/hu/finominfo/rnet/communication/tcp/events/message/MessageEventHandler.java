@@ -1,7 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.message;
 
 import hu.finominfo.rnet.common.Globals;
-import hu.finominfo.rnet.frontend.servant.MessageDisplay;
+import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;

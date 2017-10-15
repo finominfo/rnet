@@ -12,6 +12,7 @@ import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import hu.finominfo.rnet.audio.CompletedEvent;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
+import org.apache.log4j.Logger;
 
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,8 @@ import java.util.concurrent.TimeUnit;
  * @author User
  */
 public class HandlingIO {
+
+    private final static Logger logger = Logger.getLogger(HandlingIO.class);
 
     private static final Pin DOOR_PIN = RaspiPin.GPIO_00;
     private static final Pin KNOCK_PIN = RaspiPin.GPIO_02;
@@ -48,7 +51,7 @@ public class HandlingIO {
         knockButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
             if (event.getPin().getPin().equals(KNOCK_PIN) && event.getState().equals(PinState.LOW) && lastAction == null) {
                 if (checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile()) {
-                    System.out.println("Pressed knock button");
+                    logger.info("Pressed knock button");
                     lastAction = IOActionType.KnockPressed;
                 }
             }
