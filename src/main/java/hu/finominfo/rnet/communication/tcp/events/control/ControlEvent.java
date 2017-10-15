@@ -57,12 +57,13 @@ public class ControlEvent extends Event {
                 case SHOW_PICTURE:
                     return new ControlEvent(controlType, ShowPicture.create(msg));
                 case PLAY_VIDEO:
+                case PLAY_VIDEO_CONTINUOUS:
                     return new ControlEvent(controlType, PlayVideo.create(msg));
                 case PLAY_AUDIO:
-                    return new ControlEvent(controlType, PlayAudio.create(msg));
                 case PLAY_AUDIO_CONTINUOUS:
                     return new ControlEvent(controlType, PlayAudio.create(msg));
                 case STOP_AUDIO:
+                case STOP_VIDEO:
                     return new ControlEvent(controlType);
                 case RESET_COUNTER:
                     return new ControlEvent(controlType, ResetCounter.create(msg));

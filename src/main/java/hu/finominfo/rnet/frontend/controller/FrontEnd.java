@@ -73,7 +73,11 @@ public class FrontEnd extends FrontEndUtils {
         resetMins.setText("25");
         add(resetMins);
 
-
+        statusLabel.setFont(new Font(counterLabel.getFont().getName(), Font.BOLD, 25));
+        statusLabel.setBounds(280, 530, 180, 30);
+        add(statusLabel);
+        status.setBounds(280, 570, 450, 120);
+        add(status);
 
         audioLabel.setFont(new Font(audioLabel.getFont().getName(), Font.BOLD, 25));
         add(audioLabel);
@@ -110,9 +114,15 @@ public class FrontEnd extends FrontEndUtils {
         add(videoAdd);
         videoDel.setBounds(670, 420, 60, 30);
         add(videoDel);
+        videoContinuousPlay.setBounds(530, 460, 110, 30);
+        videoStop.setBounds(660, 460, 70, 30);
+        add(videoContinuousPlay);
+        add(videoStop);
         videoAdd.addActionListener(e -> sendFile(Globals.videoFolder, FileType.VIDEO));
         videoDel.addActionListener(e -> deleteFile(Globals.videoFolder, FileType.VIDEO, videoList));
-        videoPlay.addActionListener(e -> playVideo());
+        videoPlay.addActionListener(e -> playVideo(ControlType.PLAY_VIDEO));
+        videoContinuousPlay.addActionListener(e -> playVideo(ControlType.PLAY_VIDEO_CONTINUOUS));
+        videoStop.addActionListener(e -> sendOnlyControl(ControlType.STOP_VIDEO));
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));

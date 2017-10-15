@@ -1,5 +1,7 @@
 package hu.finominfo.rnet.audio;
 
+import hu.finominfo.rnet.common.Globals;
+
 import java.io.File;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,10 +38,12 @@ public class AudioPlayer {
 
     public void play(final CompletionHandler<CompletedEvent, Object> comp) {
         try {
+            Globals.get().status.setAudio("Playing: " + file.getName());
             clip.start();
             ses.schedule(() -> {
                 clip.stop();
                 clip.setFramePosition(0);
+                Globals.get().status.setAudio(null);
                 if (comp != null) {
                     comp.completed(CompletedEvent.AudioPlayFinished, null);
                 }

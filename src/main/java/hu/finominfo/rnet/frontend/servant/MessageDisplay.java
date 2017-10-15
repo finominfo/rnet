@@ -36,15 +36,24 @@ public class MessageDisplay {
             //dialog.setFont(new Font("Serif", Font.BOLD, 30));
             dialog.setTitle("Message from operator");
             dialog.setModal(true);
+            dialog.setUndecorated(true);
             dialog.setContentPane(optionPane);
             dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
             dialog.setAlwaysOnTop(true);
             dialog.pack();
-            Globals.get().executor.schedule(() -> dialog.dispose(), seconds, TimeUnit.SECONDS);
-            Globals.get().executor.schedule(() -> dialog.setVisible(true), 100, TimeUnit.MILLISECONDS);
+            Globals.get().executor.schedule(() -> {
+                Globals.get().status.setMessage(null);
+                dialog.dispose();
+            }, seconds, TimeUnit.SECONDS);
+            Globals.get().executor.schedule(() -> {
+                String shortMessage = message.length() <= 10 ? message : (message.substring(0, 10) + "...");
+                Globals.get().status.setMessage("Showing: " + shortMessage);
+                dialog.setVisible(true);
+            }, 10, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
         }
+
     }
 
     public static void main(String[] args) {

@@ -12,6 +12,7 @@ import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
+import hu.finominfo.rnet.frontend.servant.VideoPlayer;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
@@ -38,7 +39,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 58;
+    public final static int VERSION = 68;
     public final static String JAR_NAME = "rnet.jar";
     public volatile Task currentTask = null;
     public volatile Worker controller = null;
@@ -50,6 +51,9 @@ public class Globals {
     public volatile hu.finominfo.rnet.frontend.servant.counter.Panel counter = null;
     public volatile AudioPlayer audioPlayer = null;
     public volatile AudioPlayerContinuous audioPlayerContinuous = null;
+    public volatile Status status = new Status();
+    public volatile VideoPlayer videoPlayer = null;
+
 
     private final static Logger logger = Logger.getLogger(Globals.class);
     public final AtomicLong shouldWait = new AtomicLong(0);

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by kalman.kovacs@gmail.com on 2017.10.07.
  */
-public class PictureDisplay{
+public class PictureDisplay {
 
     private final static Logger logger = Logger.getLogger(PictureDisplay.class);
 
@@ -32,8 +32,14 @@ public class PictureDisplay{
             final JDialog dlg = pane.createDialog(null);
             //pane.getRootPane().setBorder( BorderFactory.createLineBorder(Color.RED) );
             dlg.setAlwaysOnTop(true);
-            Globals.get().executor.schedule(() -> dlg.dispose(), seconds, TimeUnit.SECONDS);
-            Globals.get().executor.schedule(() -> dlg.setVisible(true), 1, TimeUnit.MILLISECONDS);
+            Globals.get().executor.schedule(() -> {
+                Globals.get().status.setPicture(null);
+                dlg.dispose();
+            }, seconds, TimeUnit.SECONDS);
+            Globals.get().executor.schedule(() -> {
+                Globals.get().status.setPicture("Showing: " + pathAndName);
+                dlg.setVisible(true);
+            }, 10, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             logger.error(e);
         }

@@ -121,12 +121,13 @@ public class Servant extends Worker implements ChannelFutureListener {
                 }
             case SEND_DIR:
                 try {
-                    String status = "";
-                    DirEvent dirEvent = new DirEvent(status);
-                    Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
-                            .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
-                    Globals.get().connectedServers.values().stream()
-                            .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(dirEvent));
+                    if (!Globals.get().connectedServers.isEmpty()) {
+                        DirEvent dirEvent = new DirEvent(Globals.get().status.getCurrent());
+                        Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
+                                .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
+                        Globals.get().connectedServers.values().stream()
+                                .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(dirEvent));
+                    }
                 } catch (Exception e) {
                     logger.error(e);
                 } finally {

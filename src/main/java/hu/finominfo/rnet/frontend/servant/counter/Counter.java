@@ -79,25 +79,25 @@ public class Counter extends JPanel {
         } catch (Exception e) {
             logger.error(e);
         }
-        executor.submit(new Runnable() {
-            private volatile AudioPlayer player = null;
-
-            @Override
-            public void run() {
-                try {
-                    if (player != null) {
-                        player.close();
-                    }
-                    if (!animalVoices.isEmpty()) {
-                        player = new AudioPlayer(executor, animalVoices.get(random.nextInt(animalVoices.size())));
-                    }
-                    player.play(null);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                executor.schedule(this, random.nextInt(60), TimeUnit.SECONDS);
-            }
-        });
+//        executor.submit(new Runnable() {
+//            private volatile AudioPlayer player = null;
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    if (player != null) {
+//                        player.close();
+//                    }
+//                    if (!animalVoices.isEmpty()) {
+//                        player = new AudioPlayer(executor, animalVoices.get(random.nextInt(animalVoices.size())));
+//                    }
+//                    player.play(null);
+//                } catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//                executor.schedule(this, random.nextInt(60), TimeUnit.SECONDS);
+//            }
+//        });
         Panel[][] panels = new Panel[ROW][COLUMN];
         int i = 0;
         for (Panel[] panel : panels) {

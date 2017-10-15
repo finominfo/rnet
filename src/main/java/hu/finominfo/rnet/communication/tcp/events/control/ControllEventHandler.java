@@ -33,13 +33,20 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
                     final PictureDisplay pictureDisplay = new PictureDisplay(showPicture.getPathAndName(), showPicture.getSeconds());
-                    Globals.get().executor.submit(() -> pictureDisplay.display());
+                    Globals.get().executor.submit(pictureDisplay::display);
                     break;
                 case PLAY_VIDEO:
-                    logger.info("PLAY_VIDEO arrived: " + ip);
+                case PLAY_VIDEO_CONTINUOUS:
+                    logger.info(msg.getControlType().name() + " arrived: " + ip);
+                    closeVideo();
                     PlayVideo playVideo = (PlayVideo) msg.getControlObject();
                     final VideoPlayer videoPlayer = new VideoPlayer(playVideo);
-                    Globals.get().executor.submit(() -> videoPlayer.play());
+                    Globals.get().videoPlayer = videoPlayer;
+                    if (msg.getControlType().equals(ControlType.PLAY_VIDEO_CONTINUOUS)) {
+                        Globals.get().executor.submit(videoPlayer::continuousPlay);
+                    } else {
+                        Globals.get().executor.submit(videoPlayer::play);
+                    }
                     break;
                 case PLAY_AUDIO:
                     logger.info("PLAY_AUDIO arrived: " + ip);
@@ -63,6 +70,10 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("STOP_AUDIO arrived: " + ip);
                     closeAudio();
                     break;
+                case STOP_VIDEO:
+                    logger.info("STOP_VIDEO arrived: " + ip);
+                    closeVideo();
+                    break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
                     int minutes = ((ResetCounter) msg.getControlObject()).getMinutes();
@@ -82,6 +93,14 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
             }
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
+        }
+    }
+
+    private void closeVideo() {
+        VideoPlayer videoPlayer = Globals.get().videoPlayer;
+        if (videoPlayer != null) {
+            videoPlayer.stop();
+            Globals.get().videoPlayer = null;
         }
     }
 

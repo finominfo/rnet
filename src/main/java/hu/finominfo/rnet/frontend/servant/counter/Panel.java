@@ -2,6 +2,7 @@ package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerWrapper;
+import hu.finominfo.rnet.common.Globals;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -61,7 +62,9 @@ public class Panel extends JPanel {
             }
             long time = start - now + milliseconds;
             if (time > 0 && finished == 0) {
-                timer.setText(getTime(time));
+                String time1 = getTime(time);
+                timer.setText(time1);
+                Globals.get().status.setCounter(time1);
                 Panel.this.setBackground(backGroundColor);
                 int sec = (int) (time / 1000);
                 if (sec % 60 == 0 && sec > 59) {
@@ -177,6 +180,7 @@ public class Panel extends JPanel {
         timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (850d * diff)));
         timer.setHorizontalAlignment(JLabel.LEFT);
         timer.setText(getTime(milliseconds));
+        Globals.get().status.setCounter(getTime(milliseconds));
         start();
         timer.addMouseListener(new MouseAdapter() {
             @Override
@@ -209,6 +213,7 @@ public class Panel extends JPanel {
                         long time = Long.valueOf(split[0]) * 60_000L + Long.valueOf(split[1]) * 1_000;
                         milliseconds = time;
                         timer.setText(getTime(milliseconds));
+                        Globals.get().status.setCounter(getTime(milliseconds));
                     } catch (Throwable t) {
                         System.out.println(t.getMessage());
                     }
@@ -323,6 +328,7 @@ public class Panel extends JPanel {
             finished = System.currentTimeMillis();
             start = System.currentTimeMillis();
             timer.setText(getTime(milliseconds));
+            Globals.get().status.setCounter(getTime(milliseconds));
             if (normalTextColor.compareAndSet(false, true)) {
                 timer.setForeground(Color.YELLOW);
             }

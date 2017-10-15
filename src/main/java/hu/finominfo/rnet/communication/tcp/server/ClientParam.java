@@ -20,7 +20,16 @@ public class ClientParam {
     private volatile Client client = null;
     private volatile long lastTrying = 0;
     private volatile String name = "";
+    private volatile String status = null;
     private final Map<String, List<String>> dirs = new HashMap();
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public String getName() {
         return name;

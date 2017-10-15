@@ -68,6 +68,8 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton videoPlay = new JButton("PLAY");
     protected final JButton videoAdd = new JButton("ADD");
     protected final JButton videoDel = new JButton("DEL");
+    protected final JButton videoContinuousPlay = new JButton("CONT PLAY");
+    protected final JButton videoStop = new JButton("STOP");
 
 
     protected final JLabel pictureLabel = new JLabel("PICTURE");
@@ -80,6 +82,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel taskTextLabel = new JLabel("Remaining tasks:");
     protected final JLabel taskNumber = new JLabel();
+
+    protected final JTextArea status = new JTextArea();
+    protected final JLabel statusLabel = new JLabel("STATUS");
 
     protected final static Logger logger = Logger.getLogger(FrontEnd.class);
 
@@ -190,11 +195,15 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     pictureListModel.clear();
                     dirs.get(Globals.pictureFolder).stream().forEach(str -> pictureListModel.addElement(str));
                 }
+                status.setText(Utils.getClientParam(selectedValue).getStatus());
             } else {
                 videoListModel.clear();
                 audioListModel.clear();
                 pictureListModel.clear();
+                status.setText("");
             }
+        } else {
+            status.setText("");
         }
     }
 
@@ -249,14 +258,14 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     }
 
-    protected void playVideo() {
+    protected void playVideo(ControlType controlType) {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         if (!selectedValuesList.isEmpty() && videoList.getSelectedValue() != null) {
             String fileName = videoList.getSelectedValue();
             if (fileName != null) {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.VIDEO), fileName, Integer.valueOf(showSeconds.getText()));
-                    ControlEvent controlEvent = new ControlEvent(ControlType.PLAY_VIDEO, playVideo);
+                    ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
                 servantsList.clearSelection();

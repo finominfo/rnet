@@ -20,6 +20,7 @@ public class DirEventHandler extends SimpleChannelInboundHandler<DirEvent> {
         logger.info("DirEvent arrived: " + ip);
         try {
             ClientParam clientParam = Globals.get().serverClients.get(ip);
+            clientParam.setStatus(msg.getStatus());
             msg.getDirs().entrySet().stream().forEach(entry -> clientParam.getDirs().put(entry.getKey(), entry.getValue()));
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));

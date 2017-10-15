@@ -11,7 +11,9 @@ public enum ControlType {
     STOP_AUDIO,
     RESET_COUNTER,
     START_COUNTER,
-    STOP_COUNTER;
+    STOP_COUNTER,
+    PLAY_VIDEO_CONTINUOUS,
+    STOP_VIDEO;
 
 
     public byte getNumber() {
