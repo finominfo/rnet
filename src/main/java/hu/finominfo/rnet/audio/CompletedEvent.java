@@ -8,5 +8,5 @@ package hu.finominfo.rnet.audio;
 public enum CompletedEvent {
     AudioPlayFinished,
     RythmPlayFinished,
-    DoorOpened;
+    DoorOpened
 }

@@ -34,7 +34,6 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
     static volatile long lastKnock = 0;
 
     public final ScheduledExecutorService executor;
-    private final KnockProps propertiesReader;
     private final HandlingIO handlingIO;
     private final AudioPlayerWrapper knockPlayer;
     private final AudioPlayer successPlayer;
@@ -44,7 +43,7 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
 
     public GameKnockSimple(HandlingIO handlingIO) {
         executor = Globals.get().executor;
-        propertiesReader = new KnockProps();
+        KnockProps propertiesReader = new KnockProps();
         knockPlayer = new AudioPlayerWrapper(executor, propertiesReader.getKnockVoice());
         successPlayer = new AudioPlayer(executor, propertiesReader.getSuccess());
         failedPlayer = new AudioPlayer(executor, propertiesReader.getFailed());

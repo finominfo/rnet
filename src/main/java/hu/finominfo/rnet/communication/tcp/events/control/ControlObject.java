@@ -6,5 +6,5 @@ import io.netty.buffer.ByteBuf;
  * Created by kalman.kovacs@gmail.com on 2017.10.12.
  */
 public interface ControlObject {
-    public void getData(ByteBuf buf);
+    void getData(ByteBuf buf);
 }

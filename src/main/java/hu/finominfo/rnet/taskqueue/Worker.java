@@ -62,10 +62,7 @@ public abstract class Worker implements Runnable {
     protected boolean shouldHandleAgain(long millis) {
         long now = System.currentTimeMillis();
         long last = lastHandling.get();
-        if ((now - last > millis) && lastHandling.compareAndSet(last, now)) {
-            return true;
-        }
-        return false;
+        return (now - last > millis) && lastHandling.compareAndSet(last, now);
     }
 
     protected abstract void runCurrentTask();

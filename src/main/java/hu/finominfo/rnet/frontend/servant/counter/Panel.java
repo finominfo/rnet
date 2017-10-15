@@ -210,8 +210,7 @@ public class Panel extends JPanel {
 
 //                        String newTime = JOptionPane.showInputDialog("New time (hh:mm): ");
                         String[] split = newTime.split(":");
-                        long time = Long.valueOf(split[0]) * 60_000L + Long.valueOf(split[1]) * 1_000;
-                        milliseconds = time;
+                        milliseconds = Long.valueOf(split[0]) * 60_000L + Long.valueOf(split[1]) * 1_000;
                         timer.setText(getTime(milliseconds));
                         Globals.get().status.setCounter(getTime(milliseconds));
                     } catch (Throwable t) {

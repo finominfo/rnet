@@ -59,15 +59,14 @@ public class Utils {
         return path;
     }
 
-    public static final String getStackTrace(Exception e) {
+    public static String getStackTrace(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
-        String sStackTrace = sw.toString();
-        return sStackTrace;
+        return sw.toString();
     }
 
-    public static final List<String> getFilesFromFolder(String folder) {
+    public static List<String> getFilesFromFolder(String folder) {
         List<String> files = new ArrayList<>();
         try {
             Files.newDirectoryStream(Paths.get(folder), path -> path.toFile().isFile())

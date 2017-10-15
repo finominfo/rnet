@@ -15,14 +15,13 @@ import java.net.InetSocketAddress;
  */
 public class ConnectionBroadcaster {
     private final EventLoopGroup group;
-    private final Bootstrap bootstrap;
     private final Channel ch;
     private final int port;
 
     public ConnectionBroadcaster(int port) {
         this.port = port;
         group = new NioEventLoopGroup();
-        bootstrap = new Bootstrap();
+        Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)

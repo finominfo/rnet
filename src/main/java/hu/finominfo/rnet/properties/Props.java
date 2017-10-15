@@ -11,13 +11,9 @@ import java.util.stream.Collectors;
 public class Props {
 
     private volatile List<Long> times;
-    private final String defaultTimes = "120, 120, 120, 120, 120, 120, 120, 120, 120, 120";
     private volatile List<String> roomNames;
-    private final String defaultNames = "ROOM 1, ROOM 2, ROOM 3, ROOM 4, ROOM 5, ROOM 6, ROOM 7, ROOM 8, ROOM 9, ROOM10";
     private volatile List<String> baseAudio;
-    private final String defaultBaseAudio = "rainforest1.wav,rainforest2.wav";
     private volatile List<String> animalVoices;
-    private final String defaultAnimalVoices = "bird1.wav,chewbacca.wav,frogs.wav,gorilla.wav,monkey.wav";
     private volatile String beep;
     private volatile String success;
     private volatile String failed;
@@ -32,10 +28,14 @@ public class Props {
 
     private Props() {
         Properties prop = PropReader.get().getProperties();
+        String defaultTimes = "120, 120, 120, 120, 120, 120, 120, 120, 120, 120";
         List<String> myList = Arrays.asList(prop.getProperty("times", defaultTimes).split(","));
         times = myList.stream().map((String s) -> Long.parseLong(s.trim()) * 60_000L).collect(Collectors.toList());
+        String defaultNames = "ROOM 1, ROOM 2, ROOM 3, ROOM 4, ROOM 5, ROOM 6, ROOM 7, ROOM 8, ROOM 9, ROOM10";
         roomNames = Arrays.asList(prop.getProperty("roomNames", defaultNames).split(","));
+        String defaultBaseAudio = "rainforest1.wav,rainforest2.wav";
         baseAudio = Arrays.asList(prop.getProperty("baseAudio", defaultBaseAudio).split(","));
+        String defaultAnimalVoices = "bird1.wav,chewbacca.wav,frogs.wav,gorilla.wav,monkey.wav";
         animalVoices = Arrays.asList(prop.getProperty("animalVoices", defaultAnimalVoices).split(","));
         beep = prop.getProperty("beep", "beep.wav");
         success = prop.getProperty("success", "success.wav");

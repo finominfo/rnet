@@ -1,5 +1,7 @@
 package hu.finominfo.rnet.common;
 
+import org.apache.log4j.Logger;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
  */
 public class Interface {
 
+    private static final Logger logger = Logger.getLogger(Interface.class);
     public static volatile boolean interfaceOK = false;
     public static final List<Long> addresses = new ArrayList<>();
     public static final List<String> ips = new ArrayList<>();
@@ -61,6 +64,7 @@ public class Interface {
             }
 
         } catch (Exception ex) {
+            logger.error(ex);
         }
     }
 }

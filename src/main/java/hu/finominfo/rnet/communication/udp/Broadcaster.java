@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Broadcaster implements ChannelFutureListener, Runnable{
 
     private final static Logger logger = Logger.getLogger(Broadcaster.class);
-    private final int port;
     private final AtomicInteger times;
     private final AtomicInteger numOfSuccessfulSending;
     private final AtomicInteger faultTimes;
@@ -26,7 +25,6 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
     private volatile CompletionHandler<CompletedEvent, Integer> completionHandler;
 
     public Broadcaster(int port) {
-        this.port = port;
         this.times = new AtomicInteger();
         this.faultTimes = new AtomicInteger();
         this.waitingInMilliSeconds = new AtomicInteger();
