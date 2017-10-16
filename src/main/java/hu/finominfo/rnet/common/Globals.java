@@ -39,7 +39,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 70;
+    public final static int VERSION = 71;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;

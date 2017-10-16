@@ -63,14 +63,13 @@ public class Panel extends JPanel {
                 setInvisible();
             }
             long time = start - now + milliseconds;
-            String time1 = getTime(time);
             if (lastMilliseconds + invisibleAfter < now) {
                 timer.setVisible(false);
-                Globals.get().status.setCounter(time1 + " - invisible");
-            } else {
-                Globals.get().status.setCounter(time1);
+                Globals.get().status.setCounter("invisible");
             }
             if (time > 0 && finished == 0) {
+                String time1 = getTime(time);
+                Globals.get().status.setCounter(time1);
                 lastMilliseconds = now;
                 timer.setText(time1);
                 Panel.this.setBackground(backGroundColor);
