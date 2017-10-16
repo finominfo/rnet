@@ -19,6 +19,9 @@
       <element id="file-copy" path="$PROJECT_DIR$/success.wav" />
       <element id="file-copy" path="$PROJECT_DIR$/pi4j-core.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/pi4j-device.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/start.bat" />
+      <element id="file-copy" path="$PROJECT_DIR$/success_knock.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/failed_counter.wav" />
     </root>
   </artifact>
 </component>
