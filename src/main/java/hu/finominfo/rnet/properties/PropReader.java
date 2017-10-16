@@ -1,5 +1,7 @@
 package hu.finominfo.rnet.properties;
 
+import hu.finominfo.rnet.common.Globals;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +27,7 @@ public class PropReader {
     private PropReader() {
         InputStream input = null;
         try {
-            input = new FileInputStream("config.properties");
+            input = new FileInputStream(Globals.PROP_NAME);
             prop.load(input);
         } catch (IOException ex) {
             ex.printStackTrace();

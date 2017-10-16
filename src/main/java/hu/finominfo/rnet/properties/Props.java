@@ -19,6 +19,8 @@ public class Props {
     private volatile String failed;
     private final boolean controller;
     private final int port;
+    private final int invisible;
+
 
     private static Props ourInstance = new Props();
 
@@ -39,9 +41,14 @@ public class Props {
         animalVoices = Arrays.asList(prop.getProperty("animalVoices", defaultAnimalVoices).split(","));
         beep = prop.getProperty("beep", "beep.wav");
         success = prop.getProperty("success", "success.wav");
-        failed = prop.getProperty("failed", "failed.wav");
+        failed = prop.getProperty("failed", "failed_counter.wav");
         controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
         port = Integer.valueOf(prop.getProperty("port", "10000"));
+        invisible = Integer.valueOf(prop.getProperty("invisible", "10"));
+    }
+
+    public int getInvisible() {
+        return invisible;
     }
 
     public int getPort() {

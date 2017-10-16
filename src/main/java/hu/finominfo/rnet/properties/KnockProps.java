@@ -23,7 +23,7 @@ public class KnockProps {
     public KnockProps() {
         Properties prop = PropReader.get().getProperties();
         knockVoice = prop.getProperty("knockVoice", "knock.wav");
-        success = prop.getProperty("successMorse", "success.wav");
+        success = prop.getProperty("successMorse", "success_knock.wav");
         failed = prop.getProperty("failedMorse", "failed.wav");
         List<String> myList = Arrays.asList(prop.getProperty("rythms", "1,2,3,2,1,2").split(","));
         List<Integer> intList = myList.stream().map((String s) -> Integer.parseInt(s) - 1).collect(Collectors.toList());

@@ -3,6 +3,7 @@ package hu.finominfo.rnet.frontend.servant.counter;
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.properties.Props;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- *
  * @author kalman.kovacs@globessey.local
  */
 public class Panel extends JPanel {
@@ -52,6 +52,8 @@ public class Panel extends JPanel {
     public final AudioPlayer failed;
     public static final long DELAY = 10_000;
     public static final long DELAY_VISIBLE = 5_000;
+    public final int invisibleAfter = Props.get().getInvisible() * 60_000;
+    public volatile long lastMilliseconds = System.currentTimeMillis();
 
     public final Runnable refresh = new Runnable() {
         @Override
@@ -61,10 +63,16 @@ public class Panel extends JPanel {
                 setInvisible();
             }
             long time = start - now + milliseconds;
-            if (time > 0 && finished == 0) {
-                String time1 = getTime(time);
-                timer.setText(time1);
+            String time1 = getTime(time);
+            if (lastMilliseconds + invisibleAfter < now) {
+                timer.setVisible(false);
+                Globals.get().status.setCounter(time1 + " - invisible");
+            } else {
                 Globals.get().status.setCounter(time1);
+            }
+            if (time > 0 && finished == 0) {
+                lastMilliseconds = now;
+                timer.setText(time1);
                 Panel.this.setBackground(backGroundColor);
                 int sec = (int) (time / 1000);
                 if (sec % 60 == 0 && sec > 59) {
@@ -188,16 +196,16 @@ public class Panel extends JPanel {
                 if (!setVisible() && finished != 0 && resetState) {
                     try {
                         Object[] possibilities = {"00:10", "00:20", "00:30", "00:40", "00:50",
-                            "01:00", "01:10", "01:20", "01:30", "01:40", "01:50",
-                            "02:00", "02:10", "02:20", "02:30", "02:40", "02:50",
-                            "03:00", "03:15", "03:30", "03:45", "04:00", "04:15", "04:30", "04:45",
-                            "05:00", "05:15", "05:30", "05:45", "05:00", "05:30", "06:00", "06:30",
-                            "07:00", "07:30", "08:00", "08:30", "09:00", "09:30",
-                            "10:00", "11:00", "13:00", "14:00", "15:00", "16:00",
-                            "17:00", "18:00", "19:00", "20:00", "21:00", "22:00",
-                            "23:00", "24:00", "25:00", "26:00", "27:00", "28:00", "29:00",
-                            "30:00", "35:00", "40:00", "45:00", "50:00", "55:00", "60:00",
-                            "65:00", "70:00", "75:00", "80:00", "85:00", "90:00", "95:00", "99:59"
+                                "01:00", "01:10", "01:20", "01:30", "01:40", "01:50",
+                                "02:00", "02:10", "02:20", "02:30", "02:40", "02:50",
+                                "03:00", "03:15", "03:30", "03:45", "04:00", "04:15", "04:30", "04:45",
+                                "05:00", "05:15", "05:30", "05:45", "05:00", "05:30", "06:00", "06:30",
+                                "07:00", "07:30", "08:00", "08:30", "09:00", "09:30",
+                                "10:00", "11:00", "13:00", "14:00", "15:00", "16:00",
+                                "17:00", "18:00", "19:00", "20:00", "21:00", "22:00",
+                                "23:00", "24:00", "25:00", "26:00", "27:00", "28:00", "29:00",
+                                "30:00", "35:00", "40:00", "45:00", "50:00", "55:00", "60:00",
+                                "65:00", "70:00", "75:00", "80:00", "85:00", "90:00", "95:00", "99:59"
                         };
                         String newTime = (String) JOptionPane.showInputDialog(
                                 Panel.this,
@@ -265,7 +273,10 @@ public class Panel extends JPanel {
     }
 
     public void makeStart() {
-        start = System.currentTimeMillis() - finished + start;
+        long now = System.currentTimeMillis();
+        lastMilliseconds = now;
+        timer.setVisible(true);
+        start = now - finished + start;
         finished = 0;
         stopStartButton.setText(stopStartTexts[0]);
         resetButton.setVisible(false);
@@ -276,8 +287,11 @@ public class Panel extends JPanel {
     }
 
     public void makeStop() {
+        long now = System.currentTimeMillis();
+        lastMilliseconds = now;
+        timer.setVisible(true);
         beeping.set(false);
-        finished = System.currentTimeMillis();
+        finished = now;
         stopStartButton.setText(stopStartTexts[1]);
         stopStartButton.setVisible(false);
         resetButton.setVisible(true);
@@ -321,6 +335,9 @@ public class Panel extends JPanel {
     }
 
     public void resetButtonPressed() {
+        long now = System.currentTimeMillis();
+        lastMilliseconds = now;
+        timer.setVisible(true);
         setVisible();
         if (finished != 0) {
             resetState = true;
