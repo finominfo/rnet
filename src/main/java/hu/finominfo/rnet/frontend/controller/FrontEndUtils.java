@@ -15,70 +15,91 @@ import hu.finominfo.rnet.taskqueue.TaskToDo;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.*;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.10.08.
  */
 public class FrontEndUtils extends JFrame implements Runnable {
 
-    protected final JLabel servantsLabel = new JLabel("SERVANTS");
+    //for image preview
+    //if file get selected by click then:
+    //protected final ImageIcon PreviewIcon=new ImageIcon(File.separator + get selected image name and path or something);
+    //make it visible in FrontEnd
+    //make Proceed and Cancel button visible
+    //if click elsewhere not to select image then make all invisible Again
+    //if Proceed button clicked then send file and make all invisible Again
+    //if Cancel button clicked then Do nothing and make all invisible Again
+
+    protected final ImageIcon ServantsIcon=new ImageIcon("resources" + File.separator + "servants.png");
+    protected final ImageIcon SendTextIcon=new ImageIcon("resources" + File.separator + "sendtext.png");
+    protected final ImageIcon RenameIcon=new ImageIcon("resources" + File.separator + "rename.png");
+
+    protected final JLabel servantsLabel = new JLabel(ServantsIcon);
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
     protected final JList<String> servantsList = new JList<>(servantsListModel);
     protected final JScrollPane servantsPane = new JScrollPane(servantsList, VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton renameBtn = new JButton("RENAME");
-    protected final JButton sendTextBtn = new JButton("SEND TEXT");
+    protected final JButton renameBtn = new JButton(RenameIcon);
+    protected final JButton sendTextBtn = new JButton(SendTextIcon);
 
     protected final JLabel counterLabel = new JLabel("COUNTER");
-    protected final JLabel showPeriod = new JLabel("SHOW PERIOD (sec):");
+    protected final JLabel showPeriod = new JLabel("SHOW TIME (sec):");
     protected final JTextField showSeconds = new JTextField();
-    protected final JButton startBtn = new JButton("START");
-    protected final JButton stopBtn = new JButton("STOP");
-    protected final JButton resetBtn = new JButton("RESET");
-    protected final JLabel resetLabel = new JLabel("min");
+
+    protected final ImageIcon StartIcon=new ImageIcon("resources" + File.separator + "play.png");
+    protected final ImageIcon StopIcon=new ImageIcon("resources" + File.separator + "stop.png");
+    protected final ImageIcon ResetIcon=new ImageIcon("resources" + File.separator + "reset.png");
+    protected final ImageIcon MinIcon=new ImageIcon("resources" + File.separator + "min.png");
+    protected final ImageIcon AudioIcon=new ImageIcon("resources" + File.separator + "audio.png");
+    protected final ImageIcon VideoIcon=new ImageIcon("resources" + File.separator + "video.png");
+    protected final ImageIcon PictureIcon=new ImageIcon("resources" + File.separator + "picture.png");
+    protected final ImageIcon SendIcon=new ImageIcon("resources" + File.separator + "send.png");
+    protected final ImageIcon StopIcon2=new ImageIcon("resources" + File.separator + "stop2.png");
+    protected final ImageIcon AddIcon=new ImageIcon("resources" + File.separator + "add.png");
+    protected final ImageIcon DelIcon=new ImageIcon("resources" + File.separator + "del.png");
+
+    protected final JButton startBtn = new JButton(StartIcon);
+    protected final JButton stopBtn = new JButton(StopIcon);
+    protected final JButton resetBtn = new JButton(ResetIcon);
+    protected final JLabel resetLabel = new JLabel(MinIcon);
     protected final JTextField resetMins = new JTextField();
 
 
-    protected final JLabel audioLabel = new JLabel("AUDIO");
+    protected final JLabel audioLabel = new JLabel(AudioIcon);
     public final DefaultListModel<String> audioListModel = new DefaultListModel();
     protected final JList<String> audioList = new JList<>(audioListModel);
     protected final JScrollPane audioPane = new JScrollPane(audioList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton audioPlay = new JButton("PLAY");
-    protected final JButton audioAdd = new JButton("ADD");
-    protected final JButton audioDel = new JButton("DEL");
-    protected final JButton audioContinuousPlay = new JButton("CONT PLAY");
-    protected final JButton audioStop = new JButton("STOP");
+    protected final JButton audioPlay = new JButton(SendIcon);
+    protected final JButton audioAdd = new JButton(AddIcon);
+    protected final JButton audioDel = new JButton(DelIcon);
+    protected final JButton audioContinuousPlay = new JButton(SendIcon);
+    protected final JButton audioStop = new JButton(StopIcon2);
 
-    protected final JLabel videoLabel = new JLabel("VIDEO");
+    protected final JLabel videoLabel = new JLabel(VideoIcon);
     public final DefaultListModel<String> videoListModel = new DefaultListModel();
     protected final JList<String> videoList = new JList<>(videoListModel);
     protected final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton videoPlay = new JButton("PLAY");
-    protected final JButton videoAdd = new JButton("ADD");
-    protected final JButton videoDel = new JButton("DEL");
+    protected final JButton videoPlay = new JButton(SendIcon);
+    protected final JButton videoAdd = new JButton(AddIcon);
+    protected final JButton videoDel = new JButton(DelIcon);
     protected final JButton videoContinuousPlay = new JButton("CONT PLAY");
-    protected final JButton videoStop = new JButton("STOP");
+    protected final JButton videoStop = new JButton(StopIcon2);
 
 
-    protected final JLabel pictureLabel = new JLabel("PICTURE");
+    protected final JLabel pictureLabel = new JLabel(PictureIcon);
     public final DefaultListModel<String> pictureListModel = new DefaultListModel();
     protected final JList<String> pictureList = new JList<>(pictureListModel);
     protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton pictureShow = new JButton("SHOW");
-    protected final JButton pictureAdd = new JButton("ADD");
-    protected final JButton pictureDel = new JButton("DEL");
+    protected final JButton pictureShow = new JButton(SendIcon);
+    protected final JButton pictureAdd = new JButton(AddIcon);
+    protected final JButton pictureDel = new JButton(DelIcon);
 
     protected final JLabel taskTextLabel = new JLabel("Remaining tasks:");
     protected final JLabel taskNumber = new JLabel();
