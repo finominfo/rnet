@@ -362,6 +362,23 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     }
 
+    protected void playStartVideo(ControlType controlType) {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        if (!selectedValuesList.isEmpty() && videoList.getSelectedValue() != null) {
+            String fileName = videoList.getSelectedValue();
+            if (fileName != null) {
+                selectedValuesList.stream().forEach(selectedValue -> {
+                    PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.VIDEO), fileName, Integer.valueOf(showSeconds.getText()));
+                    ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
+                    Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
+                });
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
+            }
+        }
+    }
+
     protected void playAudio(ControlType controlType) {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         if (!selectedValuesList.isEmpty() && audioList.getSelectedValue() != null) {

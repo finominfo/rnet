@@ -49,6 +49,10 @@ public class VideoPlayer {
         }
     }
 
+    public boolean isPlaying() {
+        return playing.get();
+    }
+
     private void finish() {
         playing.set(false);
         Globals.get().status.setVideo(null);

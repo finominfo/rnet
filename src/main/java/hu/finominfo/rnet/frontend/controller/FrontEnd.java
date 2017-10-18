@@ -42,6 +42,7 @@ public class FrontEnd extends FrontEndUtils {
         servantsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         servantsLabel.setBounds(98, 5, 48, 48);
         servantsList.setBounds(30, 55, 190, 365);
+        servantsList.setFont(new Font(servantsList.getFont().getName(), Font.BOLD, 20));
         servantsPane.setBounds(30, 55, 190, 365);
         getContentPane().add(servantsPane);
         renameBtn.setBounds(30, 420, 85, 48);
@@ -79,6 +80,7 @@ public class FrontEnd extends FrontEndUtils {
         add(resetBtn);
         resetBtn.addActionListener(e -> sendResetCounter());
         startBtn.addActionListener(e -> sendOnlyControl(ControlType.START_COUNTER));
+//        startBtn.addActionListener(e -> playStartVideo(ControlType.PLAY_VIDEO));
         stopBtn.addActionListener(e -> sendOnlyControl(ControlType.STOP_COUNTER));
         resetLabel.setFont(new Font(resetLabel.getFont().getName(), Font.BOLD, 30));
         resetLabel.setBounds(155, 490, 48, 48);
@@ -100,6 +102,7 @@ public class FrontEnd extends FrontEndUtils {
         audioLabel.setFont(new Font(audioLabel.getFont().getName(), Font.BOLD, 25));
         add(audioLabel);
         audioList.setSelectionMode(SINGLE_SELECTION);
+        audioList.setFont(new Font(audioList.getFont().getName(), Font.BOLD, 20));
         audioLabel.setBounds(348, 5, 48, 48);
         audioPane.setBounds(280, 55, 200, 365);
         getContentPane().add(audioPane);
@@ -123,6 +126,7 @@ public class FrontEnd extends FrontEndUtils {
         videoLabel.setFont(new Font(videoLabel.getFont().getName(), Font.BOLD, 25));
         add(videoLabel);
         videoList.setSelectionMode(SINGLE_SELECTION);
+        videoList.setFont(new Font(videoList.getFont().getName(), Font.BOLD, 20));
         videoLabel.setBounds(598, 5, 48, 48);
         videoPane.setBounds(530, 55, 200, 365);
         getContentPane().add(videoPane);
@@ -146,6 +150,7 @@ public class FrontEnd extends FrontEndUtils {
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
         add(pictureLabel);
         pictureList.setSelectionMode(SINGLE_SELECTION);
+        pictureList.setFont(new Font(pictureList.getFont().getName(), Font.BOLD, 20));
         pictureLabel.setBounds(853, 5, 48, 48);
         picturePane.setBounds(785, 55, 200, 365);
         getContentPane().add(picturePane);

@@ -10,6 +10,7 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
+import hu.finominfo.rnet.properties.Props;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
@@ -23,7 +24,6 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
     private final static Logger logger = Logger.getLogger(ControllEventHandler.class);
 
 
-
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ControlEvent msg) throws Exception {
         try {
@@ -34,7 +34,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                 case SHOW_PICTURE:
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
-                    PictureDisplay.get().display(showPicture.getPathAndName(),  showPicture.getSeconds());
+                    PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getSeconds());
                     break;
                 case PLAY_VIDEO:
                 case PLAY_VIDEO_CONTINUOUS:
@@ -77,7 +77,23 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case START_COUNTER:
                     logger.info("START_COUNTER arrived: " + ip);
-                    Globals.get().counter.makeStart();
+                    String videoPlayAtCounterStart = Props.get().getVideoPlayAtCounterStart();
+                    if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
+                        PlayVideo playVideo2 = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
+                        VideoPlayer.get().play(playVideo2);
+                        Globals.get().executor.submit(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (VideoPlayer.get().isPlaying()) {
+                                    Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+                                } else {
+                                    Globals.get().counter.makeStart();
+                                }
+                            }
+                        });
+                    } else {
+                        Globals.get().counter.makeStart();
+                    }
                     break;
                 case STOP_COUNTER:
                     logger.info("STOP_COUNTER arrived: " + ip);
