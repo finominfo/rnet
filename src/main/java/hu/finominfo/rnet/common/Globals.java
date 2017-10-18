@@ -35,11 +35,17 @@ public class Globals {
 
     private static Globals ourInstance = new Globals();
 
+    private Globals() {
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        width = gd.getDisplayMode().getWidth();
+        height = gd.getDisplayMode().getHeight();
+    }
+
     public static Globals get() {
         return ourInstance;
     }
 
-    public final static int VERSION = 71;
+    public final static int VERSION = 86;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -72,6 +78,9 @@ public class Globals {
     public final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
     public final Queue<Task> frontEndTasks = new ConcurrentLinkedQueue<>();
     private volatile FrontEnd frontEnd = null;
+
+    public volatile int width;
+    public volatile int height;
 
     public static String getVersion() {
         int main = VERSION / 100;

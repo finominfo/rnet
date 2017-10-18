@@ -38,9 +38,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
     //if Proceed button clicked then send file and make all invisible Again
     //if Cancel button clicked then Do nothing and make all invisible Again
 
-    protected final ImageIcon ServantsIcon=new ImageIcon("resources" + File.separator + "servants.png");
-    protected final ImageIcon SendTextIcon=new ImageIcon("resources" + File.separator + "sendtext.png");
-    protected final ImageIcon RenameIcon=new ImageIcon("resources" + File.separator + "rename.png");
+    protected final ImageIcon ServantsIcon = new ImageIcon("resources" + File.separator + "servants.png");
+    protected final ImageIcon SendTextIcon = new ImageIcon("resources" + File.separator + "sendtext.png");
+    protected final ImageIcon RenameIcon = new ImageIcon("resources" + File.separator + "rename.png");
 
     protected final JLabel servantsLabel = new JLabel(ServantsIcon);
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
@@ -53,17 +53,17 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JLabel showPeriod = new JLabel("SHOW TIME (sec):");
     protected final JTextField showSeconds = new JTextField();
 
-    protected final ImageIcon StartIcon=new ImageIcon("resources" + File.separator + "play.png");
-    protected final ImageIcon StopIcon=new ImageIcon("resources" + File.separator + "stop.png");
-    protected final ImageIcon ResetIcon=new ImageIcon("resources" + File.separator + "reset.png");
-    protected final ImageIcon MinIcon=new ImageIcon("resources" + File.separator + "min.png");
-    protected final ImageIcon AudioIcon=new ImageIcon("resources" + File.separator + "audio.png");
-    protected final ImageIcon VideoIcon=new ImageIcon("resources" + File.separator + "video.png");
-    protected final ImageIcon PictureIcon=new ImageIcon("resources" + File.separator + "picture.png");
-    protected final ImageIcon SendIcon=new ImageIcon("resources" + File.separator + "send.png");
-    protected final ImageIcon StopIcon2=new ImageIcon("resources" + File.separator + "stop2.png");
-    protected final ImageIcon AddIcon=new ImageIcon("resources" + File.separator + "add.png");
-    protected final ImageIcon DelIcon=new ImageIcon("resources" + File.separator + "del.png");
+    protected final ImageIcon StartIcon = new ImageIcon("resources" + File.separator + "play.png");
+    protected final ImageIcon StopIcon = new ImageIcon("resources" + File.separator + "stop.png");
+    protected final ImageIcon ResetIcon = new ImageIcon("resources" + File.separator + "reset.png");
+    protected final ImageIcon MinIcon = new ImageIcon("resources" + File.separator + "min.png");
+    protected final ImageIcon AudioIcon = new ImageIcon("resources" + File.separator + "audio.png");
+    protected final ImageIcon VideoIcon = new ImageIcon("resources" + File.separator + "video.png");
+    protected final ImageIcon PictureIcon = new ImageIcon("resources" + File.separator + "picture.png");
+    protected final ImageIcon SendIcon = new ImageIcon("resources" + File.separator + "send.png");
+    protected final ImageIcon StopIcon2 = new ImageIcon("resources" + File.separator + "stop2.png");
+    protected final ImageIcon AddIcon = new ImageIcon("resources" + File.separator + "add.png");
+    protected final ImageIcon DelIcon = new ImageIcon("resources" + File.separator + "del.png");
 
     protected final JButton startBtn = new JButton(StartIcon);
     protected final JButton stopBtn = new JButton(StopIcon);
@@ -245,7 +245,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -259,7 +261,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -274,7 +278,10 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     ControlEvent controlEvent = new ControlEvent(ControlType.SHOW_PICTURE, showPicture);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
+
             }
         }
     }
@@ -289,7 +296,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -304,7 +313,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -315,7 +326,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
             ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(Integer.valueOf(resetMins.getText())));
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
         });
-        servantsList.clearSelection();
+        if (selectedValuesList.size() != 1) {
+            servantsList.clearSelection();
+        }
     }
 
     protected void sendOnlyControl(ControlType controlType) {
@@ -323,6 +336,8 @@ public class FrontEndUtils extends JFrame implements Runnable {
         selectedValuesList.stream().forEach(selectedValue -> {
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType), Utils.getIp(selectedValue)));
         });
-        servantsList.clearSelection();
+        if (selectedValuesList.size() != 1) {
+            servantsList.clearSelection();
+        }
     }
 }
