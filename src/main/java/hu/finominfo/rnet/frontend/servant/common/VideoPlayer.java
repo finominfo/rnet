@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.10.07.
@@ -15,41 +16,20 @@ public class VideoPlayer {
 
     private final static Logger logger = Logger.getLogger(VideoPlayer.class);
 
-    private final PlayVideo playVideo;
+    public static VideoPlayer get() {
+        return ourInstance;
+    }
+
+    private static VideoPlayer ourInstance = new VideoPlayer();
+
+    private final AtomicBoolean playing = new AtomicBoolean(false);
     private volatile Process proc = null;
-    private volatile boolean shouldFinish = false;
 
-    public VideoPlayer(PlayVideo playVideo) {
-        this.playVideo = playVideo;
-    }
 
-    public void play() {
-        try {
-            //Globals.get().executor.schedule(() -> destroy(), playVideo.getSeconds(), TimeUnit.SECONDS);
-            //String[] s = {"/bin/bash", "-c", "/usr/bin/omxplayer " + playVideo.getPathAndName()};
-            String s = "omxplayer " + playVideo.getPathAndName();
-            Globals.get().status.setVideo("Playing: " + playVideo.getPathAndName());
-            proc = Runtime.getRuntime().exec(s);
-            Globals.get().executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    if (proc.isAlive()) {
-                        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
-                    } else {
-                        Globals.get().status.setVideo(null);
-                    }
-                }
-            });
-        } catch (Exception e) {
-            logger.error(Utils.getStackTrace(e));
-        }
-    }
-
-    private class Outer implements Runnable {
-        @Override
-        public void run() {
+    public void play(final PlayVideo playVideo) {
+        if (playing.compareAndSet(false, true)) {
             try {
-                final String s = "omxplayer " + playVideo.getPathAndName();
+                String s = "omxplayer " + playVideo.getPathAndName();
                 Globals.get().status.setVideo("Playing: " + playVideo.getPathAndName());
                 proc = Runtime.getRuntime().exec(s);
                 Globals.get().executor.submit(new Runnable() {
@@ -58,52 +38,21 @@ public class VideoPlayer {
                         if (proc.isAlive()) {
                             Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
                         } else {
-                            Globals.get().status.setVideo(null);
-                            if (!shouldFinish) {
-                                Globals.get().executor.schedule(Outer.this, 1, TimeUnit.SECONDS);
-                            }
+                            finish();
                         }
                     }
                 });
             } catch (Exception e) {
                 logger.error(Utils.getStackTrace(e));
+                finish();
             }
         }
     }
 
-    public void continuousPlay() {
-        shouldFinish = false;
-        try {
-            Globals.get().executor.submit(new Outer());
-        } catch (Exception e) {
-            logger.error(Utils.getStackTrace(e));
-        }
+    private void finish() {
+        playing.set(false);
+        Globals.get().status.setVideo(null);
     }
-
-    public void stop() {
-        shouldFinish = true;
-    }
-
-    /*
-    public void destroy() {
-        try {
-            if (null != proc && proc.isAlive()) {
-//                Robot r = new Robot();
-//                r.keyPress(KeyEvent.VK_Q);
-//                r.keyRelease(KeyEvent.VK_Q);
-                //proc.getOutputStream().write((byte)0x71);
-                if (proc != null && proc.isAlive()) {
-                    String s = "kill -9 " + getPidOfProcess(proc);
-                    Runtime.getRuntime().exec(s);
-                    //proc.destroyForcibly();
-                }
-                Globals.get().status.setVideo(null);
-            }
-        } catch (Exception e) {
-            logger.error(Utils.getStackTrace(e));
-        }
-    }
-    */
 
     public static synchronized long getPidOfProcess(Process p) {
         long pid = -1;

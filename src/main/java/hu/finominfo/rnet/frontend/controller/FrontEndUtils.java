@@ -12,11 +12,14 @@ import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
+import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.File;
+import java.awt.event.MouseEvent;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +45,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final ImageIcon SendTextIcon = new ImageIcon("resources" + File.separator + "sendtext.png");
     protected final ImageIcon RenameIcon = new ImageIcon("resources" + File.separator + "rename.png");
 
+
     protected final JLabel servantsLabel = new JLabel(ServantsIcon);
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
     protected final JList<String> servantsList = new JList<>(servantsListModel);
@@ -49,9 +53,11 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton renameBtn = new JButton(RenameIcon);
     protected final JButton sendTextBtn = new JButton(SendTextIcon);
 
+
     protected final JLabel counterLabel = new JLabel("COUNTER");
     protected final JLabel showPeriod = new JLabel("SHOW TIME (sec):");
     protected final JTextField showSeconds = new JTextField();
+
 
     protected final ImageIcon StartIcon = new ImageIcon("resources" + File.separator + "play.png");
     protected final ImageIcon StopIcon = new ImageIcon("resources" + File.separator + "stop.png");
@@ -64,6 +70,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final ImageIcon StopIcon2 = new ImageIcon("resources" + File.separator + "stop2.png");
     protected final ImageIcon AddIcon = new ImageIcon("resources" + File.separator + "add.png");
     protected final ImageIcon DelIcon = new ImageIcon("resources" + File.separator + "del.png");
+
 
     protected final JButton startBtn = new JButton(StartIcon);
     protected final JButton stopBtn = new JButton(StopIcon);
@@ -108,6 +115,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JLabel statusLabel = new JLabel("STATUS");
 
     protected final static Logger logger = Logger.getLogger(FrontEnd.class);
+
 
     @Override
     public void run() {
@@ -232,6 +240,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         taskNumber.setText(String.valueOf(Globals.get().tasks.size() + (null == Globals.get().currentTask ? 0 : 1)));
     }
 
+
     protected void sendFile(final String destFolder, final FileType fileType) {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         if (!selectedValuesList.isEmpty()) {
@@ -241,6 +250,34 @@ public class FrontEndUtils extends JFrame implements Runnable {
             int result = fileChooser.showOpenDialog(FrontEndUtils.this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
+
+
+
+                //String filePath = selectedFile.getAbsolutePath();
+                    //InputStream inStream = null;
+                    //OutputStream outStream = null;
+                    //try{
+                        //File source =new File(filePath);
+                        //File dest =new File("previews" + File.separator + selectedFile.getName());
+                        //inStream = new FileInputStream(source);
+                        //outStream = new FileOutputStream(dest);
+
+                        //byte[] buffer = new byte[1024];
+
+                        //int length;
+                        //while ((length = inStream.read(buffer)) > 0){
+                            //outStream.write(buffer, 0, length);
+                        //}
+
+                        //if (inStream != null)inStream.close();
+                        //if (outStream != null)outStream.close();
+                        //System.out.println("File Copied..");
+                    //}catch(IOException e1){
+                        //e1.printStackTrace();
+                    //}
+
+
+
                 //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue)));
@@ -258,6 +295,26 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (!selectedValuesList.isEmpty() && list.getSelectedValue() != null) {
             String fileName = list.getSelectedValue();
             if (fileName != null) {
+
+
+                //try{
+
+                    //File deletable =new File("previews" + File.separator + fileName);
+                    //if(deletable.delete()){
+                        //System.out.println(deletable.getName() + " is deleted!");
+                    //}else{
+                        //System.out.println("Delete operation is failed.");
+                    //}
+
+                //}catch(Exception e){
+
+                    //e.printStackTrace();
+
+                //}
+
+
+
+
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
                 });
@@ -267,6 +324,8 @@ public class FrontEndUtils extends JFrame implements Runnable {
             }
         }
     }
+
+
 
     protected void showPicture() {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();

@@ -4,9 +4,13 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 /**
  * Created by kalman.kovacs@gmail.com on 2017.10.17.
  */
 public class Preview {
+
+
 }

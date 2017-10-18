@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEvent> {
     private final static Logger logger = Logger.getLogger(ControllEventHandler.class);
 
+
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ControlEvent msg) throws Exception {
         try {
@@ -32,21 +34,13 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                 case SHOW_PICTURE:
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
-                    final PictureDisplay pictureDisplay = new PictureDisplay(showPicture.getPathAndName(), showPicture.getSeconds());
-                    Globals.get().executor.submit(pictureDisplay::display);
+                    PictureDisplay.get().display(showPicture.getPathAndName(),  showPicture.getSeconds());
                     break;
                 case PLAY_VIDEO:
                 case PLAY_VIDEO_CONTINUOUS:
                     logger.info(msg.getControlType().name() + " arrived: " + ip);
-                    closeVideo();
                     PlayVideo playVideo = (PlayVideo) msg.getControlObject();
-                    final VideoPlayer videoPlayer = new VideoPlayer(playVideo);
-                    Globals.get().videoPlayer = videoPlayer;
-                    if (msg.getControlType().equals(ControlType.PLAY_VIDEO_CONTINUOUS)) {
-                        Globals.get().executor.submit(videoPlayer::continuousPlay);
-                    } else {
-                        Globals.get().executor.submit(videoPlayer::play);
-                    }
+                    VideoPlayer.get().play(playVideo);
                     break;
                 case PLAY_AUDIO:
                     logger.info("PLAY_AUDIO arrived: " + ip);
@@ -72,7 +66,6 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case STOP_VIDEO:
                     logger.info("STOP_VIDEO arrived: " + ip);
-                    closeVideo();
                     break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
@@ -93,14 +86,6 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
             }
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
-        }
-    }
-
-    private void closeVideo() {
-        VideoPlayer videoPlayer = Globals.get().videoPlayer;
-        if (videoPlayer != null) {
-            videoPlayer.stop();
-            Globals.get().videoPlayer = null;
         }
     }
 

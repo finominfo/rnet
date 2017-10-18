@@ -6,6 +6,9 @@ import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -15,7 +18,6 @@ import static javax.swing.ListSelectionModel.SINGLE_SELECTION;
  * Created by kalman.kovacs@gmail.com on 2017.09.25.
  */
 public class FrontEnd extends FrontEndUtils {
-
 
     public FrontEnd() {
         super();
@@ -33,6 +35,7 @@ public class FrontEnd extends FrontEndUtils {
 
         //PreviewImage.setVisible(false);
         //add(PreviewImage);
+
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
@@ -110,7 +113,7 @@ public class FrontEnd extends FrontEndUtils {
         audioAdd.setBounds(350, 420, 60, 48);
         add(audioContinuousPlay);
         add(audioStop);
-        audioPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO));
+        audioPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
         audioContinuousPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
         audioStop.addActionListener(e -> sendOnlyControl(ControlType.STOP_AUDIO));
         audioAdd.addActionListener(e -> sendFile(Globals.audioFolder, FileType.AUDIO));

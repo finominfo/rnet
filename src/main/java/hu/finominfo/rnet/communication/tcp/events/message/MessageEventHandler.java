@@ -17,6 +17,6 @@ public class MessageEventHandler extends SimpleChannelInboundHandler<MessageEven
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
         logger.info("MessageEvent arrived from: " + ip + " message: " + msg.getText());
-        new MessageDisplay(msg.getText(), msg.getSeconds()).show();
+        MessageDisplay.get().show(msg.getText(), msg.getSeconds());
     }
 }
