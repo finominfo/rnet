@@ -83,7 +83,11 @@ public class FrontEnd extends FrontEndUtils {
 //        startBtn.addActionListener(e -> playStartVideo(ControlType.PLAY_VIDEO));
         stopBtn.addActionListener(e -> sendOnlyControl(ControlType.STOP_COUNTER));
         resetLabel.setFont(new Font(resetLabel.getFont().getName(), Font.BOLD, 30));
+        resetLabel.addActionListener(e -> showTimerGui());
         resetLabel.setBounds(155, 490, 48, 48);
+        resetLabel.setOpaque(false);
+        resetLabel.setContentAreaFilled(false);
+        resetLabel.setBorder(null);
         add(resetLabel);
         resetMins.setFont(new Font(resetMins.getFont().getName(), Font.BOLD, 54));
         resetMins.setBounds(130, 620, 64, 64);

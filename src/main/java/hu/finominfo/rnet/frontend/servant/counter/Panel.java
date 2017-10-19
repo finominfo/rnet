@@ -272,17 +272,19 @@ public class Panel extends JPanel {
     }
 
     public void makeStart() {
-        long now = System.currentTimeMillis();
-        lastMilliseconds = now;
-        timer.setVisible(true);
-        start = now - finished + start;
-        finished = 0;
-        stopStartButton.setText(stopStartTexts[0]);
-        resetButton.setVisible(false);
-        if (normalTextColor.compareAndSet(false, true)) {
-            timer.setForeground(Color.YELLOW);
+        if (finished != 0) {
+            long now = System.currentTimeMillis();
+            lastMilliseconds = now;
+            timer.setVisible(true);
+            start = now - finished + start;
+            finished = 0;
+            stopStartButton.setText(stopStartTexts[0]);
+            resetButton.setVisible(false);
+            if (normalTextColor.compareAndSet(false, true)) {
+                timer.setForeground(Color.YELLOW);
+            }
+            resetState = false;
         }
-        resetState = false;
     }
 
     public void makeStop() {

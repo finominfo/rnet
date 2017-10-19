@@ -1,5 +1,6 @@
 package hu.finominfo.rnet;
 
+import hu.finominfo.rnet.communication.http.HttpServer;
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import hu.finominfo.rnet.properties.Props;
@@ -46,6 +47,7 @@ public class Main {
             Globals.get().executor.schedule(() ->
             SwingUtilities.invokeLater(() -> {
                 Counter.createAndShowGui();
+                Globals.get().executor.submit(() -> new HttpServer().start());
                 Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
                 Servant servant = new Servant();
                 servant.run();

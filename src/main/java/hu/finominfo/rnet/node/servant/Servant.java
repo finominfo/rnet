@@ -156,7 +156,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                     logger.error("Broadcast monitor successfully created at port: " + broadcastMonitorPort);
                     break;
                 case START_SERVER:
-                    logger.info("Server successfully created at port: " + serverPort);
+                    logger.info("HttpServer successfully created at port: " + serverPort);
                     currentTaskFinished();
                     break;
                 case FIND_SERVERS_TO_CONNECT:
@@ -175,11 +175,11 @@ public class Servant extends Worker implements ChannelFutureListener {
                     monitor = null;
                     break;
                 case START_SERVER:
-                    logger.error("Server could not started at port: " + serverPort);
+                    logger.error("HttpServer could not started at port: " + serverPort);
                     server.stop();
                     break;
                 case FIND_SERVERS_TO_CONNECT:
-                    logger.error("Server could not connected: " + currentConnectToServer);
+                    logger.error("HttpServer could not connected: " + currentConnectToServer);
                     currentClient.stop();
                     break;
                 case SEND_MAC_ADDRESSES:

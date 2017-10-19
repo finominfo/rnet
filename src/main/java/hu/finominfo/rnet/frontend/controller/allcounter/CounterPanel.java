@@ -15,9 +15,9 @@ public class CounterPanel extends JPanel {
     public CounterPanel(Font font) {
         setLayout(new GridLayout(2, 1));
         title = new JLabel();
-        title.setFont(font.deriveFont(Font.BOLD, (float) (45d * Globals.get().diff)));
+        title.setFont(font.deriveFont(Font.BOLD, (float) (85d * Globals.get().diff)));
         counter = new JLabel();
-        counter.setFont(font.deriveFont(Font.BOLD, (float) (125d * Globals.get().diff)));
+        counter.setFont(font.deriveFont(Font.BOLD, (float) (185d * Globals.get().diff)));
         add(title);
         add(counter);
 

@@ -10,6 +10,7 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import javafx.stage.FileChooser;
@@ -75,7 +76,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton startBtn = new JButton(StartIcon);
     protected final JButton stopBtn = new JButton(StopIcon);
     protected final JButton resetBtn = new JButton(ResetIcon);
-    protected final JLabel resetLabel = new JLabel(MinIcon);
+    protected final JButton resetLabel = new JButton(MinIcon);
     protected final JTextField resetMins = new JTextField();
 
 
@@ -398,5 +399,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (selectedValuesList.size() != 1) {
             servantsList.clearSelection();
         }
+    }
+
+    protected void showTimerGui () {
+        Globals.get().getAllCounterWithCreateIfNecessary();
     }
 }

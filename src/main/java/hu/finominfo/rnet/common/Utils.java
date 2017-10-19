@@ -1,9 +1,17 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
+import hu.finominfo.rnet.properties.Props;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -124,5 +132,53 @@ public class Utils {
     public static void main(String[] args) {
         System.out.println(isAddressEquals(Arrays.asList(1L, 7L, 8L), Arrays.asList(7L, 4L, 1L)));
     }
+
+
+    public static void startCounter() {
+        String videoPlayAtCounterStart = Props.get().getVideoPlayAtCounterStart();
+        if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
+            PlayVideo playVideo2 = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
+            VideoPlayer.get().play(playVideo2);
+            Globals.get().executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (VideoPlayer.get().isPlaying()) {
+                        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+                    } else {
+                        Globals.get().counter.makeStart();
+                    }
+                }
+            });
+        } else {
+            Globals.get().counter.makeStart();
+        }
+    }
+
+    public static void createAndShowGui(JPanel panel, Font customFont, String frameName, WindowAdapter windowAdapter) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame(frameName);
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame.setUndecorated(true);
+            //frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.addWindowListener(windowAdapter);
+            frame.getContentPane().add(panel);
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+    }
+
+    public static Font getCustomFont() {
+        Font customFont = null;
+        try {
+            customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./Crysta.ttf"));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(customFont);
+        } catch (IOException | FontFormatException e) {
+            throw new RuntimeException(e);
+        }
+        return customFont;
+    }
+
 
 }

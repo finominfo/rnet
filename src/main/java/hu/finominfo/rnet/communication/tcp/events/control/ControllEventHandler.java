@@ -77,23 +77,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case START_COUNTER:
                     logger.info("START_COUNTER arrived: " + ip);
-                    String videoPlayAtCounterStart = Props.get().getVideoPlayAtCounterStart();
-                    if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
-                        PlayVideo playVideo2 = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
-                        VideoPlayer.get().play(playVideo2);
-                        Globals.get().executor.submit(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (VideoPlayer.get().isPlaying()) {
-                                    Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
-                                } else {
-                                    Globals.get().counter.makeStart();
-                                }
-                            }
-                        });
-                    } else {
-                        Globals.get().counter.makeStart();
-                    }
+                    Utils.startCounter();
                     break;
                 case STOP_COUNTER:
                     logger.info("STOP_COUNTER arrived: " + ip);

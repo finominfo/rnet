@@ -12,14 +12,17 @@ import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
-import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
+import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.taskqueue.Worker;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -51,7 +54,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 99;
+    public final static int VERSION = 103;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -83,14 +86,16 @@ public class Globals {
     public final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
     public final Queue<Task> frontEndTasks = new ConcurrentLinkedQueue<>();
     private volatile FrontEnd frontEnd = null;
+    private volatile AllCounter allCounter = null;
 
     public static String getVersion() {
         int main = VERSION / 100;
         int sub = VERSION - main * 100;
+        String subStr;
         if (sub % 10 == 0) {
             sub /= 10;
         }
-        return "" + main + "." + sub;
+        return "" + main + "." + (sub < 10 ? ("0" + sub) : sub);
     }
 
     public FrontEnd getFrontEnd() {
@@ -98,6 +103,26 @@ public class Globals {
             frontEnd = new FrontEnd();
         }
         return frontEnd;
+    }
+
+    public AllCounter getAllCounter() {
+        return allCounter;
+    }
+
+    public AllCounter getAllCounterWithCreateIfNecessary() {
+        if (allCounter == null) {
+            Font customFont = Utils.getCustomFont();
+            allCounter = new AllCounter(customFont);
+            Utils.createAndShowGui(allCounter, customFont, "All counters", new WindowAdapter() {
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    allCounter = null;
+                    e.getWindow().dispose();
+                }
+            });
+        }
+        return allCounter;
     }
 
     public boolean isTasksEmpty() {

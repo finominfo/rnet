@@ -174,7 +174,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
         if (future.isSuccess()) {
             switch (currentTask.getTaskToDo()) {
                 case START_SERVER:
-                    logger.info("Server successful created at port: " + serverPort);
+                    logger.info("HttpServer successful created at port: " + serverPort);
                     currentTaskFinished();
                     break;
                 case FIND_SERVERS_TO_CONNECT:
@@ -189,7 +189,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
         } else {
             switch (currentTask.getTaskToDo()) {
                 case START_SERVER:
-                    logger.error("Server could not started at port: " + serverPort);
+                    logger.error("HttpServer could not started at port: " + serverPort);
                     server.stop();
                     break;
                 case FIND_SERVERS_TO_CONNECT:

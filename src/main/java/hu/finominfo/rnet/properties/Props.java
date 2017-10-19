@@ -20,6 +20,7 @@ public class Props {
     private volatile String failed;
     private final boolean controller;
     private final int port;
+    private final int httpPort;
     private final int invisible;
 
 
@@ -46,7 +47,12 @@ public class Props {
         failed = prop.getProperty("failed", "failed_counter.wav");
         controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
         port = Integer.valueOf(prop.getProperty("port", "10000"));
+        httpPort = Integer.valueOf(prop.getProperty("httpPort", "1080"));
         invisible = Integer.valueOf(prop.getProperty("invisible", "10"));
+    }
+
+    public int getHttpPort() {
+        return httpPort;
     }
 
     public String getVideoPlayAtCounterStart() {
