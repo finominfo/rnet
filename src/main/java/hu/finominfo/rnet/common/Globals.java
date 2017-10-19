@@ -34,15 +34,21 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Globals {
 
     private static Globals ourInstance = new Globals();
+    public static Globals get() {
+        return ourInstance;
+    }
+
+    public final int width;
+    public final int height;
+    public final double diff;
+    public static final int benchmarkWidth = 1920;
+
 
     private Globals() {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         width = gd.getDisplayMode().getWidth();
         height = gd.getDisplayMode().getHeight();
-    }
-
-    public static Globals get() {
-        return ourInstance;
+        diff = ((double) width) / benchmarkWidth;
     }
 
     public final static int VERSION = 94;
@@ -78,9 +84,6 @@ public class Globals {
     public final Queue<Task> tasks = new ConcurrentLinkedQueue<>();
     public final Queue<Task> frontEndTasks = new ConcurrentLinkedQueue<>();
     private volatile FrontEnd frontEnd = null;
-
-    public volatile int width;
-    public volatile int height;
 
     public static String getVersion() {
         int main = VERSION / 100;
