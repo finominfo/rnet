@@ -23,7 +23,7 @@ public class MessageDisplay {
         return ourInstance;
     }
     private static MessageDisplay ourInstance = new MessageDisplay();
-    Queue<JDialog> dialogs = new ConcurrentLinkedQueue<JDialog>();
+    Queue<JDialog> dialogs = new ConcurrentLinkedQueue<>();
 
 
 
