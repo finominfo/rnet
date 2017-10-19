@@ -42,7 +42,7 @@ public class FrontEnd extends FrontEndUtils {
         servantsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         servantsLabel.setBounds(98, 5, 48, 48);
         servantsList.setBounds(30, 55, 190, 365);
-        servantsList.setFont(new Font(servantsList.getFont().getName(), Font.BOLD, 20));
+        servantsList.setFont(new Font(servantsList.getFont().getName(), Font.BOLD, 18));
         servantsPane.setBounds(30, 55, 190, 365);
         getContentPane().add(servantsPane);
         renameBtn.setBounds(30, 420, 85, 48);
@@ -102,19 +102,20 @@ public class FrontEnd extends FrontEndUtils {
         audioLabel.setFont(new Font(audioLabel.getFont().getName(), Font.BOLD, 25));
         add(audioLabel);
         audioList.setSelectionMode(SINGLE_SELECTION);
-        audioList.setFont(new Font(audioList.getFont().getName(), Font.BOLD, 20));
+        audioList.setFont(new Font(audioList.getFont().getName(), Font.BOLD, 18));
         audioLabel.setBounds(348, 5, 48, 48);
         audioPane.setBounds(280, 55, 200, 365);
         getContentPane().add(audioPane);
-        audioPlay.setBounds(280, 420, 60, 48);
+        audioPlay.setBounds(280, 420, 50, 48);
         add(audioPlay);
-        audioAdd.setBounds(350, 420, 0, 0);
+        audioStop.setBounds(330, 420, 50, 48);
         add(audioAdd);
-        audioDel.setBounds(420, 420, 60, 48);
+        audioDel.setBounds(430, 420, 50, 48);
         add(audioDel);
         audioContinuousPlay.setBounds(280, 470, 0, 0);
-        audioAdd.setBounds(350, 420, 60, 48);
+        audioAdd.setBounds(380, 420, 50, 48);
         add(audioContinuousPlay);
+
         add(audioStop);
         audioPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
         audioContinuousPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
@@ -126,7 +127,7 @@ public class FrontEnd extends FrontEndUtils {
         videoLabel.setFont(new Font(videoLabel.getFont().getName(), Font.BOLD, 25));
         add(videoLabel);
         videoList.setSelectionMode(SINGLE_SELECTION);
-        videoList.setFont(new Font(videoList.getFont().getName(), Font.BOLD, 20));
+        videoList.setFont(new Font(videoList.getFont().getName(), Font.BOLD, 18));
         videoLabel.setBounds(598, 5, 48, 48);
         videoPane.setBounds(530, 55, 200, 365);
         getContentPane().add(videoPane);
@@ -150,7 +151,7 @@ public class FrontEnd extends FrontEndUtils {
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
         add(pictureLabel);
         pictureList.setSelectionMode(SINGLE_SELECTION);
-        pictureList.setFont(new Font(pictureList.getFont().getName(), Font.BOLD, 20));
+        pictureList.setFont(new Font(pictureList.getFont().getName(), Font.BOLD, 18));
         pictureLabel.setBounds(853, 5, 48, 48);
         picturePane.setBounds(785, 55, 200, 365);
         getContentPane().add(picturePane);

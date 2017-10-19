@@ -45,7 +45,7 @@ public class Globals {
         return ourInstance;
     }
 
-    public final static int VERSION = 94;
+    public final static int VERSION = 99;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -59,7 +59,6 @@ public class Globals {
     public volatile AudioPlayer audioPlayer = null;
     public volatile AudioPlayerContinuous audioPlayerContinuous = null;
     public volatile Status status = new Status();
-    public volatile VideoPlayer videoPlayer = null;
 
 
     private final static Logger logger = Logger.getLogger(Globals.class);
