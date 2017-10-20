@@ -16,10 +16,12 @@ import hu.finominfo.rnet.taskqueue.TaskToDo;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
@@ -92,21 +94,13 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel videoLabel = new JLabel(VideoIcon);
     public final DefaultListModel<String> videoListModel = new DefaultListModel();
-    protected final JList<String> videoList = new JList<String>(videoListModel){
+    protected final JList<String> videoList = new JList<String>(videoListModel) {
         @Override
         public String getToolTipText(MouseEvent evt) {
-            int index = locationToIndex(evt.getPoint());
-            String item = (String)(getModel().getElementAt(index));
-            String name = item.substring(0, item.lastIndexOf('.')) + ".jpg";
-            String pathAndName = Globals.videoFolder + File.separator + name;
-            File f = new File(pathAndName);
-            if(f.exists() && !f.isDirectory()) {
-                return "<html><img src=\"file:" + pathAndName + "\"> Tooltip </html>";
-            } else {
-                return "No tooltip found at: " + pathAndName;
-            }
+            return getToolTip(evt, (String) (getModel().getElementAt(locationToIndex(evt.getPoint()))), Globals.videoFolder);
         }
     };
+
     protected final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton videoPlay = new JButton(SendIcon);
     protected final JButton videoAdd = new JButton(AddIcon);
@@ -117,21 +111,13 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel pictureLabel = new JLabel(PictureIcon);
     public final DefaultListModel<String> pictureListModel = new DefaultListModel();
-    protected final JList<String> pictureList = new JList<String>(pictureListModel){
+    protected final JList<String> pictureList = new JList<String>(pictureListModel) {
         @Override
         public String getToolTipText(MouseEvent evt) {
-            int index = locationToIndex(evt.getPoint());
-            String item = (String)(getModel().getElementAt(index));
-            String name = item.substring(0, item.lastIndexOf('.')) + ".jpg";
-            String pathAndName = Globals.pictureFolder + File.separator + name;
-            File f = new File(pathAndName);
-            if(f.exists() && !f.isDirectory()) {
-                return "<html><img src=\"file:" + pathAndName + "\"> Tooltip </html>";
-            } else {
-                return "No tooltip found at: " + pathAndName;
-            }
+            return getToolTip(evt, (getModel().getElementAt(locationToIndex(evt.getPoint()))), Globals.pictureFolder);
         }
-    };;
+    };
+    ;
     protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton pictureShow = new JButton(SendIcon);
     protected final JButton pictureAdd = new JButton(AddIcon);
@@ -145,6 +131,45 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final static Logger logger = Logger.getLogger(FrontEnd.class);
 
+    private String getToolTip(MouseEvent evt, String item, String folder) {
+        String shortName = item.substring(0, item.lastIndexOf('.'));
+        String miniName = shortName + "-mini" + ".jpg";
+        String name = shortName + ".jpg";
+        String pathAndMiniName = folder + File.separator + miniName;
+        String pathAndName =folder + File.separator + name;
+        File fileMiniName = new File(pathAndMiniName);
+        File fileName = new File(pathAndName);
+        if (fileMiniName.exists() && !fileMiniName.isDirectory()) {
+            return "<html><img src=\"file:" + pathAndMiniName + "\"></html>";
+        } else if (!fileMiniName.exists() && fileName.exists() && !fileName.isDirectory()) {
+            makeMini(fileName, fileMiniName);
+            return "<html><img src=\"file:" + pathAndMiniName + "\"></html>";
+        } else {
+            return "No tooltip found at: " + pathAndName;
+        }
+    }
+
+    private void makeMini(File fileName, File fileMiniName) {
+        try {
+            BufferedImage image = ImageIO.read(fileName);
+            int height = image.getHeight();
+            int width = image.getWidth();
+            double diff = 150;
+            if (height > width) {
+                diff /= height;
+            } else {
+                diff /= width;
+            }
+            Image scaledImage = image.getScaledInstance((int) (diff * width), (int) (diff * height), Image.SCALE_SMOOTH);
+            BufferedImage bi = new BufferedImage(scaledImage.getWidth(null),scaledImage.getHeight(null),BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g2 = bi.createGraphics();
+            g2.drawImage(scaledImage, 0, 0, null);
+            g2.dispose();
+            ImageIO.write(bi, "jpg", fileMiniName);
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
+        }
+    }
 
     @Override
     public void run() {
@@ -281,30 +306,28 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 File selectedFile = fileChooser.getSelectedFile();
 
 
-
                 //String filePath = selectedFile.getAbsolutePath();
-                    //InputStream inStream = null;
-                    //OutputStream outStream = null;
-                    //try{
-                        //File source =new File(filePath);
-                        //File dest =new File("previews" + File.separator + selectedFile.getName());
-                        //inStream = new FileInputStream(source);
-                        //outStream = new FileOutputStream(dest);
+                //InputStream inStream = null;
+                //OutputStream outStream = null;
+                //try{
+                //File source =new File(filePath);
+                //File dest =new File("previews" + File.separator + selectedFile.getName());
+                //inStream = new FileInputStream(source);
+                //outStream = new FileOutputStream(dest);
 
-                        //byte[] buffer = new byte[1024];
+                //byte[] buffer = new byte[1024];
 
-                        //int length;
-                        //while ((length = inStream.read(buffer)) > 0){
-                            //outStream.write(buffer, 0, length);
-                        //}
+                //int length;
+                //while ((length = inStream.read(buffer)) > 0){
+                //outStream.write(buffer, 0, length);
+                //}
 
-                        //if (inStream != null)inStream.close();
-                        //if (outStream != null)outStream.close();
-                        //System.out.println("File Copied..");
-                    //}catch(IOException e1){
-                        //e1.printStackTrace();
-                    //}
-
+                //if (inStream != null)inStream.close();
+                //if (outStream != null)outStream.close();
+                //System.out.println("File Copied..");
+                //}catch(IOException e1){
+                //e1.printStackTrace();
+                //}
 
 
                 //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
@@ -328,20 +351,18 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
                 //try{
 
-                    //File deletable =new File("previews" + File.separator + fileName);
-                    //if(deletable.delete()){
-                        //System.out.println(deletable.getName() + " is deleted!");
-                    //}else{
-                        //System.out.println("Delete operation is failed.");
-                    //}
+                //File deletable =new File("previews" + File.separator + fileName);
+                //if(deletable.delete()){
+                //System.out.println(deletable.getName() + " is deleted!");
+                //}else{
+                //System.out.println("Delete operation is failed.");
+                //}
 
                 //}catch(Exception e){
 
-                    //e.printStackTrace();
+                //e.printStackTrace();
 
                 //}
-
-
 
 
                 selectedValuesList.stream().forEach(selectedValue -> {
@@ -353,7 +374,6 @@ public class FrontEndUtils extends JFrame implements Runnable {
             }
         }
     }
-
 
 
     protected void showPicture() {
@@ -429,7 +449,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     }
 
-    protected void showTimerGui () {
+    protected void showTimerGui() {
         Globals.get().getAllCounterWithCreateIfNecessary();
     }
 }
