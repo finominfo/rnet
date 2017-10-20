@@ -49,7 +49,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel servantsLabel = new JLabel(ServantsIcon);
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
-    protected final JList<String> servantsList = new JList<>(servantsListModel);
+    protected final JList<String> servantsList = new JList<String>(servantsListModel);
     protected final JScrollPane servantsPane = new JScrollPane(servantsList, VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton renameBtn = new JButton(RenameIcon);
     protected final JButton sendTextBtn = new JButton(SendTextIcon);
@@ -92,7 +92,21 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel videoLabel = new JLabel(VideoIcon);
     public final DefaultListModel<String> videoListModel = new DefaultListModel();
-    protected final JList<String> videoList = new JList<>(videoListModel);
+    protected final JList<String> videoList = new JList<String>(videoListModel){
+        @Override
+        public String getToolTipText(MouseEvent evt) {
+            int index = locationToIndex(evt.getPoint());
+            String item = (String)(getModel().getElementAt(index));
+            String name = item.substring(0, item.lastIndexOf('.')) + ".jpg";
+            String pathAndName = Globals.videoFolder + File.separator + name;
+            File f = new File(pathAndName);
+            if(f.exists() && !f.isDirectory()) {
+                return "<html><img src=\"" + pathAndName + "\"> Tooltip ";
+            } else {
+                return "No tooltip found at: " + pathAndName;
+            }
+        }
+    };
     protected final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton videoPlay = new JButton(SendIcon);
     protected final JButton videoAdd = new JButton(AddIcon);
@@ -103,7 +117,21 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel pictureLabel = new JLabel(PictureIcon);
     public final DefaultListModel<String> pictureListModel = new DefaultListModel();
-    protected final JList<String> pictureList = new JList<>(pictureListModel);
+    protected final JList<String> pictureList = new JList<String>(pictureListModel){
+        @Override
+        public String getToolTipText(MouseEvent evt) {
+            int index = locationToIndex(evt.getPoint());
+            String item = (String)(getModel().getElementAt(index));
+            String name = item.substring(0, item.lastIndexOf('.')) + ".jpg";
+            String pathAndName = Globals.pictureFolder + File.separator + name;
+            File f = new File(pathAndName);
+            if(f.exists() && !f.isDirectory()) {
+                return "<html><img src=\"" + pathAndName + "\"> Tooltip ";
+            } else {
+                return "No tooltip found at: " + pathAndName;
+            }
+        }
+    };;
     protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton pictureShow = new JButton(SendIcon);
     protected final JButton pictureAdd = new JButton(AddIcon);
