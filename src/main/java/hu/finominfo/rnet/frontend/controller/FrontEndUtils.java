@@ -304,33 +304,6 @@ public class FrontEndUtils extends JFrame implements Runnable {
             int result = fileChooser.showOpenDialog(FrontEndUtils.this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-
-
-                //String filePath = selectedFile.getAbsolutePath();
-                //InputStream inStream = null;
-                //OutputStream outStream = null;
-                //try{
-                //File source =new File(filePath);
-                //File dest =new File("previews" + File.separator + selectedFile.getName());
-                //inStream = new FileInputStream(source);
-                //outStream = new FileOutputStream(dest);
-
-                //byte[] buffer = new byte[1024];
-
-                //int length;
-                //while ((length = inStream.read(buffer)) > 0){
-                //outStream.write(buffer, 0, length);
-                //}
-
-                //if (inStream != null)inStream.close();
-                //if (outStream != null)outStream.close();
-                //System.out.println("File Copied..");
-                //}catch(IOException e1){
-                //e1.printStackTrace();
-                //}
-
-
-                //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue)));
                 });
@@ -347,24 +320,6 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (!selectedValuesList.isEmpty() && list.getSelectedValue() != null) {
             String fileName = list.getSelectedValue();
             if (fileName != null) {
-
-
-                //try{
-
-                //File deletable =new File("previews" + File.separator + fileName);
-                //if(deletable.delete()){
-                //System.out.println(deletable.getName() + " is deleted!");
-                //}else{
-                //System.out.println("Delete operation is failed.");
-                //}
-
-                //}catch(Exception e){
-
-                //e.printStackTrace();
-
-                //}
-
-
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
                 });
