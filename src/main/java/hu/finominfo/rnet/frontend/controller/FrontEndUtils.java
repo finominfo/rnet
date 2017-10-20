@@ -101,7 +101,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
             String pathAndName = Globals.videoFolder + File.separator + name;
             File f = new File(pathAndName);
             if(f.exists() && !f.isDirectory()) {
-                return "<html><img src=\"" + pathAndName + "\"> Tooltip ";
+                return "<html><img src=\"file:" + pathAndName + "\"> Tooltip </html>";
             } else {
                 return "No tooltip found at: " + pathAndName;
             }
@@ -126,7 +126,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
             String pathAndName = Globals.pictureFolder + File.separator + name;
             File f = new File(pathAndName);
             if(f.exists() && !f.isDirectory()) {
-                return "<html><img src=\"" + pathAndName + "\"> Tooltip ";
+                return "<html><img src=\"file:" + pathAndName + "\"> Tooltip </html>";
             } else {
                 return "No tooltip found at: " + pathAndName;
             }
