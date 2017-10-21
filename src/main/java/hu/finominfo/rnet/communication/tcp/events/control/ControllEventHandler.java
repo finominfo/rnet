@@ -70,6 +70,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
+                    closeAudio();
                     int minutes = ((ResetCounter) msg.getControlObject()).getMinutes();
                     Globals.get().counter.makeStart();
                     Globals.get().counter.makeStop();
