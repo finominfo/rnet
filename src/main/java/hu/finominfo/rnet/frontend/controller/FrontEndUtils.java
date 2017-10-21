@@ -218,7 +218,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (servantsList.getSelectedValuesList().size() > 0) {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-            panel.setPreferredSize(new Dimension(500, 400));
+            panel.setPreferredSize(new Dimension(300, 200));
             JLabel label = new JLabel("Enter the message: ");
             //label.setBounds(50, 50, 200, 40);
             JTextArea text = new JTextArea();

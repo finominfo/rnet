@@ -1,5 +1,7 @@
 package hu.finominfo.rnet.common;
 
+import hu.finominfo.rnet.audio.AudioPlayer;
+import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
@@ -19,10 +21,8 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -91,7 +91,6 @@ public class Utils {
 
 
     public static void restartApplication()
-    //TODO: Fejleszteni!!!
     {
 //        if (Globals.get().server != null) {
 //            Globals.get().server.stop();
@@ -134,37 +133,67 @@ public class Utils {
     }
 
 
-    public static void startCounter() {
+    public static void startCounterVideo() {
         String videoPlayAtCounterStart = Props.get().getVideoPlayAtCounterStart();
         if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
-            PlayVideo playVideo2 = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
-            VideoPlayer.get().play(playVideo2);
+            PlayVideo playVideo = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
+            VideoPlayer.get().play(playVideo);
             Globals.get().executor.submit(new Runnable() {
                 @Override
                 public void run() {
                     if (VideoPlayer.get().isPlaying()) {
                         Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
                     } else {
-                        Globals.get().counter.makeStart();
+                        startCounterMusic();
                     }
                 }
             });
         } else {
-            Globals.get().counter.makeStart();
+           startCounterMusic();
         }
     }
 
-    public static void createAndShowGui(JPanel panel, Font customFont, String frameName, WindowAdapter windowAdapter) {
+    private static void startCounterMusic() {
+        String contMusicAtCounterStart = Props.get().getContMusicAtCounterStart();
+        if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
+            try {
+                closeAudio();
+                Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, Globals.audioFolder + File.separator + contMusicAtCounterStart);
+                Globals.get().audioPlayerContinuous.play(null);
+            } catch (Exception e) {
+                logger.error(getStackTrace(e));
+            }
+        }
+        Globals.get().counter.makeStart();
+    }
+
+    public static void closeAudio() {
+        AudioPlayer audioPlayer = Globals.get().audioPlayer;
+        if (audioPlayer != null) {
+            audioPlayer.close();
+            Globals.get().audioPlayer = null;
+        }
+        AudioPlayerContinuous audioPlayerContinuous = Globals.get().audioPlayerContinuous;
+        if (audioPlayerContinuous != null) {
+            audioPlayerContinuous.stop();
+            audioPlayerContinuous.close();
+            Globals.get().audioPlayerContinuous = null;
+        }
+    }
+
+
+    public static void createAndShowGui(final JFrameHolder jFrameHolder, boolean undecorated, JPanel panel, Font customFont, String frameName, WindowAdapter windowAdapter) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame(frameName);
+            JFrame frame = jFrameHolder == null ? (new JFrame(frameName)) : jFrameHolder.getFrame();
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setUndecorated(true);
+            frame.setUndecorated(undecorated);
             //frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.addWindowListener(windowAdapter);
             frame.getContentPane().add(panel);
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+            jFrameHolder.setFrame(frame);
         });
     }
 

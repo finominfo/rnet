@@ -40,12 +40,8 @@ public class Main {
             controller.run();
             Globals.get().controller = controller;
             new FrontEndWorker().run();
-            /*Globals.get().executor.schedule(()
-                    -> Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "Red.avi", FileType.VIDEO,"192.168.0.111"),
-                    15, TimeUnit.SECONDS);*/
         } else {
-            Globals.get().executor.schedule(() ->
-            SwingUtilities.invokeLater(() -> {
+            Globals.get().executor.schedule(() -> {
                 Counter.createAndShowGui();
                 Globals.get().executor.submit(() -> new HttpServer().start());
                 Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
@@ -53,7 +49,7 @@ public class Main {
                 servant.run();
                 Globals.get().servant = servant;
                 Globals.get().executor.submit(new GameKnockSimple());
-            }), 3, TimeUnit.SECONDS);
+            }, 2, TimeUnit.SECONDS);
         }
     }
 

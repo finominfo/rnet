@@ -39,7 +39,7 @@ public class AllCounter extends JPanel {
 
     public static void main(String[] args) {
         Font customFont = Utils.getCustomFont();
-        Utils.createAndShowGui(new AllCounter(customFont), customFont, "All counters", new WindowAdapter() {
+        Utils.createAndShowGui(null, false, new AllCounter(customFont), customFont, "All counters", new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 e.getWindow().dispose();

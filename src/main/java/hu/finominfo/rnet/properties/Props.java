@@ -16,6 +16,7 @@ public class Props {
     private volatile List<String> animalVoices;
     private volatile String beep;
     private volatile String videoPlayAtCounterStart;
+    private volatile String contMusicAtCounterStart;
     private volatile String success;
     private volatile String failed;
     private final boolean controller;
@@ -42,7 +43,8 @@ public class Props {
         String defaultAnimalVoices = "bird1.wav,chewbacca.wav,frogs.wav,gorilla.wav,monkey.wav";
         animalVoices = Arrays.asList(prop.getProperty("animalVoices", defaultAnimalVoices).split(","));
         beep = prop.getProperty("beep", "beep.wav");
-        videoPlayAtCounterStart = prop.getProperty("videoPlayAtCounterStart", "");
+        videoPlayAtCounterStart = prop.getProperty("startVideo", "startVideo.avi");
+        contMusicAtCounterStart = prop.getProperty("startMusic", "startMusic.wav");
         success = prop.getProperty("success", "success.wav");
         failed = prop.getProperty("failed", "failed_counter.wav");
         controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
@@ -57,6 +59,10 @@ public class Props {
 
     public String getVideoPlayAtCounterStart() {
         return videoPlayAtCounterStart;
+    }
+
+    public String getContMusicAtCounterStart() {
+        return contMusicAtCounterStart;
     }
 
     public int getInvisible() {

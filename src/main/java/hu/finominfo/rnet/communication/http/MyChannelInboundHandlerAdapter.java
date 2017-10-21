@@ -2,17 +2,11 @@ package hu.finominfo.rnet.communication.http;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
-import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
-import hu.finominfo.rnet.properties.Props;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import org.apache.log4j.Logger;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.10.19.
@@ -31,7 +25,7 @@ public class MyChannelInboundHandlerAdapter extends ChannelInboundHandlerAdapter
             switch (Command.get(uri)) {
                 case start:
                     logger.info("START_COUNTER arrived: " + ip);
-                    Utils.startCounter();
+                    Utils.startCounterVideo();
                     sendResponse(ctx, request, "Counter started.");
                     break;
                 case stop:

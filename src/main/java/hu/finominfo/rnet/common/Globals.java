@@ -54,7 +54,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 103;
+    public final static int VERSION = 111;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -113,7 +113,7 @@ public class Globals {
         if (allCounter == null) {
             Font customFont = Utils.getCustomFont();
             allCounter = new AllCounter(customFont);
-            Utils.createAndShowGui(allCounter, customFont, "All counters", new WindowAdapter() {
+            Utils.createAndShowGui(null, true, allCounter, customFont, "All counters", new WindowAdapter() {
 
                 @Override
                 public void windowClosing(WindowEvent e) {

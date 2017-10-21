@@ -10,12 +10,13 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
-import hu.finominfo.rnet.properties.Props;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
+
+import static hu.finominfo.rnet.common.Utils.closeAudio;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.29.
@@ -77,7 +78,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case START_COUNTER:
                     logger.info("START_COUNTER arrived: " + ip);
-                    Utils.startCounter();
+                    Utils.startCounterVideo();
                     break;
                 case STOP_COUNTER:
                     logger.info("STOP_COUNTER arrived: " + ip);
@@ -86,20 +87,6 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
             }
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
-        }
-    }
-
-    private void closeAudio() {
-        AudioPlayer audioPlayer = Globals.get().audioPlayer;
-        if (audioPlayer != null) {
-            audioPlayer.close();
-            Globals.get().audioPlayer = null;
-        }
-        AudioPlayerContinuous audioPlayerContinuous = Globals.get().audioPlayerContinuous;
-        if (audioPlayerContinuous != null) {
-            audioPlayerContinuous.stop();
-            audioPlayerContinuous.close();
-            Globals.get().audioPlayerContinuous = null;
         }
     }
 }
