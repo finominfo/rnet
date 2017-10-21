@@ -113,7 +113,7 @@ public class Counter extends JPanel {
                 e.getWindow().dispose();
                 System.exit(0);
             }
-        });
+        }, null);
         counter.start();
     }
 

@@ -21,8 +21,7 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -37,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Globals {
 
     private static Globals ourInstance = new Globals();
+
     public static Globals get() {
         return ourInstance;
     }
@@ -54,7 +54,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 112;
+    public final static int VERSION = 115;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -62,7 +62,7 @@ public class Globals {
     public volatile Worker servant = null;
     public volatile Server server = null;
     public volatile Client client = null;
-    public volatile ConnectionBroadcaster broadcaster= null;
+    public volatile ConnectionBroadcaster broadcaster = null;
     public volatile ConnectionMonitor monitor = null;
     public volatile hu.finominfo.rnet.frontend.servant.counter.Panel counter = null;
     public volatile AudioPlayer audioPlayer = null;
@@ -120,10 +120,18 @@ public class Globals {
                     allCounter = null;
                     e.getWindow().dispose();
                 }
+            }, new KeyAdapter() {
+                public void keyPressed(KeyEvent ke) {  // handler
+                    if (ke.getKeyCode() == ke.VK_ESCAPE) {
+                        allCounter = null;
+                        ((JFrame) ke.getComponent()).dispose();
+                    }
+                }
             });
         }
-        return allCounter;
-    }
+
+    return allCounter;
+}
 
     public boolean isTasksEmpty() {
         return tasks.isEmpty();

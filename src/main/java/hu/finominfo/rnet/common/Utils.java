@@ -12,8 +12,7 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,7 +44,11 @@ public class Utils {
     }
 
     public static Map.Entry<String, ClientParam> getIpClientParam(String name) {
-        return Globals.get().serverClients.entrySet().stream().filter(entry -> entry.getValue().getName().equals(name)).findFirst().get();
+        if (name.trim().endsWith(")")) {
+            name = name.substring(0, name.indexOf('(')).trim();
+        }
+        final String finalName = name;
+        return Globals.get().serverClients.entrySet().stream().filter(entry -> entry.getValue().getName().equals(finalName)).findFirst().get();
     }
 
     public static String getFileType(FileType fileType) {
@@ -90,8 +93,7 @@ public class Utils {
     }
 
 
-    public static void restartApplication()
-    {
+    public static void restartApplication() {
 //        if (Globals.get().server != null) {
 //            Globals.get().server.stop();
 //        }
@@ -149,7 +151,7 @@ public class Utils {
                 }
             });
         } else {
-           startCounterMusic();
+            startCounterMusic();
         }
     }
 
@@ -182,18 +184,26 @@ public class Utils {
     }
 
 
-    public static void createAndShowGui(final JFrameHolder jFrameHolder, boolean undecorated, JPanel panel, Font customFont, String frameName, WindowAdapter windowAdapter) {
+    public static void createAndShowGui(final JFrameHolder jFrameHolder, boolean undecorated, JPanel panel, Font customFont, String frameName, WindowAdapter windowAdapter, KeyListener keyListener) {
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = jFrameHolder == null ? (new JFrame(frameName)) : jFrameHolder.getFrame();
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-            frame.setUndecorated(undecorated);
-            //frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.addWindowListener(windowAdapter);
-            frame.getContentPane().add(panel);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-            jFrameHolder.setFrame(frame);
+            final JFrame frame1 = jFrameHolder == null ? (new JFrame(frameName)) : jFrameHolder.getFrame();
+            frame1.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            frame1.addWindowListener(windowAdapter);
+            if (keyListener != null) {
+                frame1.addKeyListener(keyListener);
+            }
+            frame1.getContentPane().add(panel);
+            if (undecorated) {
+                frame1.setUndecorated(undecorated);
+                frame1.pack();
+            } else {
+                frame1.setOpacity(1.0f);
+            }
+            frame1.setVisible(true);
+            frame1.setLocationRelativeTo(null);
+            if (jFrameHolder != null) {
+                jFrameHolder.setFrame(frame1);
+            }
         });
     }
 

@@ -4,6 +4,8 @@ import hu.finominfo.rnet.common.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -44,6 +46,6 @@ public class AllCounter extends JPanel {
             public void windowClosing(WindowEvent e) {
                 e.getWindow().dispose();
             }
-        });
+        }, null);
     }
 }

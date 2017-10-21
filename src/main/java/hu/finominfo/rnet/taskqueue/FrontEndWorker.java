@@ -84,16 +84,23 @@ public class FrontEndWorker extends Worker {
 
     }
 
+    private String getIpPart(String ip) {
+        return ip.substring(ip.lastIndexOf('.') + 1);
+    }
     private void refreshServantList() {
-        List<String> existingNameOrIp = Globals.get().serverClients.values().stream()
-                .filter(clientParam -> clientParam.getContext() != null)
-                .map(ClientParam::getName).collect(Collectors.toList());
+        List<String> existingNameAndIpPart = Globals.get().serverClients.entrySet().stream()
+                .filter(entry -> entry.getValue().getContext() != null)
+                .map(entry -> entry.getValue().getName() + " (" + getIpPart(entry.getKey()) + ")").collect(Collectors.toList());
+
+//        List<String> existingNameOrIp = Globals.get().serverClients.values().stream()
+//                .filter(clientParam -> clientParam.getContext() != null)
+//                .map(ClientParam::getName).collect(Collectors.toList());
         List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsListModel.elements());
-        existingNameOrIp.stream()
+        existingNameAndIpPart.stream()
                 .filter(nameOrIp -> !elements.contains(nameOrIp))
                 .forEach(Globals.get().getFrontEnd().servantsListModel::addElement);
         for (int i = 0; i < elements.size(); i++) {
-            if (!existingNameOrIp.contains(elements.get(i))) {
+            if (!existingNameAndIpPart.contains(elements.get(i))) {
                 Globals.get().getFrontEnd().servantsListModel.remove(i);
             }
         }

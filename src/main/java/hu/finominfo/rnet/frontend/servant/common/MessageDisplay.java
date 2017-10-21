@@ -61,7 +61,7 @@ public class MessageDisplay extends JPanel{
                 Globals.get().status.setMessage(null);
                 e.getWindow().dispose();
             }
-        });
+        }, null);
         Globals.get().executor.schedule(() -> {
             try {
                 Globals.get().status.setMessage(null);
