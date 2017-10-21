@@ -102,7 +102,7 @@ public class Panel extends JPanel {
     };
 
     public void beepAndFlash() {
-        beep.play(null);
+        //beep.play(null);
         flash();
     }
 
