@@ -189,7 +189,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
         } else {
             switch (currentTask.getTaskToDo()) {
                 case START_SERVER:
-                    logger.error("Server could not started at port: " + serverPort);
+                    logger.error("HttpServer could not started at port: " + serverPort);
                     server.stop();
                     break;
                 case FIND_SERVERS_TO_CONNECT:

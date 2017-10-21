@@ -22,6 +22,13 @@
       <element id="file-copy" path="$PROJECT_DIR$/start.bat" />
       <element id="file-copy" path="$PROJECT_DIR$/success_knock.wav" />
       <element id="file-copy" path="$PROJECT_DIR$/failed_counter.wav" />
+      <element id="directory" name="resources">
+        <element id="dir-copy" path="$PROJECT_DIR$/resources" />
+      </element>
+      <element id="directory" name="previews">
+        <element id="dir-copy" path="$PROJECT_DIR$/previews" />
+        <element id="file-copy" path="$PROJECT_DIR$/previews/test.txt" />
+      </element>
     </root>
   </artifact>
 </component>

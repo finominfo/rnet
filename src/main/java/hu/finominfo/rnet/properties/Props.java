@@ -15,10 +15,12 @@ public class Props {
     private volatile List<String> baseAudio;
     private volatile List<String> animalVoices;
     private volatile String beep;
+    private volatile String videoPlayAtCounterStart;
     private volatile String success;
     private volatile String failed;
     private final boolean controller;
     private final int port;
+    private final int httpPort;
     private final int invisible;
 
 
@@ -40,11 +42,21 @@ public class Props {
         String defaultAnimalVoices = "bird1.wav,chewbacca.wav,frogs.wav,gorilla.wav,monkey.wav";
         animalVoices = Arrays.asList(prop.getProperty("animalVoices", defaultAnimalVoices).split(","));
         beep = prop.getProperty("beep", "beep.wav");
+        videoPlayAtCounterStart = prop.getProperty("videoPlayAtCounterStart", "");
         success = prop.getProperty("success", "success.wav");
         failed = prop.getProperty("failed", "failed_counter.wav");
         controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
         port = Integer.valueOf(prop.getProperty("port", "10000"));
+        httpPort = Integer.valueOf(prop.getProperty("httpPort", "1080"));
         invisible = Integer.valueOf(prop.getProperty("invisible", "10"));
+    }
+
+    public int getHttpPort() {
+        return httpPort;
+    }
+
+    public String getVideoPlayAtCounterStart() {
+        return videoPlayAtCounterStart;
     }
 
     public int getInvisible() {

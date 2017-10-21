@@ -1,15 +1,20 @@
 package hu.finominfo.rnet.taskqueue;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
+import hu.finominfo.rnet.frontend.controller.allcounter.CounterPanel;
 import org.apache.log4j.Logger;
 
+import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,6 +42,9 @@ public class FrontEndWorker extends Worker {
                 case REFRESH_SERVANT_LIST:
                     refreshServantList();
                     break;
+                case REFRESH_ALL_COUNTER:
+                    refreshAllCounter();
+                    break;
                 default:
                     logger.error("Not implemented task: " + currentTask.getTaskToDo().toString());
                     break;
@@ -46,6 +54,33 @@ public class FrontEndWorker extends Worker {
         } finally {
             currentTaskFinished();
         }
+
+    }
+
+    private void refreshAllCounter() {
+        AllCounter allCounter = Globals.get().getAllCounter();
+        if (allCounter == null) {
+            return;
+        }
+        try {
+            CounterPanel[] panels = allCounter.getPanels();
+            if (panels != null) {
+                final AtomicInteger i = new AtomicInteger(0);
+                Globals.get().serverClients.entrySet().stream().forEach(ipClient -> {
+                    String status = ipClient.getValue().getStatus();
+                    Optional<String> counterOptional = Arrays.stream(status.split("\n")).filter(row -> row.startsWith("Counter")).findFirst();
+                    if (counterOptional.isPresent()) {
+                        String counter = counterOptional.get().substring(9);
+                        panels[i.get()].setCounter(counter.toLowerCase().contains("invisible") ? "" : counter);
+                        panels[i.get()].setTitle(ipClient.getKey());
+                        i.incrementAndGet();
+                    }
+                });
+            }
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
+        }
+
 
     }
 

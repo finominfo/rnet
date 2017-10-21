@@ -10,75 +10,118 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
+import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
-
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.*;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.10.08.
  */
 public class FrontEndUtils extends JFrame implements Runnable {
 
-    protected final JLabel servantsLabel = new JLabel("SERVANTS");
+    //for image preview
+    //if file get selected by click then:
+    //protected final ImageIcon PreviewIcon=new ImageIcon(File.separator + get selected image name and path or something);
+    //make it visible in FrontEnd
+    //make Proceed and Cancel button visible
+    //if click elsewhere not to select image then make all invisible Again
+    //if Proceed button clicked then send file and make all invisible Again
+    //if Cancel button clicked then Do nothing and make all invisible Again
+
+    protected final ImageIcon ServantsIcon = new ImageIcon("resources" + File.separator + "servants.png");
+    protected final ImageIcon SendTextIcon = new ImageIcon("resources" + File.separator + "sendtext.png");
+    protected final ImageIcon RenameIcon = new ImageIcon("resources" + File.separator + "rename.png");
+
+
+    protected final JLabel servantsLabel = new JLabel(ServantsIcon);
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
-    protected final JList<String> servantsList = new JList<>(servantsListModel);
+    protected final JList<String> servantsList = new JList<String>(servantsListModel);
     protected final JScrollPane servantsPane = new JScrollPane(servantsList, VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton renameBtn = new JButton("RENAME");
-    protected final JButton sendTextBtn = new JButton("SEND TEXT");
+    protected final JButton renameBtn = new JButton(RenameIcon);
+    protected final JButton sendTextBtn = new JButton(SendTextIcon);
+
 
     protected final JLabel counterLabel = new JLabel("COUNTER");
-    protected final JLabel showPeriod = new JLabel("SHOW PERIOD (sec):");
+    protected final JLabel showPeriod = new JLabel("SHOW TIME (sec):");
     protected final JTextField showSeconds = new JTextField();
-    protected final JButton startBtn = new JButton("START");
-    protected final JButton stopBtn = new JButton("STOP");
-    protected final JButton resetBtn = new JButton("RESET");
-    protected final JLabel resetLabel = new JLabel("min");
+
+
+    protected final ImageIcon StartIcon = new ImageIcon("resources" + File.separator + "play.png");
+    protected final ImageIcon StopIcon = new ImageIcon("resources" + File.separator + "stop.png");
+    protected final ImageIcon ResetIcon = new ImageIcon("resources" + File.separator + "reset.png");
+    protected final ImageIcon MinIcon = new ImageIcon("resources" + File.separator + "min.png");
+    protected final ImageIcon AudioIcon = new ImageIcon("resources" + File.separator + "audio.png");
+    protected final ImageIcon VideoIcon = new ImageIcon("resources" + File.separator + "video.png");
+    protected final ImageIcon PictureIcon = new ImageIcon("resources" + File.separator + "picture.png");
+    protected final ImageIcon SendIcon = new ImageIcon("resources" + File.separator + "send.png");
+    protected final ImageIcon StopIcon2 = new ImageIcon("resources" + File.separator + "stop2.png");
+    protected final ImageIcon AddIcon = new ImageIcon("resources" + File.separator + "add.png");
+    protected final ImageIcon DelIcon = new ImageIcon("resources" + File.separator + "del.png");
+
+
+    protected final JButton startBtn = new JButton(StartIcon);
+    protected final JButton stopBtn = new JButton(StopIcon);
+    protected final JButton resetBtn = new JButton(ResetIcon);
+    protected final JButton resetLabel = new JButton(MinIcon);
     protected final JTextField resetMins = new JTextField();
 
 
-    protected final JLabel audioLabel = new JLabel("AUDIO");
+    protected final JLabel audioLabel = new JLabel(AudioIcon);
     public final DefaultListModel<String> audioListModel = new DefaultListModel();
     protected final JList<String> audioList = new JList<>(audioListModel);
     protected final JScrollPane audioPane = new JScrollPane(audioList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton audioPlay = new JButton("PLAY");
-    protected final JButton audioAdd = new JButton("ADD");
-    protected final JButton audioDel = new JButton("DEL");
-    protected final JButton audioContinuousPlay = new JButton("CONT PLAY");
-    protected final JButton audioStop = new JButton("STOP");
+    protected final JButton audioPlay = new JButton(SendIcon);
+    protected final JButton audioAdd = new JButton(AddIcon);
+    protected final JButton audioDel = new JButton(DelIcon);
+    protected final JButton audioContinuousPlay = new JButton(SendIcon);
+    protected final JButton audioStop = new JButton(StopIcon2);
 
-    protected final JLabel videoLabel = new JLabel("VIDEO");
+    protected final JLabel videoLabel = new JLabel(VideoIcon);
     public final DefaultListModel<String> videoListModel = new DefaultListModel();
-    protected final JList<String> videoList = new JList<>(videoListModel);
+    protected final JList<String> videoList = new JList<String>(videoListModel) {
+        @Override
+        public String getToolTipText(MouseEvent evt) {
+            return getToolTip(evt, (String) (getModel().getElementAt(locationToIndex(evt.getPoint()))), Globals.videoFolder);
+        }
+    };
+
     protected final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton videoPlay = new JButton("PLAY");
-    protected final JButton videoAdd = new JButton("ADD");
-    protected final JButton videoDel = new JButton("DEL");
+    protected final JButton videoPlay = new JButton(SendIcon);
+    protected final JButton videoAdd = new JButton(AddIcon);
+    protected final JButton videoDel = new JButton(DelIcon);
     protected final JButton videoContinuousPlay = new JButton("CONT PLAY");
-    protected final JButton videoStop = new JButton("STOP");
+    protected final JButton videoStop = new JButton(StopIcon2);
 
 
-    protected final JLabel pictureLabel = new JLabel("PICTURE");
+    protected final JLabel pictureLabel = new JLabel(PictureIcon);
     public final DefaultListModel<String> pictureListModel = new DefaultListModel();
-    protected final JList<String> pictureList = new JList<>(pictureListModel);
+    protected final JList<String> pictureList = new JList<String>(pictureListModel) {
+        @Override
+        public String getToolTipText(MouseEvent evt) {
+            return getToolTip(evt, (getModel().getElementAt(locationToIndex(evt.getPoint()))), Globals.pictureFolder);
+        }
+    };
+    ;
     protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    protected final JButton pictureShow = new JButton("SHOW");
-    protected final JButton pictureAdd = new JButton("ADD");
-    protected final JButton pictureDel = new JButton("DEL");
+    protected final JButton pictureShow = new JButton(SendIcon);
+    protected final JButton pictureAdd = new JButton(AddIcon);
+    protected final JButton pictureDel = new JButton(DelIcon);
 
     protected final JLabel taskTextLabel = new JLabel("Remaining tasks:");
     protected final JLabel taskNumber = new JLabel();
@@ -87,6 +130,46 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JLabel statusLabel = new JLabel("STATUS");
 
     protected final static Logger logger = Logger.getLogger(FrontEnd.class);
+
+    private String getToolTip(MouseEvent evt, String item, String folder) {
+        String shortName = item.substring(0, item.lastIndexOf('.'));
+        String miniName = shortName + "-mini" + ".jpg";
+        String name = shortName + ".jpg";
+        String pathAndMiniName = folder + File.separator + miniName;
+        String pathAndName =folder + File.separator + name;
+        File fileMiniName = new File(pathAndMiniName);
+        File fileName = new File(pathAndName);
+        if (fileMiniName.exists() && !fileMiniName.isDirectory()) {
+            return "<html><img src=\"file:" + pathAndMiniName + "\"></html>";
+        } else if (!fileMiniName.exists() && fileName.exists() && !fileName.isDirectory()) {
+            makeMini(fileName, fileMiniName);
+            return "<html><img src=\"file:" + pathAndMiniName + "\"></html>";
+        } else {
+            return "No tooltip found at: " + pathAndName;
+        }
+    }
+
+    private void makeMini(File fileName, File fileMiniName) {
+        try {
+            BufferedImage image = ImageIO.read(fileName);
+            int height = image.getHeight();
+            int width = image.getWidth();
+            double diff = 150;
+            if (height > width) {
+                diff /= height;
+            } else {
+                diff /= width;
+            }
+            Image scaledImage = image.getScaledInstance((int) (diff * width), (int) (diff * height), Image.SCALE_SMOOTH);
+            BufferedImage bi = new BufferedImage(scaledImage.getWidth(null),scaledImage.getHeight(null),BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g2 = bi.createGraphics();
+            g2.drawImage(scaledImage, 0, 0, null);
+            g2.dispose();
+            ImageIO.write(bi, "jpg", fileMiniName);
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
+        }
+    }
 
     @Override
     public void run() {
@@ -211,6 +294,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         taskNumber.setText(String.valueOf(Globals.get().tasks.size() + (null == Globals.get().currentTask ? 0 : 1)));
     }
 
+
     protected void sendFile(final String destFolder, final FileType fileType) {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         if (!selectedValuesList.isEmpty()) {
@@ -220,11 +304,12 @@ public class FrontEndUtils extends JFrame implements Runnable {
             int result = fileChooser.showOpenDialog(FrontEndUtils.this);
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                //System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_FILE, selectedFile.getAbsolutePath(), fileType, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -238,10 +323,13 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 selectedValuesList.stream().forEach(selectedValue -> {
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
+
 
     protected void showPicture() {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
@@ -253,7 +341,10 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     ControlEvent controlEvent = new ControlEvent(ControlType.SHOW_PICTURE, showPicture);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
+
             }
         }
     }
@@ -268,7 +359,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -283,7 +376,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
-                servantsList.clearSelection();
+                if (selectedValuesList.size() != 1) {
+                    servantsList.clearSelection();
+                }
             }
         }
     }
@@ -294,7 +389,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
             ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(Integer.valueOf(resetMins.getText())));
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
         });
-        servantsList.clearSelection();
+        if (selectedValuesList.size() != 1) {
+            servantsList.clearSelection();
+        }
     }
 
     protected void sendOnlyControl(ControlType controlType) {
@@ -302,6 +399,12 @@ public class FrontEndUtils extends JFrame implements Runnable {
         selectedValuesList.stream().forEach(selectedValue -> {
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType), Utils.getIp(selectedValue)));
         });
-        servantsList.clearSelection();
+        if (selectedValuesList.size() != 1) {
+            servantsList.clearSelection();
+        }
+    }
+
+    protected void showTimerGui() {
+        Globals.get().getAllCounterWithCreateIfNecessary();
     }
 }

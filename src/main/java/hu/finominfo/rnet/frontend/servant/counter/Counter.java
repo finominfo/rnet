@@ -4,7 +4,6 @@ import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.frontend.servant.counter.io.HandlingIO;
 import hu.finominfo.rnet.audio.AudioPlayer;
-import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import org.apache.log4j.Logger;
 
@@ -19,10 +18,8 @@ import java.awt.GridLayout;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
@@ -40,7 +37,6 @@ public class Counter extends JPanel {
     public final ScheduledExecutorService executor;
     private final Props props = Props.get();
     private final Font customFont;
-    //private final Set<AudioPlayerContinuous> continuousPlayers = new HashSet<>();
     private final List<String> animalVoices = new ArrayList<>();
     private final Random random = new Random(0xdf435fa2187L);
 
@@ -48,7 +44,7 @@ public class Counter extends JPanel {
         this.customFont = customFont;
         Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
         diff = ((double) screenSize.width) / 1920;
-        System.out.println("diff: " + diff);
+        logger.info("diff: " + diff);
         mainPanel = new JPanel(new GridLayout(ROW, COLUMN));
         executor = Globals.get().executor;
     }

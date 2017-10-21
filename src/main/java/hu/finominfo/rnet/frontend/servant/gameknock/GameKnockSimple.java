@@ -123,7 +123,6 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
         if (rhythmsAreOk()) {
             state.set(State.PlayGoodResult.ordinal());
             successPlayer.play(this);
-            Globals.get().counter.makeStop();
         } else {
             state.set(State.PlayWrongResult.ordinal());
             failedPlayer.play(this);

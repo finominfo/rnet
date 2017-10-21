@@ -19,6 +19,9 @@ public class ControllerRepeater implements Runnable {
             if (Globals.get().isTasksEmpty() && ((counter & 0x1f) == 0)) {
                 Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
             }
+            if (Globals.get().isTasksEmpty() && ((counter & 0x01) == 0)) {
+                Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.REFRESH_ALL_COUNTER);
+            }
             if (Globals.get().isFrontEndTasksEmpty()) {
                 Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.REFRESH_SERVANT_LIST);
             }
