@@ -5,6 +5,7 @@ import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -27,7 +28,8 @@ public class VideoPlayer {
 
 
     public void play(final PlayVideo playVideo) {
-        if (playing.compareAndSet(false, true)) {
+        File f = new File(playVideo.getPathAndName());
+        if(f.exists() && !f.isDirectory() && playing.compareAndSet(false, true)) {
             try {
                 String s = "omxplayer " + playVideo.getPathAndName();
                 Globals.get().status.setVideo("Playing: " + playVideo.getPathAndName());
