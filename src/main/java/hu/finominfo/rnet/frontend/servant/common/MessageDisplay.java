@@ -51,7 +51,7 @@ public class MessageDisplay extends JPanel{
         jTextArea.setBackground(BG);
         jTextArea.setForeground(FG);
         jTextArea.setFont(customFont);
-        jTextArea.setFont(new Font(jTextArea.getFont().getName(), Font.BOLD, 55));
+        jTextArea.setFont(new Font(jTextArea.getFont().getName(), Font.BOLD, 72));
         jTextArea.setText(message);
         String shortMessage = message.length() <= 10 ? message : (message.substring(0, 10) + "...");
         Globals.get().status.setMessage("Showing: " + shortMessage);

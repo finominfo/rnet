@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.taskqueue;
 
 import hu.finominfo.rnet.common.Globals;
+import io.netty.util.internal.ThreadLocalRandom;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
@@ -10,18 +11,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServantRepeater implements Runnable {
     private final static Logger logger = Logger.getLogger(ServantRepeater.class);
-    private volatile long counter = 0;
+    private volatile long nextDirSend = System.currentTimeMillis();
 
     @Override
     public void run() {
         try {
-            counter++;
-            if (Globals.get().isTasksEmpty() && ((counter & 0x01) == 0)) {
+            long now = System.currentTimeMillis();
+            if (nextDirSend < now && Globals.get().isTasksEmpty()) {
+                nextDirSend = now + ThreadLocalRandom.current().nextInt(2000, 5001);
                 Globals.get().addToTasksIfNotExists(TaskToDo.SEND_DIR);
             }
         }catch (Exception e) {
             logger.error(e);
         }
-        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+        Globals.get().executor.schedule(this, 100, TimeUnit.MILLISECONDS);
     }
 }

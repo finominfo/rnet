@@ -16,7 +16,7 @@ public class ControllerRepeater implements Runnable {
     public void run() {
         try {
             counter++;
-            if (Globals.get().isTasksEmpty() && ((counter & 0x1f) == 0)) {
+            if (Globals.get().isTasksEmpty() && ((counter & 0x3f) == 0)) {
                 Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
             }
             if (Globals.get().isTasksEmpty() && ((counter & 0x01) == 0)) {
