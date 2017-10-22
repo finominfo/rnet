@@ -351,10 +351,10 @@ public class Panel extends JPanel {
                 timer.setForeground(Color.YELLOW);
             }
             beeping.set(false);
-            successPlayed.set(false);
-            failedPlayed.set(false);
             resetButton.setVisible(false);
             stopStartButton.setVisible(true);
         }
+        successPlayed.set(false);
+        failedPlayed.set(false);
     }
 }
