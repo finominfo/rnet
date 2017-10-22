@@ -1,8 +1,10 @@
 package hu.finominfo.rnet;
 
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.http.HttpServer;
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
+import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.taskqueue.FrontEndWorker;
@@ -12,6 +14,7 @@ import hu.finominfo.rnet.node.servant.Servant;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.ServantRepeater;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.File;
@@ -31,6 +34,8 @@ public class Main {
 
     public static void main(String[] args) {
         setupLog4J();
+        Logger logger = Logger.getLogger(Main.class);
+        logger.info("Starting 0");
         Interface.getInterfaces();
         if (Props.get().isController()) {
             Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
@@ -43,12 +48,21 @@ public class Main {
         } else {
             Globals.get().executor.schedule(() -> {
                 Counter.createAndShowGui();
-                Globals.get().executor.submit(() -> new HttpServer().start());
+                logger.info("Starting 1");
+                Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
                 Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
                 Servant servant = new Servant();
-                servant.run();
                 Globals.get().servant = servant;
-                Globals.get().executor.submit(new GameKnockSimple());
+                Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
+                logger.info("Starting 2");
+                try {
+                    HandlingIO handlingIO = new HandlingIO(Globals.get().executor);
+                    logger.info("Starting 3");
+                    Globals.get().executor.submit(new GameKnockSimple(handlingIO));
+                } catch (Exception e) {
+                    logger.error(Utils.getStackTrace(e));
+                }
+                logger.info("Finished starting");
             }, 2, TimeUnit.SECONDS);
         }
     }

@@ -8,23 +8,24 @@
           <element id="file-copy" path="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
         </element>
       </element>
-      <element id="library" level="project" name="Gradle: io.netty:netty-all:4.1.15.Final" />
-      <element id="library" level="project" name="Gradle: log4j:log4j:1.2.17" />
       <element id="file-copy" path="$PROJECT_DIR$/beep-02.wav" />
-      <element id="file-copy" path="$PROJECT_DIR$/beep-19.wav" />
       <element id="file-copy" path="$PROJECT_DIR$/config.properties" />
       <element id="file-copy" path="$PROJECT_DIR$/Crysta.ttf" />
       <element id="file-copy" path="$PROJECT_DIR$/failed.wav" />
       <element id="file-copy" path="$PROJECT_DIR$/log4j.properties" />
       <element id="file-copy" path="$PROJECT_DIR$/success.wav" />
-      <element id="file-copy" path="$PROJECT_DIR$/pi4j-core.jar" />
-      <element id="file-copy" path="$PROJECT_DIR$/pi4j-device.jar" />
       <element id="file-copy" path="$PROJECT_DIR$/start.bat" />
       <element id="file-copy" path="$PROJECT_DIR$/success_knock.wav" />
       <element id="file-copy" path="$PROJECT_DIR$/failed_counter.wav" />
       <element id="directory" name="resources">
         <element id="dir-copy" path="$PROJECT_DIR$/resources" />
       </element>
+      <element id="directory" name="lib">
+        <element id="library" level="project" name="Gradle: com.pi4j:pi4j-core:1.1" />
+        <element id="library" level="project" name="Gradle: io.netty:netty-all:4.1.15.Final" />
+        <element id="library" level="project" name="Gradle: log4j:log4j:1.2.17" />
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/knock.wav" />
     </root>
   </artifact>
 </component>

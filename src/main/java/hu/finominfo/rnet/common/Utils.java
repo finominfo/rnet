@@ -158,12 +158,16 @@ public class Utils {
     private static void startCounterMusic() {
         String contMusicAtCounterStart = Props.get().getContMusicAtCounterStart();
         if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
-            try {
-                closeAudio();
-                Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, Globals.audioFolder + File.separator + contMusicAtCounterStart);
-                Globals.get().audioPlayerContinuous.play(null);
-            } catch (Exception e) {
-                logger.error(getStackTrace(e));
+            String fileName = Globals.audioFolder + File.separator + contMusicAtCounterStart;
+            File f = new File(fileName);
+            if (f.exists() && !f.isDirectory()) {
+                try {
+                    closeAudio();
+                    Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
+                    Globals.get().audioPlayerContinuous.play(null);
+                } catch (Exception e) {
+                    logger.error(getStackTrace(e));
+                }
             }
         }
         Globals.get().counter.makeStart();

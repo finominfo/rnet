@@ -1,1 +1,1 @@
-java -jar rnet.jar
+java -cp "rnet.jar;lib/*" hu.finominfo.rnet.Main

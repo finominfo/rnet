@@ -3,7 +3,11 @@ package hu.finominfo.rnet.frontend.servant.counter;
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
+import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.properties.Props;
+import org.apache.log4j.Logger;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -55,6 +59,8 @@ public class Panel extends JPanel {
     public final int invisibleAfter = Props.get().getInvisible() * 60_000;
     public volatile long lastMilliseconds = System.currentTimeMillis();
 
+    private final static Logger logger = Logger.getLogger(Panel.class);
+
     public final Runnable refresh = new Runnable() {
         @Override
         public void run() {
@@ -68,10 +74,10 @@ public class Panel extends JPanel {
                 Globals.get().status.setCounter("invisible");
             }
             if (time > 0 && finished == 0) {
-                String time1 = getTime(time);
-                Globals.get().status.setCounter(time1);
+                String timeString = getTime(time);
+                Globals.get().status.setCounter(timeString);
                 lastMilliseconds = now;
-                timer.setText(time1);
+                timer.setText(timeString);
                 Panel.this.setBackground(backGroundColor);
                 int sec = (int) (time / 1000);
                 if (sec % 60 == 0 && sec > 59) {
@@ -85,13 +91,23 @@ public class Panel extends JPanel {
                 }
             } else if (time <= 0 && ((finished - start > milliseconds) || (finished == 0))) {
                 changeColorIfPossible(failedBackGroundColor);
-                if (failedPlayed.compareAndSet(false, true)) {
-                    failed.play(null);
+                try {
+                    if (failedPlayed.compareAndSet(false, true)) {
+                        failed.play(null);
+                    }
+                } catch (Exception ex) {
+                    logger.error(Utils.getStackTrace(ex));
+                    VideoPlayer.get().play(new PlayVideo(".", "failed_counter.wav", 10));
                 }
             } else if (!resetState) {
                 changeColorIfPossible(successBackGroundColor);
-                if (successPlayed.compareAndSet(false, true)) {
-                    success.play(null);
+                try {
+                    if (successPlayed.compareAndSet(false, true)) {
+                        success.play(null);
+                    }
+                } catch (Exception ex) {
+                    logger.error(Utils.getStackTrace(ex));
+                    VideoPlayer.get().play(new PlayVideo(".", "success.wav", 10));
                 }
             }
             now = System.currentTimeMillis();

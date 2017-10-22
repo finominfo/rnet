@@ -2,6 +2,7 @@ package hu.finominfo.rnet.frontend.servant.gameknock;
 
 import hu.finominfo.rnet.audio.CompletedEvent;
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.IOActionType;
 import hu.finominfo.rnet.audio.AudioPlayer;
@@ -19,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- *
  * @author kalman.kovacs@gmail.com
  */
 public final class GameKnockSimple implements CompletionHandler<CompletedEvent, Object>, Runnable {
@@ -33,32 +33,44 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
 
     static volatile long lastKnock = 0;
 
-    public final ScheduledExecutorService executor;
-    private final HandlingIO handlingIO;
-    private final AudioPlayerWrapper knockPlayer;
-    private final AudioPlayer successPlayer;
-    private final AudioPlayer failedPlayer;
-    private final AtomicInteger state;
-    private final List<Integer> rhythmsTemplate;
+    public volatile ScheduledExecutorService executor;
+    private volatile HandlingIO handlingIO;
+    private volatile AudioPlayerWrapper knockPlayer;
+    private volatile AudioPlayer successPlayer;
+    private volatile AudioPlayer failedPlayer;
+    private volatile AtomicInteger state;
+    private volatile List<Integer> rhythmsTemplate;
 
     public GameKnockSimple(HandlingIO handlingIO) {
-        executor = Globals.get().executor;
-        KnockProps propertiesReader = new KnockProps();
-        knockPlayer = new AudioPlayerWrapper(executor, propertiesReader.getKnockVoice());
-        successPlayer = new AudioPlayer(executor, propertiesReader.getSuccess());
-        failedPlayer = new AudioPlayer(executor, propertiesReader.getFailed());
-        state = new AtomicInteger(State.UserRepeating.ordinal());
-        rhythmsTemplate = propertiesReader.getRythms();
-        this.handlingIO = handlingIO;
-        //knockPlayer.play(null);
+        try {
+            logger.info("sdasdasdasd");
+            executor = Globals.get().executor;
+            KnockProps propertiesReader = new KnockProps();
+            knockPlayer = new AudioPlayerWrapper(executor, propertiesReader.getKnockVoice());
+            successPlayer = new AudioPlayer(executor, propertiesReader.getSuccess());
+            failedPlayer = new AudioPlayer(executor, propertiesReader.getFailed());
+            state = new AtomicInteger(State.UserRepeating.ordinal());
+            rhythmsTemplate = propertiesReader.getRythms();
+            this.handlingIO = handlingIO;
+            logger.info("knock object created");
+            //knockPlayer.play(null);
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
+        }
     }
 
     public GameKnockSimple() {
         this(new HandlingIO(Globals.get().executor));
     }
 
+    private volatile long counter = 0;
+
     @Override
     public void run() {
+        if ((counter % 1000) == 0) {
+            logger.info("knock is running...");
+        }
+        counter++;
         try {
             long now = System.currentTimeMillis();
             if ((now - lastKnock > 5000) && lastKnock != 0 && state.compareAndSet(State.UserRepeating.ordinal(), State.UserRepeatingCheck.ordinal())) {
@@ -85,10 +97,8 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
                         break;
                 }
             }
-        } catch (Throwable t) {
-            if (t.getMessage() != null) {
-                System.out.println(t.getMessage());
-            }
+        } catch (Exception t) {
+            logger.error(Utils.getStackTrace(t));
         } finally {
             executor.schedule(this, 10, TimeUnit.MILLISECONDS);
         }

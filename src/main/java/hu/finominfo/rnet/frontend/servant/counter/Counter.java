@@ -50,9 +50,11 @@ public class Counter extends JPanel {
         AudioPlayer success = null;
         AudioPlayer failed = null;
         try {
-            beep = new AudioPlayerWrapper(executor, props.getBeep());
-            success = new AudioPlayer(executor, props.getSuccess());
-            failed = new AudioPlayer(executor, props.getFailed());
+            //beep = new AudioPlayerWrapper(executor, props.getBeep());
+            String success1 = props.getSuccess();
+            String failed1 = props.getFailed();
+            success = new AudioPlayer(executor, success1 == null ? "success.wav" : success1);
+            failed = new AudioPlayer(executor, failed1 == null ? "failed_counter.wav" : failed1);
         } catch (Exception e) {
             logger.error(e);
         }

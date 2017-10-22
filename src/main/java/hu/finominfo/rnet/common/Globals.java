@@ -54,7 +54,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 120;
+    public final static int VERSION = 50;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -77,7 +77,7 @@ public class Globals {
     public final static String videoFolder = "video";
     public final static String audioFolder = "audio";
     public final static String pictureFolder = "picture";
-    public final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(4);
+    public final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(8);
     public final Queue<Event> events = new ConcurrentLinkedQueue<>();
     public final ConcurrentHashMap.KeySetView<Connection, Boolean> connections = ConcurrentHashMap.newKeySet();
     public final ConcurrentMap<String, ClientParam> serverClients = new ConcurrentHashMap<>(); //ip and port - context
@@ -93,9 +93,11 @@ public class Globals {
         int sub = VERSION - main * 100;
         String subStr;
         if (sub % 10 == 0) {
-            sub /= 10;
+            subStr = "" + (sub / 10);
+        } else {
+            subStr = "" + sub;
         }
-        return "" + main + "." + (sub < 10 ? ("0" + sub) : sub);
+        return "" + main + "." + subStr;
     }
 
     public FrontEnd getFrontEnd() {
