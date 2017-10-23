@@ -13,6 +13,7 @@ import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
 import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
 import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
+import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
@@ -54,7 +55,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 50;
+    public final static int VERSION = 60;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -67,6 +68,7 @@ public class Globals {
     public volatile hu.finominfo.rnet.frontend.servant.counter.Panel counter = null;
     public volatile AudioPlayer audioPlayer = null;
     public volatile AudioPlayerContinuous audioPlayerContinuous = null;
+    public volatile VideoPlayerContinuous videoPlayerContinuous = null;
     public volatile Status status = new Status();
 
 

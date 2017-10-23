@@ -7,6 +7,7 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
+import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
 import hu.finominfo.rnet.properties.Props;
 import org.apache.log4j.Logger;
 
@@ -113,17 +114,9 @@ public class Utils {
         } catch (InterruptedException e) {
             logger.error(e);
         }
-        final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
-        final File currentJar = new File(Globals.JAR_NAME);
-
-        final ArrayList<String> command = new ArrayList<String>();
-        command.add(javaBin);
-        command.add("-jar");
-        command.add(currentJar.getPath());
-
-        final ProcessBuilder builder = new ProcessBuilder(command);
+        final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "sudo java -Dpi4j.linking=dynamic -cp \"rnet.jar:lib/*\" hu.finominfo.rnet.Main");
         try {
-            builder.start();
+            processBuilder.start();
         } catch (IOException e) {
             logger.error(e);
         }
@@ -163,8 +156,8 @@ public class Utils {
             if (f.exists() && !f.isDirectory()) {
                 try {
                     closeAudio();
-                    Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
-                    Globals.get().audioPlayerContinuous.play(null);
+                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
+                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
                 } catch (Exception e) {
                     logger.error(getStackTrace(e));
                 }
@@ -184,6 +177,11 @@ public class Utils {
             audioPlayerContinuous.stop();
             audioPlayerContinuous.close();
             Globals.get().audioPlayerContinuous = null;
+        }
+        VideoPlayerContinuous videoPlayerContinuous = Globals.get().videoPlayerContinuous;
+        if (videoPlayerContinuous != null) {
+            videoPlayerContinuous.stop();
+            Globals.get().videoPlayerContinuous = null;
         }
     }
 

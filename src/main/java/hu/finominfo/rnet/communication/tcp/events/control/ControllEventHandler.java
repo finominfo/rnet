@@ -10,6 +10,7 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
+import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
@@ -58,8 +59,8 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("PLAY_AUDIO_CONTINUOUS arrived: " + ip);
                     PlayAudio playAudioContinuous = (PlayAudio) msg.getControlObject();
                     closeAudio();
-                    Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, playAudioContinuous.getPathAndName());
-                    Globals.get().audioPlayerContinuous.play(null);
+                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
+                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, playAudioContinuous.getShortName(), 100));
                     break;
                 case STOP_AUDIO:
                     logger.info("STOP_AUDIO arrived: " + ip);
