@@ -32,6 +32,7 @@ public class VideoPlayer {
         if(f.exists() && !f.isDirectory() && playing.compareAndSet(false, true)) {
             try {
                 String s = "omxplayer " + playVideo.getPathAndName();
+                Globals.get().counter.timer.setVisible(false);
                 Globals.get().status.setVideo("Playing: " + playVideo.getPathAndName());
                 proc = Runtime.getRuntime().exec(s);
                 Globals.get().executor.submit(new Runnable() {
@@ -57,6 +58,7 @@ public class VideoPlayer {
 
     private void finish() {
         playing.set(false);
+        Globals.get().counter.timer.setVisible(true);
         Globals.get().status.setVideo(null);
     }
 

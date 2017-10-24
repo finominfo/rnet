@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,6 +23,7 @@ public class PictureDisplay {
     }
 
     private static PictureDisplay ourInstance = new PictureDisplay();
+    ScheduledFuture<?> schedule = null;
     Queue<JDialog> dialogs = new ConcurrentLinkedQueue<JDialog>();
 
     public void display(final String pathAndName, final int seconds) {
@@ -40,14 +42,24 @@ public class PictureDisplay {
             icon = new ImageIcon(scaledInstance);  // transform it back
 
             //pane.getRootPane().setBorder( BorderFactory.createLineBorder(Color.RED) );
-            JOptionPane pane = new JOptionPane(icon);
-            final JDialog dlg = pane.createDialog(null);
+            JDialog dialog = new JDialog();
+            dialog.setUndecorated(true);
+            JLabel label = new JLabel(icon);
+            label.setHorizontalAlignment(SwingConstants.CENTER);
+            dialog.add( label );
+            dialog.pack();
+            final JDialog dlg = dialog;
             dlg.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             dlg.setAlwaysOnTop(true);
             closeAllDialogs();
             dialogs.add(dlg);
+            //while (!dialogs.isEmpty()) {
+            //    Globals.get().executor.schedule(() -> show(dlg, pathAndName), 100, TimeUnit.MILLISECONDS);
+            //    Globals.get().executor.schedule(() -> close(dlg), seconds+remaining, TimeUnit.SECONDS);
+            //}else{
             Globals.get().executor.schedule(() -> show(dlg, pathAndName), 100, TimeUnit.MILLISECONDS);
-            Globals.get().executor.schedule(() -> close(dlg), seconds, TimeUnit.SECONDS);
+            schedule = Globals.get().executor.schedule(() -> close(dlg), seconds, TimeUnit.SECONDS);
+            //}
         } catch (Exception e) {
             logger.error(e);
         }
@@ -55,6 +67,8 @@ public class PictureDisplay {
 
 
     private void closeAllDialogs() {
+        if (schedule != null)
+            schedule.cancel(false);
         while (!dialogs.isEmpty()) {
             close(dialogs.poll());
         }
