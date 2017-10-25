@@ -6,7 +6,6 @@ import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -60,21 +59,5 @@ public class VideoPlayer {
         playing.set(false);
         Globals.get().counter.timer.setVisible(true);
         Globals.get().status.setVideo(null);
-    }
-
-    public static synchronized long getPidOfProcess(Process p) {
-        long pid = -1;
-
-        try {
-            if (p.getClass().getName().equals("java.lang.UNIXProcess")) {
-                Field f = p.getClass().getDeclaredField("pid");
-                f.setAccessible(true);
-                pid = f.getLong(p);
-                f.setAccessible(false);
-            }
-        } catch (Exception e) {
-            pid = -1;
-        }
-        return pid;
     }
 }
