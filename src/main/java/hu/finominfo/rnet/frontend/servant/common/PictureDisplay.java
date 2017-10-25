@@ -6,8 +6,6 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -23,11 +21,10 @@ public class PictureDisplay {
     }
 
     private static PictureDisplay ourInstance = new PictureDisplay();
-    ScheduledFuture<?> schedule = null;
-    Queue<JDialog> dialogs = new ConcurrentLinkedQueue<JDialog>();
+    ScheduledFuture<?> lastSchedule = null;
+    JDialog lastDialog = null;
 
     public void display(final String pathAndName, final int seconds) {
-        closeAllDialogs();
         try {
             ImageIcon icon = new ImageIcon(pathAndName);
             int iconHeight = icon.getIconHeight();
@@ -35,63 +32,59 @@ public class PictureDisplay {
             double widthScale = ((double) Globals.get().width) / (double) iconWidth;
             double heightScale = ((double) Globals.get().height) / (double) iconHeight;
             double resize = widthScale < heightScale ? widthScale : heightScale;
-//            logger.info("widthScale: " + widthScale);
-//            logger.info("heightScale: " + heightScale);
-//            logger.info("resize: " + resize);
-            Image scaledInstance = icon.getImage().getScaledInstance((int) (iconWidth * resize), (int) (iconHeight * resize), Image.SCALE_SMOOTH);
+            int x = (int) (iconWidth * resize);
+            int y = (int) (iconHeight * resize);
+            int locationX = (Globals.get().width - x) / 2;
+            int locationY = (Globals.get().height - y) / 2;
+            Image scaledInstance = icon.getImage().getScaledInstance(x, y, Image.SCALE_SMOOTH);
             icon = new ImageIcon(scaledInstance);  // transform it back
-
-            //pane.getRootPane().setBorder( BorderFactory.createLineBorder(Color.RED) );
             JDialog dialog = new JDialog();
             dialog.setUndecorated(true);
+            dialog.setLocation(locationX, locationY);
             JLabel label = new JLabel(icon);
-            label.setHorizontalAlignment(SwingConstants.CENTER);
-            dialog.add( label );
+            dialog.add(label);
             dialog.pack();
-            final JDialog dlg = dialog;
-            dlg.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-            dlg.setAlwaysOnTop(true);
-            closeAllDialogs();
-            dialogs.add(dlg);
-            //while (!dialogs.isEmpty()) {
-            //    Globals.get().executor.schedule(() -> show(dlg, pathAndName), 100, TimeUnit.MILLISECONDS);
-            //    Globals.get().executor.schedule(() -> close(dlg), seconds+remaining, TimeUnit.SECONDS);
-            //}else{
-            Globals.get().executor.schedule(() -> show(dlg, pathAndName), 100, TimeUnit.MILLISECONDS);
-            schedule = Globals.get().executor.schedule(() -> close(dlg), seconds, TimeUnit.SECONDS);
-            //}
+            dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            dialog.setAlwaysOnTop(true);
+            close();
+            lastDialog = dialog;
+            Globals.get().executor.schedule(() -> show(pathAndName), 10, TimeUnit.MILLISECONDS);
+            lastSchedule = Globals.get().executor.schedule(() -> close(), seconds, TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error(e);
         }
     }
 
-
-    private void closeAllDialogs() {
-        if (schedule != null)
-            schedule.cancel(false);
-        while (!dialogs.isEmpty()) {
-            close(dialogs.poll());
+    private void show(String pathAndName) {
+        try {
+            if (lastDialog != null) {
+                Globals.get().status.setPicture("Showing: " + pathAndName);
+                lastDialog.setVisible(true);
+                Globals.get().counter.timer.setVisible(false);
+            }
+        } catch (Exception ex) {
+            logger.error(Utils.getStackTrace(ex));
         }
     }
 
-    private void show(JDialog dialog, String pathAndName) {
-        Globals.get().status.setPicture("Showing: " + pathAndName);
-        Globals.get().counter.timer.setVisible(false);
-        dialog.setVisible(true);
-    }
-
-    private void close(JDialog dialog) {
+    private void close() {
         try {
-            Globals.get().status.setPicture(null);
-            Globals.get().counter.timer.setVisible(true);
-            dialog.dispose();
+            if (lastSchedule != null) {
+                lastSchedule.cancel(false);
+                lastSchedule = null;
+            }
+            if (lastDialog != null) {
+                Globals.get().status.setPicture(null);
+                lastDialog.dispose();
+                lastDialog = null;
+                Globals.get().counter.timer.setVisible(true);
+            }
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
         }
     }
 
-//    public static void main(String[] args) {
-//        new PictureDisplay("C:\\3.jpg", 5).display();
-//        Globals.get().executor.shutdown();
-//    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> PictureDisplay.get().display("C:\\images.jpg", 3));
+    }
 }
