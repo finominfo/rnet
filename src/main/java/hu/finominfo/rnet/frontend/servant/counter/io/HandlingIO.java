@@ -1,16 +1,15 @@
 package hu.finominfo.rnet.frontend.servant.counter.io;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinPullResistance;
-import com.pi4j.io.gpio.PinState;
-import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import hu.finominfo.rnet.audio.CompletedEvent;
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import org.apache.log4j.Logger;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.17..
@@ -18,18 +17,38 @@ import org.apache.log4j.Logger;
 public abstract class HandlingIO {
     private final static Logger logger = Logger.getLogger(HandlingIO.class);
 
-    private static final Pin START_PIN = RaspiPin.GPIO_09;
-    private volatile GpioPinDigitalInput stopButton = null;
+    private static final Pin STOP_PIN = RaspiPin.GPIO_09;
+    private static final Pin STOP_AND_OPEN_PIN = RaspiPin.GPIO_08;
+    private static final Pin OUT_DOOR_PIN = RaspiPin.GPIO_07;
+
+    private final GpioPinDigitalInput stopButton = GpioFactory.getInstance().provisionDigitalInputPin(STOP_PIN, PinPullResistance.PULL_UP);
+    private final GpioPinDigitalInput stopAndOpenButton = GpioFactory.getInstance().provisionDigitalInputPin(STOP_AND_OPEN_PIN, PinPullResistance.PULL_UP);
+    private final GpioPinDigitalOutput outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", PinState.LOW);
+
 
 
     public HandlingIO() {
         try {
-            stopButton = GpioFactory.getInstance().provisionDigitalInputPin(START_PIN, PinPullResistance.PULL_UP);
+            outDoorPin.setShutdownOptions(true, PinState.LOW);
+            outDoorPin.low();
+
             stopButton.setShutdownOptions(true);
             stopButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
-                if (event.getPin().getPin().equals(START_PIN) && event.getState().equals(PinState.LOW)) {
-                    if (checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile() && checkAfterAWhile()) {
+                if (event.getPin().getPin().equals(STOP_PIN) && event.getState().equals(PinState.LOW)) {
+                    if (checkAfterAWhile(stopButton) && checkAfterAWhile(stopButton)
+                            && checkAfterAWhile(stopButton) && checkAfterAWhile(stopButton) && checkAfterAWhile(stopButton)) {
                         logger.info("Pressed stop button");
+                        stopButtonPressed();
+                    }
+                }
+            });
+            stopAndOpenButton.setShutdownOptions(true);
+            stopAndOpenButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
+                if (event.getPin().getPin().equals(STOP_AND_OPEN_PIN) && event.getState().equals(PinState.LOW)) {
+                    if (checkAfterAWhile(stopAndOpenButton) && checkAfterAWhile(stopAndOpenButton)
+                            && checkAfterAWhile(stopAndOpenButton) && checkAfterAWhile(stopAndOpenButton) && checkAfterAWhile(stopAndOpenButton)) {
+                        logger.info("Pressed stop and open button");
+                        openDoor();
                         stopButtonPressed();
                     }
                 }
@@ -39,7 +58,7 @@ public abstract class HandlingIO {
         }
     }
 
-    private boolean checkAfterAWhile() {
+    private boolean checkAfterAWhile(GpioPinDigitalInput button) {
         long start = System.currentTimeMillis();
         while (System.currentTimeMillis() == start) {
             try {
@@ -48,9 +67,20 @@ public abstract class HandlingIO {
                 logger.error(ex.getMessage());
             }
         }
-        return stopButton.getState().equals(PinState.LOW);
+        return button.getState().equals(PinState.LOW);
     }
 
     public abstract void stopButtonPressed();
+
+    public void openDoor() {
+        outDoorPin.high();
+        Globals.get().executor.schedule(new Runnable() {
+
+            @Override
+            public void run() {
+                outDoorPin.low();
+            }
+        }, 5, TimeUnit.SECONDS);
+    }
 
 }
