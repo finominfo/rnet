@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -206,6 +207,10 @@ public class Utils {
             if (jFrameHolder != null) {
                 jFrameHolder.setFrame(frame1);
             }
+            BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                    cursorImg, new Point(0, 0), "blank cursor");
+            frame1.getContentPane().setCursor(blankCursor);
         });
     }
 

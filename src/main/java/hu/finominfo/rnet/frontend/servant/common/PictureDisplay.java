@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,10 @@ public class PictureDisplay {
             dialog.setUndecorated(true);
             dialog.setLocation(locationX, locationY);
             JLabel label = new JLabel(icon);
+            BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+            Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                    cursorImg, new Point(0, 0), "blank cursor");
+            dialog.setCursor(blankCursor);
             dialog.add(label);
             dialog.pack();
             dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);

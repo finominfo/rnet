@@ -10,6 +10,7 @@ import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.17..
@@ -26,11 +27,11 @@ public abstract class HandlingIO {
     private final GpioPinDigitalOutput outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", PinState.LOW);
 
 
-
     public HandlingIO() {
         try {
             outDoorPin.setShutdownOptions(true, PinState.LOW);
             outDoorPin.low();
+            //testOutdoor(outDoorPin);
 
             stopButton.setShutdownOptions(true);
             stopButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
@@ -53,9 +54,29 @@ public abstract class HandlingIO {
                     }
                 }
             });
+
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
         }
+    }
+
+    private void testOutdoor(GpioPinDigitalOutput digitalOutput) {
+        AtomicInteger i = new AtomicInteger(0);
+        Globals.get().executor.schedule(new Runnable() {
+            @Override
+            public void run() {
+                if ((i.incrementAndGet() & 1) == 0) {
+                    digitalOutput.low();
+                } else {
+                    digitalOutput.high();
+                }
+                if (i.get() < 10) {
+                    Globals.get().executor.schedule(this, 3, TimeUnit.SECONDS);
+                } else {
+                    digitalOutput.low();
+                }
+            }
+        }, 3, TimeUnit.SECONDS);
     }
 
     private boolean checkAfterAWhile(GpioPinDigitalInput button) {

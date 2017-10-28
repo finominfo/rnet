@@ -55,7 +55,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 72;
+    public final static int VERSION = 76;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
