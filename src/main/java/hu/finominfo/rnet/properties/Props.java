@@ -19,6 +19,7 @@ public class Props {
     private volatile String contMusicAtCounterStart;
     private volatile String success;
     private volatile String failed;
+    private volatile boolean inverse;
     private final boolean controller;
     private final int port;
     private final int httpPort;
@@ -51,6 +52,11 @@ public class Props {
         port = Integer.valueOf(prop.getProperty("port", "10000"));
         httpPort = Integer.valueOf(prop.getProperty("httpPort", "1080"));
         invisible = Integer.valueOf(prop.getProperty("invisible", "10"));
+        inverse = Boolean.valueOf(prop.getProperty("inverse", "true"));
+    }
+
+    public boolean isInverse() {
+        return inverse;
     }
 
     public int getHttpPort() {

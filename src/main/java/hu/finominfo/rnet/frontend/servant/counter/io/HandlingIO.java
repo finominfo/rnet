@@ -24,13 +24,13 @@ public abstract class HandlingIO {
 
     private final GpioPinDigitalInput stopButton = GpioFactory.getInstance().provisionDigitalInputPin(STOP_PIN, PinPullResistance.PULL_UP);
     private final GpioPinDigitalInput stopAndOpenButton = GpioFactory.getInstance().provisionDigitalInputPin(STOP_AND_OPEN_PIN, PinPullResistance.PULL_UP);
-    private final GpioPinDigitalOutput outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", PinState.LOW);
+    private final GpioPinDigitalOutput outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", Globals.get().getOff());
 
 
     public HandlingIO() {
         try {
-            outDoorPin.setShutdownOptions(true, PinState.LOW);
-            outDoorPin.low();
+            outDoorPin.setShutdownOptions(true, Globals.get().getOff());
+            outDoorPin.setState(Globals.get().getOff());
             //testOutdoor(outDoorPin);
 
             stopButton.setShutdownOptions(true);
@@ -94,14 +94,8 @@ public abstract class HandlingIO {
     public abstract void stopButtonPressed();
 
     public void openDoor() {
-        outDoorPin.high();
-        Globals.get().executor.schedule(new Runnable() {
-
-            @Override
-            public void run() {
-                outDoorPin.low();
-            }
-        }, 5, TimeUnit.SECONDS);
+        outDoorPin.setState(Globals.get().getOn());
+        Globals.get().executor.schedule(() -> outDoorPin.setState(Globals.get().getOff()), 30, TimeUnit.SECONDS);
     }
 
 }

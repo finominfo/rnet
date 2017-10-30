@@ -10,6 +10,7 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import hu.finominfo.rnet.audio.CompletedEvent;
+import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import org.apache.log4j.Logger;
 
@@ -40,7 +41,6 @@ public class HandlingIO {
     }
 
     public HandlingIO(ScheduledExecutorService ses) {
-        logger.info("eddig 0");
         this.ses = ses;
         try {
             DOOR_PIN = RaspiPin.GPIO_00;
@@ -48,14 +48,13 @@ public class HandlingIO {
             OUT_DOOR_PIN = RaspiPin.GPIO_03;
 
             knockButton = GpioFactory.getInstance().provisionDigitalInputPin(KNOCK_PIN, PinPullResistance.PULL_UP);
-            outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", PinState.LOW);
-            outDoorPin2 = GpioFactory.getInstance().provisionDigitalOutputPin(DOOR_PIN, "FINISHED2", PinState.LOW);
+            outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", Globals.get().getOff());
+            outDoorPin2 = GpioFactory.getInstance().provisionDigitalOutputPin(DOOR_PIN, "FINISHED2", Globals.get().getOff());
 
-            outDoorPin.setShutdownOptions(true, PinState.LOW);
-            outDoorPin2.setShutdownOptions(true, PinState.LOW);
-            outDoorPin.low();
-            outDoorPin2.low();
-            logger.info("eddig 1");
+            outDoorPin.setShutdownOptions(true, Globals.get().getOff());
+            outDoorPin2.setShutdownOptions(true, Globals.get().getOff());
+            outDoorPin.setState(Globals.get().getOff());
+            outDoorPin2.setState(Globals.get().getOff());
             knockButton.setShutdownOptions(true);
             knockButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
                 if (event.getPin().getPin().equals(KNOCK_PIN) && event.getState().equals(PinState.LOW) && lastAction == null) {
@@ -83,16 +82,12 @@ public class HandlingIO {
     }
 
     public void openDoor(final GameKnockSimple comp) {
-        outDoorPin.high();
-        outDoorPin2.high();
-        ses.schedule(new Runnable() {
-
-            @Override
-            public void run() {
-                outDoorPin.low();
-                outDoorPin2.low();
-                comp.completed(CompletedEvent.DoorOpened, null);
-            }
+        outDoorPin.setState(Globals.get().getOn());
+        outDoorPin2.setState(Globals.get().getOn());
+        ses.schedule(() -> {
+            outDoorPin.setState(Globals.get().getOff());
+            outDoorPin2.setState(Globals.get().getOff());
+            comp.completed(CompletedEvent.DoorOpened, null);
         }, 5, TimeUnit.SECONDS);
     }
 

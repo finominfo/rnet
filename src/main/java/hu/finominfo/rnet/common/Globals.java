@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.common;
 
+import com.pi4j.io.gpio.PinState;
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.client.Client;
@@ -14,6 +15,7 @@ import hu.finominfo.rnet.communication.udp.out.ConnectionBroadcaster;
 import hu.finominfo.rnet.frontend.controller.FrontEnd;
 import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
+import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
@@ -55,7 +57,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 76;
+    public final static int VERSION = 77;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -89,6 +91,15 @@ public class Globals {
     public final Queue<Task> frontEndTasks = new ConcurrentLinkedQueue<>();
     private volatile FrontEnd frontEnd = null;
     private volatile AllCounter allCounter = null;
+
+
+    public PinState getOn() {
+        return Props.get().isInverse() ? PinState.LOW : PinState.HIGH;
+    }
+
+    public PinState getOff() {
+        return Props.get().isInverse() ? PinState.HIGH : PinState.LOW;
+    }
 
     public static String getVersion() {
         int main = VERSION / 100;
