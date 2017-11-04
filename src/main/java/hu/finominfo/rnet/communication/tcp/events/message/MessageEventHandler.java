@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.events.message;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -17,6 +18,7 @@ public class MessageEventHandler extends SimpleChannelInboundHandler<MessageEven
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
         logger.info("MessageEvent arrived from: " + ip + " message: " + msg.getText());
-        MessageDisplay.get().show(msg.getText(), msg.getSeconds());
+        Utils.showMessage(msg);
     }
+
 }

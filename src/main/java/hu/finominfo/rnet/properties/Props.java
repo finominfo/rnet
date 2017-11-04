@@ -17,6 +17,7 @@ public class Props {
     private volatile String beep;
     private volatile String videoPlayAtCounterStart;
     private volatile String contMusicAtCounterStart;
+    private volatile String attention;
     private volatile String success;
     private volatile String failed;
     private volatile boolean inverse;
@@ -46,6 +47,7 @@ public class Props {
         beep = prop.getProperty("beep", "beep.wav");
         videoPlayAtCounterStart = prop.getProperty("startVideo", "startVideo.avi");
         contMusicAtCounterStart = prop.getProperty("startMusic", "startMusic.wav");
+        attention = prop.getProperty("attention", "attention.wav");
         success = prop.getProperty("success", "success.wav");
         failed = prop.getProperty("failed", "failed_counter.wav");
         controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
@@ -69,6 +71,10 @@ public class Props {
 
     public String getContMusicAtCounterStart() {
         return contMusicAtCounterStart;
+    }
+
+    public String getAttention() {
+        return attention;
     }
 
     public int getInvisible() {

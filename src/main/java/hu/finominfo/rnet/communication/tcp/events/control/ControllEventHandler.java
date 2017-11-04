@@ -36,31 +36,23 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                 case SHOW_PICTURE:
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
-                    PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getSeconds());
+                    Utils.showPicture(showPicture);
                     break;
                 case PLAY_VIDEO:
                 case PLAY_VIDEO_CONTINUOUS:
                     logger.info(msg.getControlType().name() + " arrived: " + ip);
                     PlayVideo playVideo = (PlayVideo) msg.getControlObject();
-                    VideoPlayer.get().play(playVideo);
+                    Utils.playVideo(playVideo);
                     break;
                 case PLAY_AUDIO:
                     logger.info("PLAY_AUDIO arrived: " + ip);
                     PlayAudio playAudio = (PlayAudio) msg.getControlObject();
-                    closeAudio();
-                    Globals.get().audioPlayer = new AudioPlayer(Globals.get().executor, playAudio.getPathAndName());
-                    Globals.get().audioPlayer.play(null);
-                    Globals.get().executor.schedule(() -> {
-                        Globals.get().audioPlayer.close();
-                        Globals.get().audioPlayer = null;
-                    }, (Globals.get().audioPlayer.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
+                    Utils.playAudio(playAudio);
                     break;
                 case PLAY_AUDIO_CONTINUOUS:
                     logger.info("PLAY_AUDIO_CONTINUOUS arrived: " + ip);
                     PlayAudio playAudioContinuous = (PlayAudio) msg.getControlObject();
-                    closeAudio();
-                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
-                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, playAudioContinuous.getShortName(), 100));
+                    Utils.playAudioContinuous(playAudioContinuous);
                     break;
                 case STOP_AUDIO:
                     logger.info("STOP_AUDIO arrived: " + ip);
@@ -91,4 +83,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
             logger.error(Utils.getStackTrace(e));
         }
     }
+
+
+
 }

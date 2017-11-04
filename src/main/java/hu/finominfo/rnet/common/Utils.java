@@ -2,10 +2,15 @@ package hu.finominfo.rnet.common;
 
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
+import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
+import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
+import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
 import hu.finominfo.rnet.properties.Props;
@@ -25,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -226,5 +232,69 @@ public class Utils {
         return customFont;
     }
 
+    public static void playAudio(PlayAudio playAudio) {
+        closeAudio();
+        Globals.get().audioPlayer = new AudioPlayer(Globals.get().executor, playAudio.getPathAndName());
+        Globals.get().audioPlayer.play(null);
+        Globals.get().executor.schedule(() -> {
+            Globals.get().audioPlayer.close();
+            Globals.get().audioPlayer = null;
+        }, (Globals.get().audioPlayer.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
+    }
+
+    public static void playAudioContinuous(PlayAudio playAudioContinuous) {
+        closeAudio();
+        Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
+        Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, playAudioContinuous.getShortName(), 100));
+    }
+
+    public static void showPicture(ShowPicture showPicture) {
+        attention(() -> PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getSeconds()));
+    }
+
+    public static void showMessage(MessageEvent msg) {
+        attention(() -> MessageDisplay.get().show(msg.getText(), msg.getSeconds()));
+    }
+
+    public static void playVideo(PlayVideo playVideo) {
+        attention(() -> VideoPlayer.get().play(playVideo));
+    }
+
+
+    private static void attention(final Runnable runnable) {
+        final AtomicBoolean wasRun = new AtomicBoolean(false);
+        String attention = Props.get().getAttention();
+        if (attention != null && !attention.isEmpty()) {
+            String fileName = Globals.audioFolder + File.separator + attention;
+            File f = new File(fileName);
+            if (f.exists() && !f.isDirectory()) {
+                try {
+                    closeAudio();
+                    Globals.get().audioPlayer = new AudioPlayer(Globals.get().executor, fileName);
+                    Globals.get().audioPlayer.play(null);
+                    Globals.get().executor.schedule(() -> {
+                        Globals.get().audioPlayer.close();
+                        Globals.get().audioPlayer = null;
+                        if (runnable != null && wasRun.compareAndSet(false, true)) {
+                            Globals.get().executor.submit(runnable);
+                        }
+                    }, (Globals.get().audioPlayer.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
+                } catch (Exception e) {
+                    logger.error(getStackTrace(e));
+                    if (runnable != null && wasRun.compareAndSet(false, true)) {
+                        Globals.get().executor.submit(runnable);
+                    }
+                }
+            } else {
+                if (runnable != null && wasRun.compareAndSet(false, true)) {
+                    Globals.get().executor.submit(runnable);
+                }
+            }
+        } else {
+            if (runnable != null && wasRun.compareAndSet(false, true)) {
+                Globals.get().executor.submit(runnable);
+            }
+        }
+    }
 
 }
