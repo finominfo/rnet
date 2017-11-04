@@ -31,6 +31,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
@@ -296,6 +297,22 @@ public class Utils {
                 Globals.get().executor.submit(runnable);
             }
         }
+    }
+
+    private volatile static int lastVolume = 100;
+    private volatile static AtomicLong lastCheck = new AtomicLong(0);
+
+    public static int getOmxVolume() {
+        long now = System.currentTimeMillis();
+        long last = lastCheck.get();
+        if (now - last > 60_000L && lastCheck.compareAndSet(last, now)) {
+            try {
+                new ProcessBuilder("chown", "-R", "user:").start();
+            } catch (IOException e) {
+                logger.error(getStackTrace(e));
+            }
+        }
+        return lastVolume;
     }
 
 }
