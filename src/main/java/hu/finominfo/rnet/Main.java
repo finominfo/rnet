@@ -3,6 +3,7 @@ package hu.finominfo.rnet;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.http.HttpServer;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
+import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
@@ -53,8 +54,9 @@ public class Main {
                 Servant servant = new Servant();
                 Globals.get().servant = servant;
                 Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
-                MessageEvent messageEvent = new MessageEvent("RNET servant version " + Globals.getVersion(), 3);
-                Globals.get().executor.schedule(() -> Utils.showMessage(messageEvent), 2, TimeUnit.SECONDS);
+                Globals.get().executor.schedule(() ->
+                        MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
+                        2, TimeUnit.SECONDS);
                 try {
                     HandlingIO handlingIO = new HandlingIO(Globals.get().executor);
                     Globals.get().executor.submit(new GameKnockSimple(handlingIO));

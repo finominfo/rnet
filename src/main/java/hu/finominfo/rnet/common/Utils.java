@@ -269,16 +269,17 @@ public class Utils {
             File f = new File(fileName);
             if (f.exists() && !f.isDirectory()) {
                 try {
-                    closeAudio();
-                    Globals.get().audioPlayer = new AudioPlayer(Globals.get().executor, fileName);
-                    Globals.get().audioPlayer.play(null);
+                    final AudioPlayer player = new AudioPlayer(Globals.get().executor, fileName);
+                    player.play(null);
                     Globals.get().executor.schedule(() -> {
-                        Globals.get().audioPlayer.close();
-                        Globals.get().audioPlayer = null;
+                        player.close();
+                    }, (player.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
+                    Globals.get().executor.schedule(() -> {
                         if (runnable != null && wasRun.compareAndSet(false, true)) {
                             Globals.get().executor.submit(runnable);
                         }
-                    }, (Globals.get().audioPlayer.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
+                    }, 3, TimeUnit.SECONDS);
+
                 } catch (Exception e) {
                     logger.error(getStackTrace(e));
                     if (runnable != null && wasRun.compareAndSet(false, true)) {
