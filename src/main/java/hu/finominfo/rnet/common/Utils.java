@@ -305,7 +305,7 @@ public class Utils {
     public static int getOmxVolume() {
         long now = System.currentTimeMillis();
         long last = lastCheck.get();
-        if (now - last > 60_000L && lastCheck.compareAndSet(last, now)) {
+        if (now - last > 60_000L && lastCheck.compareAndSet(last, now)) { //Check only once per minute
             try {
                 new ProcessBuilder("chown", "-R", "user:").start();
             } catch (IOException e) {
