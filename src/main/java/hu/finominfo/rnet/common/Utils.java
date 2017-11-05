@@ -20,10 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -306,8 +303,14 @@ public class Utils {
         long now = System.currentTimeMillis();
         long last = lastCheck.get();
         if (now - last > 60_000L && lastCheck.compareAndSet(last, now)) { //Check only once per minute
+            String line = null;
             try {
-                new ProcessBuilder("chown", "-R", "user:").start();
+                ProcessBuilder processBuilder = new ProcessBuilder("amixer", "cget", "numid=1");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(processBuilder.start().getInputStream()));
+                int i = 0;
+                while ( (++i) < 4 && (line = reader.readLine()) != null);
+                String num = line.substring(line.indexOf("=") + 1);
+                lastVolume = Integer.valueOf(num);
             } catch (IOException e) {
                 logger.error(getStackTrace(e));
             }
