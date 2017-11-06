@@ -39,6 +39,23 @@ public class FrontEnd extends FrontEndUtils {
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
+        servantsList.setCellRenderer(new DefaultListCellRenderer() {
+
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof String && ((String) value).equals("aaabbb")) {
+                    setBackground(Color.yellow);
+                    setForeground(Color.RED);
+                    if (isSelected) {
+                        setBackground(getBackground().darker());
+                    }
+                }
+                return c;
+            }
+
+        });
         servantsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         servantsLabel.setBounds(98, 5, 48, 48);
         servantsList.setBounds(30, 55, 190, 365);
