@@ -7,7 +7,8 @@ public enum FileType {
     VIDEO(1),
     AUDIO(2),
     PICTURE(3),
-    MAIN(4);
+    MAIN(4),
+    LIBRARY(5);
 
     private final byte number;
 

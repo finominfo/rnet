@@ -63,6 +63,9 @@ public class Utils {
             case MAIN:
                 path = ".";
                 break;
+            case LIBRARY:
+                path = Globals.libraryFolder;
+                break;
             case VIDEO:
                 path = Globals.videoFolder;
                 break;

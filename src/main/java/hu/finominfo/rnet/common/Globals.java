@@ -57,7 +57,7 @@ public class Globals {
         diff = ((double) width) / benchmarkWidth;
     }
 
-    public final static int VERSION = 80;
+    public final static int VERSION = 84;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -78,6 +78,7 @@ public class Globals {
     public final AtomicLong shouldWait = new AtomicLong(0);
     public final static String ADDRESSES = "addresses.txt";
     public final static String ADDRESS = "status.txt";
+    public final static String libraryFolder = "lib";
     public final static String videoFolder = "video";
     public final static String audioFolder = "audio";
     public final static String pictureFolder = "picture";

@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.taskqueue;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
@@ -91,22 +92,7 @@ public class Task {
     }
 
     public String getPathFromFileType() {
-        String path = "";
-        switch (getFileType()) {
-            case MAIN:
-                path = ".";
-                break;
-            case VIDEO:
-                path = Globals.videoFolder;
-                break;
-            case AUDIO:
-                path = Globals.audioFolder;
-                break;
-            case PICTURE:
-                path = Globals.pictureFolder;
-                break;
-        }
-        return path;
+        return Utils.getFileType(getFileType());
     }
 
     public int getTime() {
