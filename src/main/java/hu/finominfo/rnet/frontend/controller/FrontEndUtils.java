@@ -32,6 +32,8 @@ import static javax.swing.ScrollPaneConstants.*;
  */
 public class FrontEndUtils extends JFrame implements Runnable {
 
+    protected volatile boolean shouldRefreshAll = false;
+
     protected final ImageIcon ServantsIcon = new ImageIcon("resources" + File.separator + "servants.png");
     protected final ImageIcon SendTextIcon = new ImageIcon("resources" + File.separator + "sendtext.png");
     protected final ImageIcon RenameIcon = new ImageIcon("resources" + File.separator + "rename.png");
@@ -124,7 +126,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         String miniName = shortName + "-mini" + ".jpg";
         String name = shortName + ".jpg";
         String pathAndMiniName = folder + File.separator + miniName;
-        String pathAndName =folder + File.separator + name;
+        String pathAndName = folder + File.separator + name;
         File fileMiniName = new File(pathAndMiniName);
         File fileName = new File(pathAndName);
         if (fileMiniName.exists() && !fileMiniName.isDirectory()) {
@@ -149,7 +151,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 diff /= width;
             }
             Image scaledImage = image.getScaledInstance((int) (diff * width), (int) (diff * height), Image.SCALE_SMOOTH);
-            BufferedImage bi = new BufferedImage(scaledImage.getWidth(null),scaledImage.getHeight(null),BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage bi = new BufferedImage(scaledImage.getWidth(null), scaledImage.getHeight(null), BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g2 = bi.createGraphics();
             g2.drawImage(scaledImage, 0, 0, null);
             g2.dispose();
@@ -237,6 +239,12 @@ public class FrontEndUtils extends JFrame implements Runnable {
     }
 
     protected void refreshDirs() {
+        if (shouldRefreshAll) {
+            shouldRefreshAll = false;
+            videoListModel.clear();
+            audioListModel.clear();
+            pictureListModel.clear();
+        }
         if (servantsList.getSelectedValuesList().isEmpty()) {
             startBtn.setEnabled(false);
             stopBtn.setEnabled(false);

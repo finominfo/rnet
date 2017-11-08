@@ -1,5 +1,7 @@
 package hu.finominfo.rnet.properties;
 
+import hu.finominfo.rnet.database.H2KeyValue;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -66,11 +68,11 @@ public class Props {
     }
 
     public String getVideoPlayAtCounterStart() {
-        return videoPlayAtCounterStart;
+        return H2KeyValue.getValue(H2KeyValue.DEF_VIDEO);
     }
 
     public String getContMusicAtCounterStart() {
-        return contMusicAtCounterStart;
+        return H2KeyValue.getValue(H2KeyValue.DEF_AUDIO);
     }
 
     public String getAttention() {

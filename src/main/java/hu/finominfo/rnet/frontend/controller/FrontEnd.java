@@ -225,4 +225,7 @@ public class FrontEnd extends FrontEndUtils {
         new FrontEnd();
     }
 
+    public void shouldRefreshAll() {
+        shouldRefreshAll = true;
+    }
 }
