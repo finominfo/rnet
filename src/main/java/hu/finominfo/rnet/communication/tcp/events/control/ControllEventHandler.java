@@ -4,10 +4,8 @@ import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.*;
+import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
@@ -15,6 +13,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import static hu.finominfo.rnet.common.Utils.closeAudio;
@@ -24,6 +24,8 @@ import static hu.finominfo.rnet.common.Utils.closeAudio;
  */
 public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEvent> {
     private final static Logger logger = Logger.getLogger(ControllEventHandler.class);
+    private final static ConcurrentMap<String, Long> defAudioHits = new ConcurrentHashMap<>();
+    private final static ConcurrentMap<String, Long> defVideoHits = new ConcurrentHashMap<>();
 
 
     @Override
@@ -56,10 +58,14 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case STOP_AUDIO:
                     logger.info("STOP_AUDIO arrived: " + ip);
+                    Name audName = (Name)msg.getControlObject();
+                    checkHits(defAudioHits, audName.getName(), H2KeyValue.DEF_AUDIO);
                     closeAudio();
                     break;
                 case STOP_VIDEO:
                     logger.info("STOP_VIDEO arrived: " + ip);
+                    Name vidName = (Name)msg.getControlObject();
+                    checkHits(defAudioHits, vidName.getName(), H2KeyValue.DEF_VIDEO);
                     break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
@@ -84,6 +90,26 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
         }
     }
 
+    private void checkHits(ConcurrentMap<String, Long> defHits, String name, String key) {
+        Long value = defHits.get(name);
+        Long now = System.currentTimeMillis();
+        if (value == null) {
+            final Long newValue = new Long(now);
+            value = defHits.putIfAbsent(name, value);
+            if (value == null) {
+                value = newValue;
+            }
+        }
+        long hits = (value >> 60) + 1;
+        long time = value & 0xfffffffffffffffL;
+        if (now - time < 15_000L && hits > 2) {
+            defHits.remove(name);
+            H2KeyValue.set(key, name);
+        } else {
+            long newValue = (hits << 60) | time;
+            defHits.put(name, newValue);
+        }
+    }
 
 
 }

@@ -21,6 +21,8 @@ public class DirEventHandler extends SimpleChannelInboundHandler<DirEvent> {
         try {
             ClientParam clientParam = Globals.get().serverClients.get(ip);
             clientParam.setStatus(msg.getStatus());
+            clientParam.setDefAudio(msg.getDefAudio());
+            clientParam.setDefVideo(msg.getDefVideo());
             msg.getDirs().entrySet().stream().forEach(entry -> clientParam.getDirs().put(entry.getKey(), entry.getValue()));
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));

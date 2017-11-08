@@ -39,23 +39,6 @@ public class FrontEnd extends FrontEndUtils {
 
         servantsLabel.setFont(new Font(servantsLabel.getFont().getName(), Font.BOLD, 25));
         add(servantsLabel);
-        servantsList.setCellRenderer(new DefaultListCellRenderer() {
-
-            @Override
-            public Component getListCellRendererComponent(JList list, Object value, int index,
-                                                          boolean isSelected, boolean cellHasFocus) {
-                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof String && ((String) value).equals("aaabbb")) {
-                    setBackground(Color.yellow);
-                    setForeground(Color.RED);
-                    if (isSelected) {
-                        setBackground(getBackground().darker());
-                    }
-                }
-                return c;
-            }
-
-        });
         servantsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         servantsLabel.setBounds(98, 5, 48, 48);
         servantsList.setBounds(30, 55, 190, 365);
@@ -122,6 +105,21 @@ public class FrontEnd extends FrontEndUtils {
 
         audioLabel.setFont(new Font(audioLabel.getFont().getName(), Font.BOLD, 25));
         add(audioLabel);
+        audioList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof String && ((String) value).equals(defAudio)) {
+                    setBackground(Color.YELLOW);
+                    setForeground(Color.RED);
+                    if (isSelected) {
+                        setBackground(getBackground().darker());
+                    }
+                }
+                return c;
+            }
+        });
         audioList.setSelectionMode(SINGLE_SELECTION);
         audioList.setFont(new Font(audioList.getFont().getName(), Font.BOLD, 18));
         audioLabel.setBounds(348, 5, 48, 48);
@@ -140,13 +138,28 @@ public class FrontEnd extends FrontEndUtils {
         add(audioStop);
         audioPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
         audioContinuousPlay.addActionListener(e -> playAudio(ControlType.PLAY_AUDIO_CONTINUOUS));
-        audioStop.addActionListener(e -> sendOnlyControl(ControlType.STOP_AUDIO));
+        audioStop.addActionListener(e -> sendControlWithName(ControlType.STOP_AUDIO, audioList.getSelectedValue()));
         audioAdd.addActionListener(e -> sendFile(Globals.audioFolder, FileType.AUDIO));
         audioDel.addActionListener(e -> deleteFile(Globals.audioFolder, FileType.AUDIO, audioList));
 
 
         videoLabel.setFont(new Font(videoLabel.getFont().getName(), Font.BOLD, 25));
         add(videoLabel);
+        videoList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof String && ((String) value).equals(defVideo)) {
+                    setBackground(Color.YELLOW);
+                    setForeground(Color.RED);
+                    if (isSelected) {
+                        setBackground(getBackground().darker());
+                    }
+                }
+                return c;
+            }
+        });
         videoList.setSelectionMode(SINGLE_SELECTION);
         videoList.setFont(new Font(videoList.getFont().getName(), Font.BOLD, 18));
         videoLabel.setBounds(598, 5, 48, 48);
@@ -166,7 +179,8 @@ public class FrontEnd extends FrontEndUtils {
         videoDel.addActionListener(e -> deleteFile(Globals.videoFolder, FileType.VIDEO, videoList));
         videoPlay.addActionListener(e -> playVideo(ControlType.PLAY_VIDEO));
         videoContinuousPlay.addActionListener(e -> playVideo(ControlType.PLAY_VIDEO_CONTINUOUS));
-        videoStop.addActionListener(e -> sendOnlyControl(ControlType.STOP_VIDEO));
+        videoStop.addActionListener(e -> sendControlWithName(ControlType.STOP_VIDEO, videoList.getSelectedValue()));
+
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));

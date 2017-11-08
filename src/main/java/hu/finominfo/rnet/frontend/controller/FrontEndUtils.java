@@ -4,10 +4,7 @@ import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.*;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
@@ -35,14 +32,8 @@ import static javax.swing.ScrollPaneConstants.*;
  */
 public class FrontEndUtils extends JFrame implements Runnable {
 
-    //for image preview
-    //if file get selected by click then:
-    //protected final ImageIcon PreviewIcon=new ImageIcon(File.separator + get selected image name and path or something);
-    //make it visible in FrontEnd
-    //make Proceed and Cancel button visible
-    //if click elsewhere not to select image then make all invisible Again
-    //if Proceed button clicked then send file and make all invisible Again
-    //if Cancel button clicked then Do nothing and make all invisible Again
+    protected volatile String defAudio = null;
+    protected volatile String defVideo = null;
 
     protected final ImageIcon ServantsIcon = new ImageIcon("resources" + File.separator + "servants.png");
     protected final ImageIcon SendTextIcon = new ImageIcon("resources" + File.separator + "sendtext.png");
@@ -398,6 +389,16 @@ public class FrontEndUtils extends JFrame implements Runnable {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         selectedValuesList.stream().forEach(selectedValue -> {
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType), Utils.getIp(selectedValue)));
+        });
+        if (selectedValuesList.size() != 1) {
+            servantsList.clearSelection();
+        }
+    }
+
+    protected void sendControlWithName(ControlType controlType, String name) {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        selectedValuesList.stream().forEach(selectedValue -> {
+            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType, new Name(name)), Utils.getIp(selectedValue)));
         });
         if (selectedValuesList.size() != 1) {
             servantsList.clearSelection();

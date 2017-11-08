@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.node.servant;
 
+import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.common.Interface;
@@ -122,7 +123,9 @@ public class Servant extends Worker implements ChannelFutureListener {
             case SEND_DIR:
                 try {
                     if (!Globals.get().connectedServers.isEmpty()) {
-                        DirEvent dirEvent = new DirEvent(Globals.get().status.getCurrent());
+                        DirEvent dirEvent = new DirEvent(Globals.get().status.getCurrent(),
+                                H2KeyValue.getValue(H2KeyValue.DEF_AUDIO),
+                                H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
                         Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
                                 .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
                         Globals.get().connectedServers.values().stream()
