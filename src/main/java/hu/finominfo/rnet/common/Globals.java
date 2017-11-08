@@ -204,21 +204,20 @@ public class Globals {
         }
     }
 
-    public void restart() {
-        //TODO: Executor-okat shutdown-nolni!!!
-        StringBuilder cmd = new StringBuilder();
-        cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
-        for (String jvmArg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
-            cmd.append(jvmArg + " ");
-        }
-        cmd.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
-        cmd.append(Window.class.getName()).append(" ");
-
-        try {
-            Runtime.getRuntime().exec(cmd.toString());
-        } catch (IOException e) {
-            logger.error(Utils.getStackTrace(e));
-        }
-        System.exit(0);
-    }
+//    public void restart() {
+//        StringBuilder cmd = new StringBuilder();
+//        cmd.append(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java ");
+//        for (String jvmArg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+//            cmd.append(jvmArg + " ");
+//        }
+//        cmd.append("-cp ").append(ManagementFactory.getRuntimeMXBean().getClassPath()).append(" ");
+//        cmd.append(Window.class.getName()).append(" ");
+//
+//        try {
+//            Runtime.getRuntime().exec(cmd.toString());
+//        } catch (IOException e) {
+//            logger.error(Utils.getStackTrace(e));
+//        }
+//        System.exit(0);
+//    }
 }
