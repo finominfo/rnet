@@ -43,7 +43,7 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
 
     public GameKnockSimple(HandlingIO handlingIO) {
         try {
-            logger.info("sdasdasdasd");
+            //logger.info("sdasdasdasd");
             executor = Globals.get().executor;
             KnockProps propertiesReader = new KnockProps();
             knockPlayer = new AudioPlayerWrapper(executor, propertiesReader.getKnockVoice());
@@ -67,9 +67,6 @@ public final class GameKnockSimple implements CompletionHandler<CompletedEvent, 
 
     @Override
     public void run() {
-        if ((counter % 1000) == 0) {
-            logger.info("knock is running...");
-        }
         counter++;
         try {
             long now = System.currentTimeMillis();

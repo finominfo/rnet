@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.frontend.controller;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
@@ -110,11 +111,15 @@ public class FrontEnd extends FrontEndUtils {
             public Component getListCellRendererComponent(JList list, Object value, int index,
                                                           boolean isSelected, boolean cellHasFocus) {
                 Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof String && ((String) value).equals(defAudio)) {
-                    setBackground(Color.YELLOW);
-                    setForeground(Color.RED);
-                    if (isSelected) {
-                        setBackground(getBackground().darker());
+                if (servantsList.getSelectedValuesList().size() < 2) {
+                    String selectedValue = servantsList.getSelectedValue();
+                    String defAudio = Utils.getClientParam(selectedValue).getDefAudio();
+                    if (value instanceof String && ((String) value).equals(defAudio)) {
+                        setBackground(Color.YELLOW);
+                        setForeground(Color.RED);
+                        if (isSelected) {
+                            setBackground(getBackground().darker());
+                        }
                     }
                 }
                 return c;
@@ -150,11 +155,15 @@ public class FrontEnd extends FrontEndUtils {
             public Component getListCellRendererComponent(JList list, Object value, int index,
                                                           boolean isSelected, boolean cellHasFocus) {
                 Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof String && ((String) value).equals(defVideo)) {
-                    setBackground(Color.YELLOW);
-                    setForeground(Color.RED);
-                    if (isSelected) {
-                        setBackground(getBackground().darker());
+                if (servantsList.getSelectedValuesList().size() < 2) {
+                    String selectedValue = servantsList.getSelectedValue();
+                    String defVideo = Utils.getClientParam(selectedValue).getDefVideo();
+                    if (value instanceof String && ((String) value).equals(defVideo)) {
+                        setBackground(Color.YELLOW);
+                        setForeground(Color.RED);
+                        if (isSelected) {
+                            setBackground(getBackground().darker());
+                        }
                     }
                 }
                 return c;

@@ -52,10 +52,12 @@ public class DirEvent extends Event {
         byte[] bytes2 = status.getBytes(CharsetUtil.UTF_8);
         buf.writeInt(bytes.length);
         buf.writeInt(bytes2.length);
-        buf.writeBytes(bytes);
-        buf.writeBytes(bytes2);
         byte[] audBytes = defAudio.getBytes(CharsetUtil.UTF_8);
         byte[] vidBytes = defVideo.getBytes(CharsetUtil.UTF_8);
+        buf.writeInt(audBytes.length);
+        buf.writeInt(vidBytes.length);
+        buf.writeBytes(bytes);
+        buf.writeBytes(bytes2);
         buf.writeBytes(audBytes);
         buf.writeBytes(vidBytes);
     }
@@ -63,14 +65,14 @@ public class DirEvent extends Event {
     public static DirEvent create(ByteBuf msg) {
         int size = msg.readInt();
         int size2 = msg.readInt();
+        int sizeAud = msg.readInt();
+        int sizeVid = msg.readInt();
         byte[] bytes = new byte[size];
         msg.readBytes(bytes);
         byte[] bytes2 = new byte[size2];
         msg.readBytes(bytes2);
         String input = new String(bytes, CharsetUtil.UTF_8);
         String status = new String(bytes2, CharsetUtil.UTF_8);
-        int sizeAud = msg.readInt();
-        int sizeVid = msg.readInt();
         byte[] audBytes = new byte[sizeAud];
         byte[] vidBytes = new byte[sizeVid];
         msg.readBytes(audBytes);

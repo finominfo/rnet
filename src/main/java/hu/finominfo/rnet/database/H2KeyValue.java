@@ -69,6 +69,12 @@ public class H2KeyValue {
         if (dataMap.get(COUNTER) == null) {
             dataMap.put(COUNTER, "60");
         }
+        if (dataMap.get(DEF_AUDIO) == null) {
+            dataMap.put(DEF_AUDIO, "");
+        }
+        if (dataMap.get(DEF_VIDEO) == null) {
+            dataMap.put(DEF_VIDEO, "");
+        }
     }
 
     private void compactFile(long maxCompactTime, MVStore store) {

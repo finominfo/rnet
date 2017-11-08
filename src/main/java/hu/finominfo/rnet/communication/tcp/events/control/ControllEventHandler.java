@@ -58,14 +58,22 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case STOP_AUDIO:
                     logger.info("STOP_AUDIO arrived: " + ip);
-                    Name audName = (Name)msg.getControlObject();
-                    checkHits(defAudioHits, audName.getName(), H2KeyValue.DEF_AUDIO);
+                    String audName = ((Name) msg.getControlObject()).getName();
+                    if (audName != null && !audName.isEmpty()) {
+                        checkHits(defAudioHits, audName, H2KeyValue.DEF_AUDIO);
+                    } else {
+                        logger.warn("No audName in STOP_AUDIO");
+                    }
                     closeAudio();
                     break;
                 case STOP_VIDEO:
                     logger.info("STOP_VIDEO arrived: " + ip);
-                    Name vidName = (Name)msg.getControlObject();
-                    checkHits(defAudioHits, vidName.getName(), H2KeyValue.DEF_VIDEO);
+                    String vidName = ((Name) msg.getControlObject()).getName();
+                    if (vidName != null && !vidName.isEmpty()) {
+                        checkHits(defVideoHits, vidName, H2KeyValue.DEF_VIDEO);
+                    } else {
+                        logger.warn("No vidName in STOP_VIDEO");
+                    }
                     break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
@@ -95,18 +103,24 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
         Long now = System.currentTimeMillis();
         if (value == null) {
             final Long newValue = new Long(now);
-            value = defHits.putIfAbsent(name, value);
+            value = defHits.putIfAbsent(name, newValue);
             if (value == null) {
                 value = newValue;
             }
         }
         long hits = (value >> 60) + 1;
         long time = value & 0xfffffffffffffffL;
-        if (now - time < 15_000L && hits > 2) {
-            defHits.remove(name);
-            H2KeyValue.set(key, name);
+        if (now - time < 15_000L) {
+            if (hits > 2) {
+                defHits.remove(name);
+                H2KeyValue.set(key, name);
+                logger.info("checkHits name set: " + name);
+            } else {
+                long newValue = (hits << 60) | time;
+                defHits.put(name, newValue);
+            }
         } else {
-            long newValue = (hits << 60) | time;
+            long newValue = (1 << 60) | now;
             defHits.put(name, newValue);
         }
     }

@@ -32,9 +32,6 @@ import static javax.swing.ScrollPaneConstants.*;
  */
 public class FrontEndUtils extends JFrame implements Runnable {
 
-    protected volatile String defAudio = null;
-    protected volatile String defVideo = null;
-
     protected final ImageIcon ServantsIcon = new ImageIcon("resources" + File.separator + "servants.png");
     protected final ImageIcon SendTextIcon = new ImageIcon("resources" + File.separator + "sendtext.png");
     protected final ImageIcon RenameIcon = new ImageIcon("resources" + File.separator + "rename.png");
