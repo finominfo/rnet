@@ -93,7 +93,7 @@ public class FrontEnd extends FrontEndUtils {
         resetMins.setFont(new Font(resetMins.getFont().getName(), Font.BOLD, 54));
         resetMins.setBounds(130, 620, 64, 64);
         resetMins.setHorizontalAlignment(JTextField.CENTER);
-        resetMins.setText("25");
+        resetMins.setText("");
         resetMins.setBorder(null);
         add(resetMins);
 

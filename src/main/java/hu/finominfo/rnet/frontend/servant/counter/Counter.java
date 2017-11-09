@@ -2,6 +2,7 @@ package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.frontend.servant.counter.io.HandlingIO;
 import hu.finominfo.rnet.audio.AudioPlayer;
@@ -71,7 +72,7 @@ public class Counter extends JPanel {
                         Color.GREEN,
                         Color.RED,
                         diff,
-                        props.getTimes().get(i),
+                        Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)),
                         executor).make();
                 Globals.get().counter = panel[j];
                 i++;

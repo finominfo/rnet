@@ -79,10 +79,19 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("RESET_COUNTER arrived: " + ip);
                     closeAudio();
                     int minutes = ((ResetCounter) msg.getControlObject()).getMinutes();
-                    Globals.get().counter.makeStart();
-                    Globals.get().counter.makeStop();
-                    Globals.get().counter.milliseconds = minutes * 60_000L;
-                    Globals.get().counter.resetButtonPressed();
+                    if (minutes == 0 || minutes > 30) {
+                        Globals.get().counter.makeStart();
+                        Globals.get().counter.makeStop();
+                        if (minutes == 0) {
+                            Globals.get().counter.milliseconds = Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)) * 60_000L;
+                        } else {
+                            Globals.get().counter.milliseconds = minutes * 60_000L;
+                            H2KeyValue.set(H2KeyValue.COUNTER, String.valueOf(minutes));
+                        }
+                        Globals.get().counter.resetButtonPressed();
+                    } else {
+                        Globals.get().counter.addMinutesIfPossible(minutes);
+                    }
                     break;
                 case START_COUNTER:
                     logger.info("START_COUNTER arrived: " + ip);

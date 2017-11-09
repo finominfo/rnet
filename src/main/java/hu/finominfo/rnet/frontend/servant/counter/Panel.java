@@ -122,6 +122,16 @@ public class Panel extends JPanel {
         flash();
     }
 
+    public void addMinutesIfPossible(int minutes) {
+        long now = System.currentTimeMillis();
+        long addMillis = minutes * 60_000L;
+        if (now < addMillis + start) {
+            start = now;
+        } else {
+            start += addMillis;
+        }
+    }
+
     public void flash() {
         if (normalTextColor.compareAndSet(true, false)) {
             timer.setForeground(Color.BLACK);

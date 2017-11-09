@@ -382,7 +382,18 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected void sendResetCounter() {
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         selectedValuesList.stream().forEach(selectedValue -> {
-            ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(Integer.valueOf(resetMins.getText())));
+            String resetMinsText = resetMins.getText();
+            int minutes;
+            try {
+                minutes = Integer.valueOf(resetMinsText);
+                if (minutes > 30) {
+                    resetMins.setText("");
+                }
+            } catch (Exception e) {
+                logger.error(Utils.getStackTrace(e));
+                minutes = 0;
+            }
+            ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(minutes));
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
         });
         if (selectedValuesList.size() != 1) {

@@ -44,14 +44,12 @@ public class H2KeyValue {
         if (updateStarted.compareAndSet(false, true)) {
             Globals.get().executor.schedule(() -> {
                 updateStarted.set(false);
-                Globals.get().executor.schedule(() -> {
-                    MVStore mvStore = MVStore.open("database");
-                    MVMap<String, String> dataMap = mvStore.openMap("strings");
-                    keyValue.entrySet().stream().forEach(e -> dataMap.put(e.getKey(), e.getValue()));
-                    compactFile(5000, mvStore);
-                    mvStore.commit();
-                    mvStore.close();
-                }, 10, TimeUnit.SECONDS);
+                MVStore mvStore = MVStore.open("database");
+                MVMap<String, String> dataMap = mvStore.openMap("strings");
+                keyValue.entrySet().stream().forEach(e -> dataMap.put(e.getKey(), e.getValue()));
+                compactFile(10000, mvStore);
+                mvStore.commit();
+                mvStore.close();
             }, 3, TimeUnit.MINUTES);
         }
     }
@@ -70,10 +68,10 @@ public class H2KeyValue {
             dataMap.put(COUNTER, "60");
         }
         if (dataMap.get(DEF_AUDIO) == null) {
-            dataMap.put(DEF_AUDIO, "");
+            dataMap.put(DEF_AUDIO, "startMusic.wav");
         }
         if (dataMap.get(DEF_VIDEO) == null) {
-            dataMap.put(DEF_VIDEO, "");
+            dataMap.put(DEF_VIDEO, "startVideo.avi");
         }
     }
 
