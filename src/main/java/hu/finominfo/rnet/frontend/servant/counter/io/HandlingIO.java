@@ -66,7 +66,6 @@ public abstract class HandlingIO {
                             && checkAfterAWhile(justOpenButton) && checkAfterAWhile(justOpenButton) && checkAfterAWhile(justOpenButton)) {
                         logger.info("Pressed JUST open button");
                         justOpenDoor();
-                        stopButtonPressed();
                     }
                 }
             });
