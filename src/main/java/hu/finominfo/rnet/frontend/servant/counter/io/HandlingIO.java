@@ -22,10 +22,15 @@ public abstract class HandlingIO {
     private static final Pin STOP_AND_OPEN_PIN = RaspiPin.GPIO_08;
     private static final Pin OUT_DOOR_PIN = RaspiPin.GPIO_07;
 
+    private static final Pin JUST_OPEN_PIN = RaspiPin.GPIO_28;
+    private static final Pin JUST_OPEN_OUT = RaspiPin.GPIO_29;
+
     private final GpioPinDigitalInput stopButton = GpioFactory.getInstance().provisionDigitalInputPin(STOP_PIN, PinPullResistance.PULL_UP);
     private final GpioPinDigitalInput stopAndOpenButton = GpioFactory.getInstance().provisionDigitalInputPin(STOP_AND_OPEN_PIN, PinPullResistance.PULL_UP);
     private final GpioPinDigitalOutput outDoorPin = GpioFactory.getInstance().provisionDigitalOutputPin(OUT_DOOR_PIN, "FINISHED", Globals.get().getOff());
 
+    private final GpioPinDigitalInput justOpenButton = GpioFactory.getInstance().provisionDigitalInputPin(JUST_OPEN_PIN, PinPullResistance.PULL_UP);
+    private final GpioPinDigitalOutput justOpenOut = GpioFactory.getInstance().provisionDigitalOutputPin(JUST_OPEN_OUT, "FINISHED", Globals.get().getOff());
 
     public HandlingIO() {
         try {
@@ -54,11 +59,23 @@ public abstract class HandlingIO {
                     }
                 }
             });
+            justOpenButton.setShutdownOptions(true);
+            justOpenButton.addListener((GpioPinListenerDigital) (GpioPinDigitalStateChangeEvent event) -> {
+                if (event.getPin().getPin().equals(JUST_OPEN_PIN) && event.getState().equals(PinState.LOW)) {
+                    if (checkAfterAWhile(justOpenButton) && checkAfterAWhile(justOpenButton)
+                            && checkAfterAWhile(justOpenButton) && checkAfterAWhile(justOpenButton) && checkAfterAWhile(justOpenButton)) {
+                        logger.info("Pressed JUST open button");
+                        justOpenDoor();
+                        stopButtonPressed();
+                    }
+                }
+            });
 
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));
         }
     }
+
 
     private void testOutdoor(GpioPinDigitalOutput digitalOutput) {
         AtomicInteger i = new AtomicInteger(0);
@@ -97,5 +114,11 @@ public abstract class HandlingIO {
         outDoorPin.setState(Globals.get().getOn());
         Globals.get().executor.schedule(() -> outDoorPin.setState(Globals.get().getOff()), 30, TimeUnit.SECONDS);
     }
+
+    private void justOpenDoor() {
+        justOpenOut.setState(Globals.get().getOn());
+        Globals.get().executor.schedule(() -> justOpenOut.setState(Globals.get().getOff()), 10, TimeUnit.SECONDS);
+    }
+
 
 }

@@ -36,9 +36,9 @@ public class StatusEventHandler extends SimpleChannelInboundHandler<StatusEvent>
             Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
         }
         if (Globals.VERSION > msg.getVersion()) {
-            if (msg.getVersion() < 90) {
-                Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "h2-mvstore-1.4.196.jar", FileType.LIBRARY, ip);
-            }
+//            if (msg.getVersion() < 90) {
+//                Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "h2-mvstore-1.4.196.jar", FileType.LIBRARY, ip);
+//            }
             Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip);
         }
     }

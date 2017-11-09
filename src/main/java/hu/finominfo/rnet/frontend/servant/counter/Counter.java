@@ -72,7 +72,7 @@ public class Counter extends JPanel {
                         Color.GREEN,
                         Color.RED,
                         diff,
-                        Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)),
+                        Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)) * 60_000L,
                         executor).make();
                 Globals.get().counter = panel[j];
                 i++;
