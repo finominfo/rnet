@@ -212,7 +212,10 @@ public class FrontEndUtils extends JFrame implements Runnable {
             JLabel label = new JLabel("Enter the message: ");
             //label.setBounds(50, 50, 200, 40);
             JTextArea text = new JTextArea();
-            text.setRows(10);
+            text.setFont(new Font("", Font.PLAIN, 20));
+            text.setLineWrap(true);
+            text.setWrapStyleWord(true);
+            text.setRows(7);
             //text.setBounds(50, 100, 400, 250);
             panel.add(label);
             panel.add(text);

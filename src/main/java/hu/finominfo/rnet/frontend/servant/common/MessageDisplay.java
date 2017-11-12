@@ -52,12 +52,15 @@ public class MessageDisplay extends JPanel{
         Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
                 cursorImg, new Point(0, 0), "blank cursor");
         previousFrame = currentFrame;
+        jTextArea.setCursor(blankCursor);
+        jTextArea.setLineWrap(true);
+        jTextArea.setWrapStyleWord(true);
         jTextArea.setBackground(BG);
         jTextArea.setForeground(FG);
         jTextArea.setFont(customFont);
-        jTextArea.setFont(new Font(jTextArea.getFont().getName(), Font.BOLD, 100));
+        jTextArea.setFont(new Font(jTextArea.getFont().getName(), Font.BOLD, 80));
         jTextArea.setText(message);
-        jTextArea.setCursor(blankCursor);
+        jTextArea.setEditable(false);
         String shortMessage = message.length() <= 10 ? message : (message.substring(0, 10) + "...");
         Globals.get().status.setMessage("Showing: " + shortMessage);
         Utils.createAndShowGui(currentFrame, true, this, customFont, "Display message", new WindowAdapter() {
