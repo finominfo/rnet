@@ -110,14 +110,14 @@ public abstract class HandlingIO {
     public abstract void stopButtonPressed();
 
     public void openDoor() {
+        justOpenOut.setState(Globals.get().getOn());
         outDoorPin.setState(Globals.get().getOn());
-        Globals.get().executor.schedule(() -> outDoorPin.setState(Globals.get().getOff()), 30, TimeUnit.SECONDS);
+        Globals.get().executor.schedule(() -> {outDoorPin.setState(Globals.get().getOff()); justOpenOut.setState(Globals.get().getOff());}, 30, TimeUnit.SECONDS);
     }
 
     private void justOpenDoor() {
         justOpenOut.setState(Globals.get().getOn());
-        Globals.get().executor.schedule(() -> justOpenOut.setState(Globals.get().getOff()), 10, TimeUnit.SECONDS);
+        outDoorPin.setState(Globals.get().getOn());
+        Globals.get().executor.schedule(() -> {outDoorPin.setState(Globals.get().getOff()); justOpenOut.setState(Globals.get().getOff());}, 10, TimeUnit.SECONDS);
     }
-
-
 }
