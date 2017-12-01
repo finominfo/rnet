@@ -7,6 +7,7 @@ import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.properties.Props;
+import hu.finominfo.rnet.statistics.Clicker;
 import org.apache.log4j.Logger;
 
 import java.awt.*;
@@ -299,6 +300,7 @@ public class Panel extends JPanel {
 
     public void makeStart() {
         if (finished != 0) {
+            Clicker.click();
             timer.setVisible(true);
             long now = System.currentTimeMillis();
             lastMilliseconds = now;
