@@ -27,7 +27,7 @@ public class Clicker {
         clicks.put(name, new AtomicInteger(Integer.valueOf(H2KeyValue.getValue(name))));
     }
 
-    private final DecimalFormat df = new DecimalFormat("00");
+    private static final DecimalFormat df = new DecimalFormat("00");
 
     private final ConcurrentMap<String, AtomicInteger> clicks = new ConcurrentHashMap<>();
 
@@ -51,12 +51,16 @@ public class Clicker {
         }
     }
 
-    private String getCurrentName() {
+    public static String getCurrentName() {
         return getName(LocalDateTime.now());
     }
 
-    private String getName(LocalDateTime dateTime) {
+    public static String getName(LocalDateTime dateTime) {
         return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue()) + df.format(dateTime.getDayOfMonth());
+    }
+
+    public static String getYearMonth(LocalDateTime dateTime) {
+        return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue());
     }
 
 }
