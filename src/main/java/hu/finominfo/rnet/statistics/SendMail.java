@@ -21,9 +21,9 @@ public class SendMail {
         try{
             final String emailMessage = Stat.get();
             System.out.println(emailMessage);
-            final String fromEmail = "kalman.kovacs@gmail.com"; //requires valid gmail id
-            final String password = "korte5116"; // correct password for gmail id
-            final String toEmail = "kalman.kovacs@gmail.com"; // can be any email id
+            final String fromEmail = "rnetkk4@gmail.com"; //requires valid gmail id
+            final String password = "Alma1241"; // correct password for gmail id
+            final String toEmail = "rnetkk4@gmail.com"; // can be any email id
 
             System.out.println("TLSEmail Start");
             Properties props = new Properties();
@@ -43,7 +43,7 @@ public class SendMail {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            message.setSubject("Statistics");
+            message.setSubject("statistics");
             message.setText(emailMessage);
             Transport.send(message);
             logger.info("Mail Sent");

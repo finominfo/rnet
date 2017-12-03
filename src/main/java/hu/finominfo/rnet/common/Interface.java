@@ -20,6 +20,7 @@ public class Interface {
 
     private static final Logger logger = Logger.getLogger(Interface.class);
     public static volatile boolean interfaceOK = false;
+    public static volatile int fromAddress = 0;
     public static final List<Long> addresses = new ArrayList<>();
     public static final List<String> ips = new ArrayList<>();
 
@@ -36,6 +37,10 @@ public class Interface {
                     }
                     if (value > 1000) {
                         addresses.add(value);
+                        while (value != 0) {
+                            fromAddress ^= value & 0x0f;
+                            value >>= 4;
+                        }
                         if (networkInterface.isUp() && networkInterface.getInetAddresses().hasMoreElements()) {
                             for (Enumeration<InetAddress> enumIpAddress = networkInterface.getInetAddresses(); enumIpAddress.hasMoreElements(); ) {
                                 InetAddress inetAddress = enumIpAddress.nextElement();

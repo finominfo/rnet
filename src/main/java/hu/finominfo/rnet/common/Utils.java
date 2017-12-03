@@ -122,7 +122,7 @@ public class Utils {
         } catch (InterruptedException e) {
             logger.error(e);
         }
-        final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "sudo java -Dpi4j.linking=dynamic -cp \"rnet.jar:lib/*\" hu.finominfo.rnet.Main");
+        final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "sudo java -Xms400m -Xmx400m -Dpi4j.linking=dynamic -cp \"rnet.jar:lib/*\" hu.finominfo.rnet.Main");
         try {
             processBuilder.start();
         } catch (IOException e) {

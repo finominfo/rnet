@@ -86,8 +86,8 @@ public class Main {
                     zonedNext5 = zonedNext5.plusDays(1);
                 }
                 Duration duration = Duration.between(zonedNow, zonedNext5);
-                final long initialDelay = duration.getSeconds();
-                Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.SECONDS);
+                final long initialDelay = ((duration.getSeconds()) / 60) +  Interface.fromAddress;
+                Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
                 try {
                     HandlingIO handlingIO = new HandlingIO(Globals.get().executor);
                     Globals.get().executor.submit(new GameKnockSimple(handlingIO));
