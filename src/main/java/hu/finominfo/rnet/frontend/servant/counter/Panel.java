@@ -300,7 +300,7 @@ public class Panel extends JPanel {
 
     public void makeStart() {
         if (finished != 0) {
-            Clicker.click();
+            Globals.get().executor.submit(() -> Clicker.click());
             timer.setVisible(true);
             long now = System.currentTimeMillis();
             lastMilliseconds = now;

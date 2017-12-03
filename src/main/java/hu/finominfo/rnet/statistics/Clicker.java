@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Clicker {
 
     private static Clicker ourInstance = new Clicker();
+    private volatile String today = "";
 
     public static Clicker get() {
         return ourInstance;
@@ -42,6 +43,10 @@ public class Clicker {
 
     private final AtomicBoolean started = new AtomicBoolean(false);
 
+    public String getToday() {
+        return today;
+    }
+
     private void incrementCounter() {
         if (started.compareAndSet(false, true)) {
             Globals.get().executor.schedule(() -> {
@@ -56,6 +61,7 @@ public class Clicker {
                     }
                 }
                 H2KeyValue.set(name, String.valueOf(counter.incrementAndGet()));
+                today = name + " " + counter.get();
             }, 10, TimeUnit.MINUTES);
         }
     }
@@ -67,11 +73,4 @@ public class Clicker {
     public String getName(LocalDateTime dateTime) {
         return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue()) + df.format(dateTime.getDayOfMonth());
     }
-
-    public String getYearMonth(LocalDateTime dateTime) {
-        String year = String.valueOf(dateTime.getYear()).substring(2);
-        String month = df.format(dateTime.getMonthValue());
-        return year + month;
-    }
-
 }

@@ -59,10 +59,9 @@ public class Stat {
         stat.append("\nMAC: ").append(Long.toHexString(Interface.addresses.get(0)));
         stat.append("\nDefault video: ").append(H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
         stat.append("\nDefault audio: ").append(H2KeyValue.getValue(H2KeyValue.DEF_AUDIO)).append("\n");
-//        int todayStat = Clicker.getTodayStat();
-//        if (todayStat != 0) {
-//            stat.append("\nToday: ").append(todayStat).append("\n");
-//        }
+        if (!Clicker.get().getToday().isEmpty()) {
+            stat.append("\nToday: ").append(Clicker.get().getToday()).append("\n");
+        }
         stat.append(getInstance().initStat);
         return stat.toString();
     }
