@@ -20,5 +20,7 @@
     <orderEntry type="library" exported="" name="Gradle: log4j:log4j:1.2.17" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.pi4j:pi4j-core:1.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.h2database:h2-mvstore:1.4.196" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: javax.mail:mail:1.4.7" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: javax.activation:activation:1.1" level="project" />
   </component>
 </module>

@@ -2,6 +2,7 @@ package hu.finominfo.rnet.communication.http;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.statistics.Stat;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -31,6 +32,9 @@ public class MyChannelInboundHandlerAdapter extends ChannelInboundHandlerAdapter
                 case stop:
                     Globals.get().counter.makeStop();
                     sendResponse(ctx, request, "Counter stopped.");
+                    break;
+                case stat:
+                    sendResponse(ctx, request, Stat.get());
                     break;
                 case unknown:
                     sendResponse(ctx, request, "Unknown command, Try /start, /stop.");

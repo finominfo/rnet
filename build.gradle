@@ -7,6 +7,7 @@ repositories {
 }
 
 dependencies {
+    compile group: 'javax.mail', name: 'mail', version: '1.4.7'
     compile group: 'javax.media', name: 'jmf', version: 'fs-3.0'
     compile group: 'com.pi4j', name: 'pi4j-core', version: '1.1'
     compile group: 'log4j', name: 'log4j', version: '1.2.17'

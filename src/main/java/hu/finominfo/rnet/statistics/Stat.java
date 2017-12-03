@@ -1,7 +1,9 @@
 package hu.finominfo.rnet.statistics;
 
+import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.database.H2KeyValue;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 /**
@@ -14,45 +16,65 @@ public class Stat {
         return ourInstance;
     }
 
-    public StringBuilder lastStat = new StringBuilder();
+    public StringBuilder initStat = new StringBuilder();
 
-    private volatile int currentMonthSum = 0;
-    private volatile int previousMonthSum = 0;
+    private final DecimalFormat df = new DecimalFormat("00");
 
     public void init() {
+        int currentMonthSum = 0;
+        int previousMonthSum = 0;
         LocalDateTime dateTime = LocalDateTime.now();
         int currentMonth = dateTime.getMonthValue();
         int previousMonth = LocalDateTime.now().minusMonths(1).getMonthValue();
-        boolean dataExists = true;
-        while ((dateTime.getMonthValue() == currentMonth || dateTime.getMonthValue() == previousMonth) && dataExists) {
+        while (dateTime.getMonthValue() == currentMonth || dateTime.getMonthValue() == previousMonth) {
             int before = dateTime.getMonthValue();
-            dateTime.minusDays(1);
+            String beforeYearMonth = getYearMonth(dateTime);
+            dateTime = dateTime.minusDays(1);
+            String yearMonth = getYearMonth(dateTime);
             int after = dateTime.getMonthValue();
             if (before != after) {
-                dateTime.plusDays(1);
-                lastStat.append("\nSUM: ").append(Clicker.getYearMonth(dateTime)).append(" ")
+                initStat.append("\nSUM: ").append(beforeYearMonth).append(" ")
                         .append(before == currentMonth ? currentMonthSum : previousMonthSum)
                         .append("\n");
-                dateTime.minusDays(1);
             }
-            String date = Clicker.getName(dateTime);
-            String value = H2KeyValue.getValue(date);
-            if (null == value) {
-                dataExists = false;
-                lastStat.append("\nSUM: ").append(Clicker.getYearMonth(dateTime)).append(" ")
-                        .append(before == currentMonth ? currentMonthSum : previousMonthSum)
-                        .append("\n");
-            } else {
+            if (after == currentMonth || after == previousMonth) {
+                String date = getName(dateTime);
+                String value = H2KeyValue.getValue(date);
+                if (null == value) {
+                    value = "0";
+                }
                 if (dateTime.getMonthValue() == currentMonth) {
                     currentMonthSum += Integer.valueOf(value);
                 }
                 if (dateTime.getMonthValue() == previousMonth) {
                     previousMonthSum += Integer.valueOf(value);
                 }
-                lastStat.append("\n").append(date).append(" ").append(value);
+                initStat.append("\n").append(date).append(" ").append(value);
             }
         }
     }
 
+    public static String get() {
+        StringBuilder stat = new StringBuilder();
+        stat.append("\nMAC: ").append(Long.toHexString(Interface.addresses.get(0)));
+        stat.append("\nDefault video: ").append(H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
+        stat.append("\nDefault audio: ").append(H2KeyValue.getValue(H2KeyValue.DEF_AUDIO)).append("\n");
+//        int todayStat = Clicker.getTodayStat();
+//        if (todayStat != 0) {
+//            stat.append("\nToday: ").append(todayStat).append("\n");
+//        }
+        stat.append(getInstance().initStat);
+        return stat.toString();
+    }
+
+    public String getName(LocalDateTime dateTime) {
+        return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue()) + df.format(dateTime.getDayOfMonth());
+    }
+
+    public String getYearMonth(LocalDateTime dateTime) {
+        String year = String.valueOf(dateTime.getYear()).substring(2);
+        String month = df.format(dateTime.getMonthValue());
+        return year + month;
+    }
 
 }

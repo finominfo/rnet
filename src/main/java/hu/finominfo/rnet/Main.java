@@ -9,6 +9,8 @@ import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.statistics.SendMail;
+import hu.finominfo.rnet.statistics.Stat;
 import hu.finominfo.rnet.taskqueue.FrontEndWorker;
 import hu.finominfo.rnet.node.controller.Controller;
 import hu.finominfo.rnet.taskqueue.ControllerRepeater;
@@ -50,6 +52,8 @@ public class Main {
             Globals.get().executor.schedule(() -> {
                 Counter.createAndShowGui();
                 Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
+                Globals.get().executor.schedule(() -> Stat.getInstance().init(), 8, TimeUnit.SECONDS);
+                Globals.get().executor.schedule(() -> SendMail.send(), 12, TimeUnit.SECONDS);
                 Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
                 Servant servant = new Servant();
                 Globals.get().servant = servant;

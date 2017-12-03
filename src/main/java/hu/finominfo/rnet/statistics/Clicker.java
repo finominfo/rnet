@@ -18,8 +18,17 @@ public class Clicker {
 
     private static Clicker ourInstance = new Clicker();
 
+    public static Clicker get() {
+        return ourInstance;
+    }
+
     public static void click() {
         ourInstance.incrementCounter();
+    }
+
+    public static int getTodayStat() {
+        AtomicInteger atomicInteger = ourInstance.clicks.get(ourInstance.getCurrentName());
+        return atomicInteger == null ? 0 : atomicInteger.get();
     }
 
     public Clicker() {
@@ -27,7 +36,7 @@ public class Clicker {
         clicks.put(name, new AtomicInteger(Integer.valueOf(H2KeyValue.getValue(name))));
     }
 
-    private static final DecimalFormat df = new DecimalFormat("00");
+    private final DecimalFormat df = new DecimalFormat("00");
 
     private final ConcurrentMap<String, AtomicInteger> clicks = new ConcurrentHashMap<>();
 
@@ -51,16 +60,18 @@ public class Clicker {
         }
     }
 
-    public static String getCurrentName() {
+    public String getCurrentName() {
         return getName(LocalDateTime.now());
     }
 
-    public static String getName(LocalDateTime dateTime) {
+    public String getName(LocalDateTime dateTime) {
         return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue()) + df.format(dateTime.getDayOfMonth());
     }
 
-    public static String getYearMonth(LocalDateTime dateTime) {
-        return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue());
+    public String getYearMonth(LocalDateTime dateTime) {
+        String year = String.valueOf(dateTime.getYear()).substring(2);
+        String month = df.format(dateTime.getMonthValue());
+        return year + month;
     }
 
 }
