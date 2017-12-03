@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class H2KeyValue {
 
+    public static String LAST_SENDING = "lastsending";
     public static String COUNTER = "counter";
     public static String DEF_AUDIO = "defAudio";
     public static String DEF_VIDEO = "defVideo";
@@ -72,6 +73,9 @@ public class H2KeyValue {
         }
         if (dataMap.get(DEF_VIDEO) == null) {
             dataMap.put(DEF_VIDEO, "startVideo.avi");
+        }
+        if (dataMap.get(LAST_SENDING) == null) {
+            dataMap.put(LAST_SENDING, "0");
         }
     }
 

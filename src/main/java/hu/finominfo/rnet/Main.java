@@ -3,6 +3,7 @@ package hu.finominfo.rnet;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.http.HttpServer;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
+import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
@@ -22,6 +23,9 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.File;
+import java.time.*;
+import java.time.temporal.TemporalUnit;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,14 +57,37 @@ public class Main {
                 Counter.createAndShowGui();
                 Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
                 Globals.get().executor.schedule(() -> Stat.getInstance().init(), 8, TimeUnit.SECONDS);
-                Globals.get().executor.schedule(() -> SendMail.send(), 12, TimeUnit.SECONDS);
+
+                Globals.get().executor.schedule(() -> {
+                    long lastSending = Long.valueOf(H2KeyValue.getValue(H2KeyValue.LAST_SENDING));
+                    LocalDateTime last = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSending), TimeZone.getDefault().toZoneId());
+                    LocalDateTime current = LocalDateTime.now();
+                    boolean shouldSend = System.currentTimeMillis() < 1514764800000L || last.getMonthValue() != current.getMonthValue();
+                    if (shouldSend) {
+                        SendMail.send();
+                    }
+                }, 12, TimeUnit.SECONDS);
+
                 Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
                 Servant servant = new Servant();
                 Globals.get().servant = servant;
                 Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
+
                 Globals.get().executor.schedule(() ->
-                        MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
+                                MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
                         2, TimeUnit.SECONDS);
+
+                LocalDateTime localNow = LocalDateTime.now();
+                ZoneId currentZone = ZoneId.systemDefault();
+                ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+                ZonedDateTime zonedNext5;
+                zonedNext5 = zonedNow.withHour(5).withMinute(0).withSecond(0);
+                if (zonedNow.compareTo(zonedNext5) > 0) {
+                    zonedNext5 = zonedNext5.plusDays(1);
+                }
+                Duration duration = Duration.between(zonedNow, zonedNext5);
+                final long initialDelay = duration.getSeconds();
+                Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.SECONDS);
                 try {
                     HandlingIO handlingIO = new HandlingIO(Globals.get().executor);
                     Globals.get().executor.submit(new GameKnockSimple(handlingIO));

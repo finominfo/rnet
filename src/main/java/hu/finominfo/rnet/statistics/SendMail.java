@@ -2,6 +2,7 @@ package hu.finominfo.rnet.statistics;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Interface;
+import hu.finominfo.rnet.database.H2KeyValue;
 import org.apache.log4j.Logger;
 
 import javax.mail.*;
@@ -46,6 +47,7 @@ public class SendMail {
             message.setText(emailMessage);
             Transport.send(message);
             logger.info("Mail Sent");
+            H2KeyValue.set(H2KeyValue.LAST_SENDING, String.valueOf(System.currentTimeMillis()));
         }catch(Exception ex){
             System.out.println(ex.getMessage());
             logger.error("Mail fail", ex);
