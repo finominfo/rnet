@@ -30,7 +30,6 @@ public class Stat {
             int before = dateTime.getMonthValue();
             String beforeYearMonth = getYearMonth(dateTime);
             dateTime = dateTime.minusDays(1);
-            String yearMonth = getYearMonth(dateTime);
             int after = dateTime.getMonthValue();
             if (before != after) {
                 initStat.append("\nSUM: ").append(beforeYearMonth).append(" ")

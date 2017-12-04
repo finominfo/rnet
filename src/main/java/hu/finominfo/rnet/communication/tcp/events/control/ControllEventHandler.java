@@ -80,7 +80,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     closeAudio();
                     int minutes = ((ResetCounter) msg.getControlObject()).getMinutes();
                     if (minutes == 0 || minutes > 30) {
-                        Globals.get().counter.makeStart();
+                        //Globals.get().counter.makeStart();
                         Globals.get().counter.makeStop();
                         if (minutes == 0) {
                             Globals.get().counter.milliseconds = Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)) * 60_000L;

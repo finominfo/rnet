@@ -34,7 +34,8 @@ public class Clicker {
 
     public Clicker() {
         String name = getCurrentName();
-        clicks.put(name, new AtomicInteger(Integer.valueOf(H2KeyValue.getValue(name))));
+        String value = H2KeyValue.getValue(name);
+        clicks.put(name, new AtomicInteger(Integer.valueOf(value == null ? "0" : value)));
     }
 
     private final DecimalFormat df = new DecimalFormat("00");
@@ -49,20 +50,19 @@ public class Clicker {
 
     private void incrementCounter() {
         if (started.compareAndSet(false, true)) {
-            Globals.get().executor.schedule(() -> {
-                started.set(false);
-                String name = getCurrentName();
-                AtomicInteger counter = clicks.get(name);
+            Globals.get().executor.schedule(() -> started.set(false), 10, TimeUnit.MINUTES);
+            String name = getCurrentName();
+            AtomicInteger counter = clicks.get(name);
+            if (counter == null) {
+                final AtomicInteger value = new AtomicInteger(0);
+                counter = clicks.putIfAbsent(name, value);
                 if (counter == null) {
-                    final AtomicInteger value = new AtomicInteger(0);
-                    counter = clicks.putIfAbsent(name, value);
-                    if (counter == null) {
-                        counter = value;
-                    }
+                    counter = value;
                 }
-                H2KeyValue.set(name, String.valueOf(counter.incrementAndGet()));
-                today = name + " " + counter.get();
-            }, 10, TimeUnit.MINUTES);
+            }
+            final int currentCounter = counter.incrementAndGet();
+            today = name + " " + currentCounter;
+            H2KeyValue.set(name, String.valueOf(currentCounter));
         }
     }
 
@@ -72,5 +72,10 @@ public class Clicker {
 
     public String getName(LocalDateTime dateTime) {
         return String.valueOf(dateTime.getYear()).substring(2) + df.format(dateTime.getMonthValue()) + df.format(dateTime.getDayOfMonth());
+    }
+
+    public static void main(String[] args) {
+        Clicker.click();
+        System.out.println("OK");
     }
 }
