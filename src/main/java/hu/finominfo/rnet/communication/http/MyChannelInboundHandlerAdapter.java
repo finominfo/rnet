@@ -33,7 +33,7 @@ public class MyChannelInboundHandlerAdapter extends ChannelInboundHandlerAdapter
                     Globals.get().counter.makeStop();
                     sendResponse(ctx, request, "Counter stopped.");
                     break;
-                case stat:
+                case rnetstat:
                     sendResponse(ctx, request, Stat.get());
                     break;
                 case unknown:

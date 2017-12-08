@@ -6,7 +6,7 @@ package hu.finominfo.rnet.communication.http;
 public enum Command {
     start,
     stop,
-    stat,
+    rnetstat,
     unknown;
 
     public static Command get(String uri) {
