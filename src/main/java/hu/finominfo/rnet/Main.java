@@ -62,7 +62,7 @@ public class Main {
                     long lastSending = Long.valueOf(H2KeyValue.getValue(H2KeyValue.LAST_SENDING));
                     LocalDateTime last = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSending), TimeZone.getDefault().toZoneId());
                     LocalDateTime current = LocalDateTime.now();
-                    boolean shouldSend = (System.currentTimeMillis() < 1514764800000L && last.getDayOfMonth() != current.getDayOfMonth())
+                    boolean shouldSend = (System.currentTimeMillis() < 2514764800000L && last.getDayOfMonth() != current.getDayOfMonth())
                             || last.getMonthValue() != current.getMonthValue();
                     if (shouldSend) {
                         SendMail.send();
