@@ -41,7 +41,9 @@ public class MessageDisplay extends JPanel{
         if (previousFrame != null) {
             try {
                 Globals.get().status.setMessage(null);
-                previousFrame.getFrame().dispose();
+                if (previousFrame != null && previousFrame.getFrame() != null) {
+                    previousFrame.getFrame().dispose();
+                }
             } catch (Exception e) {
                 logger.error(Utils.getStackTrace(e));
             }

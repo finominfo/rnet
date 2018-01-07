@@ -148,6 +148,10 @@ public class Servant extends Worker implements ChannelFutureListener {
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (currentTask == null) {
+            String ip = "";
+            if (future.channel() != null && future.channel().remoteAddress() != null) {
+                ip = future.channel().remoteAddress().toString();
+            }
             logger.error("currentTask is null: " + future.channel().remoteAddress().toString());
             return;
         }
