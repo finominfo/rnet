@@ -1,5 +1,6 @@
 package hu.finominfo.rnet.properties;
 
+import hu.finominfo.rnet.NodeType;
 import hu.finominfo.rnet.database.H2KeyValue;
 
 import java.util.Arrays;
@@ -23,10 +24,10 @@ public class Props {
     private volatile String success;
     private volatile String failed;
     private volatile boolean inverse;
-    private final boolean controller;
     private final int port;
     private final int httpPort;
     private final int invisible;
+    private final NodeType nodeType;
 
 
     private static Props ourInstance = new Props();
@@ -52,7 +53,19 @@ public class Props {
         attention = prop.getProperty("attention", "attention.wav");
         success = prop.getProperty("success", "success.wav");
         failed = prop.getProperty("failed", "failed_counter.wav");
-        controller = prop.getProperty("node", "servant").equalsIgnoreCase("controller");
+        String node = prop.getProperty("node", "servant");
+        switch (NodeType.valueOf(node.toUpperCase())) {
+            case SERVANT:
+                nodeType = NodeType.SERVANT;
+                break;
+            case COUNTER:
+                nodeType = NodeType.COUNTER;
+                break;
+            case CONTROLLER:
+            default:
+                nodeType = NodeType.CONTROLLER;
+                break;
+        }
         port = Integer.valueOf(prop.getProperty("port", "10000"));
         httpPort = Integer.valueOf(prop.getProperty("httpPort", "1080"));
         invisible = Integer.valueOf(prop.getProperty("invisible", "10"));
@@ -87,8 +100,8 @@ public class Props {
         return port;
     }
 
-    public boolean isController() {
-        return controller;
+    public NodeType getNodeType() {
+        return nodeType;
     }
 
     public String getFailed() {

@@ -2,12 +2,12 @@ package hu.finominfo.rnet;
 
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.http.HttpServer;
-import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
 import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
+import hu.finominfo.rnet.frontend.counteronly.GameFrontEnd;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.statistics.SendMail;
@@ -24,7 +24,6 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import java.io.File;
 import java.time.*;
-import java.time.temporal.TemporalUnit;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -44,58 +43,83 @@ public class Main {
         setupLog4J();
         Logger logger = Logger.getLogger(Main.class);
         Interface.getInterfaces();
-        if (Props.get().isController()) {
-            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
-            Globals.get().executor.schedule(new ControllerRepeater(), 5, TimeUnit.SECONDS);
-            Globals.get().getFrontEnd();
-            Controller controller = new Controller();
-            controller.run();
-            Globals.get().controller = controller;
-            new FrontEndWorker().run();
-        } else {
+        switch (Props.get().getNodeType()) {
+            case CONTROLLER:
+                handleController();
+                break;
+            case SERVANT:
+                handleServant(logger);
+                break;
+            case COUNTER:
+                handleCounter(logger);
+                break;
+        }
+    }
+
+    private static void handleCounter(Logger logger) {
+        SwingUtilities.invokeLater(() -> {
+            GameFrontEnd.createAndShowGui();
+        });
+        Globals.get().executor.schedule(() -> startGameKnock(logger), 2, TimeUnit.SECONDS);
+    }
+
+    private static void handleController() {
+        Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.LOAD_NAME_ADDRESS);
+        Globals.get().executor.schedule(new ControllerRepeater(), 5, TimeUnit.SECONDS);
+        Globals.get().getFrontEnd();
+        Controller controller = new Controller();
+        controller.run();
+        Globals.get().controller = controller;
+        new FrontEndWorker().run();
+    }
+
+    private static void handleServant(Logger logger) {
+        Globals.get().executor.schedule(() -> {
+            Counter.createAndShowGui();
+            Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
+            Globals.get().executor.schedule(() -> Stat.getInstance().init(), 8, TimeUnit.SECONDS);
+
             Globals.get().executor.schedule(() -> {
-                Counter.createAndShowGui();
-                Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
-                Globals.get().executor.schedule(() -> Stat.getInstance().init(), 8, TimeUnit.SECONDS);
-
-                Globals.get().executor.schedule(() -> {
-                    long lastSending = Long.valueOf(H2KeyValue.getValue(H2KeyValue.LAST_SENDING));
-                    LocalDateTime last = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSending), TimeZone.getDefault().toZoneId());
-                    LocalDateTime current = LocalDateTime.now();
-                    boolean shouldSend = (System.currentTimeMillis() < 2514764800000L && last.getDayOfMonth() != current.getDayOfMonth())
-                            || last.getMonthValue() != current.getMonthValue();
-                    if (shouldSend) {
-                        SendMail.send();
-                    }
-                }, 12, TimeUnit.SECONDS);
-
-                Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
-                Servant servant = new Servant();
-                Globals.get().servant = servant;
-                Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
-
-                Globals.get().executor.schedule(() ->
-                                MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
-                        2, TimeUnit.SECONDS);
-
-                LocalDateTime localNow = LocalDateTime.now();
-                ZoneId currentZone = ZoneId.systemDefault();
-                ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
-                ZonedDateTime zonedNext5;
-                zonedNext5 = zonedNow.withHour(4).withMinute(0).withSecond(0);
-                if (zonedNow.compareTo(zonedNext5) > 0) {
-                    zonedNext5 = zonedNext5.plusDays(1);
+                long lastSending = Long.valueOf(H2KeyValue.getValue(H2KeyValue.LAST_SENDING));
+                LocalDateTime last = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSending), TimeZone.getDefault().toZoneId());
+                LocalDateTime current = LocalDateTime.now();
+                boolean shouldSend = (System.currentTimeMillis() < 2514764800000L && last.getDayOfMonth() != current.getDayOfMonth())
+                        || last.getMonthValue() != current.getMonthValue();
+                if (shouldSend) {
+                    SendMail.send();
                 }
-                Duration duration = Duration.between(zonedNow, zonedNext5);
-                final long initialDelay = ((duration.getSeconds()) / 60) +  Interface.fromAddress;
-                Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
-                try {
-                    HandlingIO handlingIO = new HandlingIO(Globals.get().executor);
-                    Globals.get().executor.submit(new GameKnockSimple(handlingIO));
-                } catch (Exception e) {
-                    logger.error(Utils.getStackTrace(e));
-                }
-            }, 2, TimeUnit.SECONDS);
+            }, 12, TimeUnit.SECONDS);
+
+            Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
+            Servant servant = new Servant();
+            Globals.get().servant = servant;
+            Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
+
+            Globals.get().executor.schedule(() ->
+                            MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
+                    2, TimeUnit.SECONDS);
+
+            LocalDateTime localNow = LocalDateTime.now();
+            ZoneId currentZone = ZoneId.systemDefault();
+            ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+            ZonedDateTime zonedNext5;
+            zonedNext5 = zonedNow.withHour(4).withMinute(0).withSecond(0);
+            if (zonedNow.compareTo(zonedNext5) > 0) {
+                zonedNext5 = zonedNext5.plusDays(1);
+            }
+            Duration duration = Duration.between(zonedNow, zonedNext5);
+            final long initialDelay = ((duration.getSeconds()) / 60) + Interface.fromAddress;
+            Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
+            startGameKnock(logger);
+        }, 2, TimeUnit.SECONDS);
+    }
+
+    private static void startGameKnock(Logger logger) {
+        try {
+            HandlingIO handlingIO = new HandlingIO(Globals.get().executor);
+            Globals.get().executor.submit(new GameKnockSimple(handlingIO));
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
         }
     }
 
