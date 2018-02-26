@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.11.08.
@@ -16,6 +17,8 @@ public class H2KeyValue {
 
     public static String LAST_SENDING = "lastsending";
     public static String COUNTER = "counter";
+    public static String COUNTER_FINISHED = "stop";
+    public static String COUNTER_CURRENT_STATE = "counterCurrentState";
     public static String DEF_AUDIO = "defAudio";
     public static String DEF_VIDEO = "defVideo";
 
@@ -31,6 +34,7 @@ public class H2KeyValue {
 
     private Map<String, String> keyValue = new HashMap<>();
     private final AtomicBoolean updateStarted = new AtomicBoolean(false);
+    private final AtomicLong lastCompact = new AtomicLong(0);
 
     private String getMapValue(String key) {
         return keyValue.get(key);
@@ -48,10 +52,10 @@ public class H2KeyValue {
                 MVStore mvStore = MVStore.open("database");
                 MVMap<String, String> dataMap = mvStore.openMap("strings");
                 keyValue.entrySet().stream().forEach(e -> dataMap.put(e.getKey(), e.getValue()));
-                compactFile(10000, mvStore);
+                compactFile(30_000, mvStore);
                 mvStore.commit();
                 mvStore.close();
-            }, 3, TimeUnit.MINUTES);
+            }, 1, TimeUnit.MINUTES);
         }
     }
 
@@ -68,6 +72,9 @@ public class H2KeyValue {
         if (dataMap.get(COUNTER) == null) {
             dataMap.put(COUNTER, "60");
         }
+        if (dataMap.get(COUNTER_CURRENT_STATE) == null || dataMap.get(COUNTER_CURRENT_STATE) == "0") {
+            dataMap.put(COUNTER_CURRENT_STATE, COUNTER_FINISHED);
+        }
         if (dataMap.get(DEF_AUDIO) == null) {
             dataMap.put(DEF_AUDIO, "startMusic.wav");
         }
@@ -80,14 +87,18 @@ public class H2KeyValue {
     }
 
     private void compactFile(long maxCompactTime, MVStore store) {
-        store.setRetentionTime(0);
-        long start = System.currentTimeMillis();
-        while (store.compact(95, 16 * 1024 * 1024)) {
-            store.sync();
-            store.compactMoveChunks(95, 16 * 1024 * 1024);
-            long time = System.currentTimeMillis() - start;
-            if (time > maxCompactTime) {
-                break;
+        long last = lastCompact.get();
+        long now = System.currentTimeMillis();
+        if (now - last > 86_400_000L && lastCompact.compareAndSet(last, now)) {
+            store.setRetentionTime(0);
+            long start = System.currentTimeMillis();
+            while (store.compact(95, 16 * 1024 * 1024)) {
+                store.sync();
+                store.compactMoveChunks(95, 16 * 1024 * 1024);
+                long time = System.currentTimeMillis() - start;
+                if (time > maxCompactTime) {
+                    break;
+                }
             }
         }
     }

@@ -117,8 +117,12 @@ public class Utils {
 //        }
         Globals.get().executor.shutdown();
 
+        restartNow(3000);
+    }
+
+    public static void restartNow(int wait) {
         try {
-            Thread.sleep(3000);
+            Thread.sleep(wait);
         } catch (InterruptedException e) {
             logger.error(e);
         }
@@ -156,7 +160,7 @@ public class Utils {
         }
     }
 
-    private static void startCounterMusic() {
+    public static void startCounterMusic() {
         String contMusicAtCounterStart = Props.get().getContMusicAtCounterStart();
         if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
             String fileName = Globals.audioFolder + File.separator + contMusicAtCounterStart;

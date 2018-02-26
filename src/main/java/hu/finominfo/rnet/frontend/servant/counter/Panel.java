@@ -5,6 +5,7 @@ import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
+import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.statistics.Clicker;
@@ -260,6 +261,7 @@ public class Panel extends JPanel {
         int secs = (int) (millisecs / 1000);
         int remSecs = secs % 60;
         int remMins = secs / 60;
+        H2KeyValue.set(H2KeyValue.COUNTER_CURRENT_STATE, String.valueOf(remMins));
         return String.format("%02d:%02d", remMins, remSecs);
     }
 

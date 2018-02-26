@@ -42,17 +42,27 @@ public class Main {
     public static void main(String[] args) {
         setupLog4J();
         Logger logger = Logger.getLogger(Main.class);
-        Interface.getInterfaces();
-        switch (Props.get().getNodeType()) {
-            case CONTROLLER:
-                handleController();
-                break;
-            case SERVANT:
-                handleServant(logger);
-                break;
-            case COUNTER:
-                handleCounter(logger);
-                break;
+        try {
+            Interface.getInterfaces();
+            switch (Props.get().getNodeType()) {
+                case CONTROLLER:
+                    handleController();
+                    break;
+                case SERVANT:
+                    handleServant(logger);
+                    break;
+                case COUNTER:
+                    handleCounter(logger);
+                    break;
+            }
+        } catch (Throwable t) {
+            logger.error("Error in Main() ", t);
+            try {
+                Utils.restartNow(120_000);
+            } catch (Throwable t2) {
+                logger.error("Error in restartNow() ", t2);
+                System.exit(0);
+            }
         }
     }
 
@@ -111,7 +121,16 @@ public class Main {
             final long initialDelay = ((duration.getSeconds()) / 60) + Interface.fromAddress;
             Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
             startGameKnock(logger);
+            Globals.get().executor.schedule(() -> checkFaultyRestart(), 25, TimeUnit.SECONDS);
         }, 2, TimeUnit.SECONDS);
+    }
+
+    private static void checkFaultyRestart() {
+        String counterState = H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE);
+        if (!counterState.equals(H2KeyValue.COUNTER_FINISHED)) {
+            Globals.get().counter.milliseconds = Integer.valueOf(counterState) * 60_000L;
+            Utils.startCounterMusic();
+        }
     }
 
     private static void startGameKnock(Logger logger) {

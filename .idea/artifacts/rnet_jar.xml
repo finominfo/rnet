@@ -29,6 +29,14 @@
         <element id="library" level="project" name="Gradle: javax.mail:mail:1.4.7" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/knock.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/frogs.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/rainforest2.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/rainforest1.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/chewbacca.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/monkey.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/jaguar.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/gorilla.wav" />
+      <element id="file-copy" path="$PROJECT_DIR$/bird1.wav" />
     </root>
   </artifact>
 </component>
