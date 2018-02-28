@@ -63,7 +63,7 @@ public class Broadcaster implements ChannelFutureListener, Runnable{
     @Override
     public void operationComplete(ChannelFuture future) throws Exception {
         if (!future.isSuccess()) {
-            logger.error("Broadcast sending was unsuccessful");
+            //logger.error("Broadcast sending was unsuccessful");
             if (faultTimes.decrementAndGet() >= 0) {
                 times.incrementAndGet();
             }
