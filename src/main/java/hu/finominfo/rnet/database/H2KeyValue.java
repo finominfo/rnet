@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.database;
 
 import hu.finominfo.rnet.common.Globals;
+import org.apache.log4j.Logger;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
 
@@ -23,6 +24,7 @@ public class H2KeyValue {
     public static String DEF_VIDEO = "defVideo";
 
     private static H2KeyValue ourInstance = new H2KeyValue();
+    private final static Logger logger = Logger.getLogger(H2KeyValue.class);
 
     public static String getValue(String key) {
         return ourInstance.getMapValue(key);
@@ -51,9 +53,12 @@ public class H2KeyValue {
                 updateStarted.set(false);
                 MVStore mvStore = MVStore.open("database");
                 MVMap<String, String> dataMap = mvStore.openMap("strings");
+                logger.info("Writing data to database.");
                 keyValue.entrySet().stream().forEach(e -> dataMap.put(e.getKey(), e.getValue()));
                 compactFile(30_000, mvStore);
+                logger.info("Comitting data to database.");
                 mvStore.commit();
+                logger.info("Closing database.");
                 mvStore.close();
             }, 1, TimeUnit.MINUTES);
         }
@@ -90,6 +95,7 @@ public class H2KeyValue {
         long last = lastCompact.get();
         long now = System.currentTimeMillis();
         if (now - last > 86_400_000L && lastCompact.compareAndSet(last, now)) {
+            logger.info("Start compacting database.");
             store.setRetentionTime(0);
             long start = System.currentTimeMillis();
             while (store.compact(95, 16 * 1024 * 1024)) {
@@ -100,6 +106,7 @@ public class H2KeyValue {
                     break;
                 }
             }
+            logger.info("Finished compacting database.");
         }
     }
 }

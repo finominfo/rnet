@@ -268,7 +268,6 @@ public class Panel extends JPanel {
     public void start() {
         finished = System.currentTimeMillis();
         start = System.currentTimeMillis();
-//        ses.submit(refresh);
     }
 
     public JButton createStopStartButton() {

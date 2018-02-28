@@ -3,6 +3,7 @@ package hu.finominfo.rnet.frontend.counteronly;
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.audio.AudioPlayerWrapper;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.frontend.servant.counter.io.HandlingIO;
 
 import java.awt.BorderLayout;
@@ -10,11 +11,9 @@ import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -137,29 +136,19 @@ public class GameFrontEnd extends JPanel {
     }
 
     public static void createAndShowGui() {
-        Font customFont = null;
-        try {
-            customFont = Font.createFont(Font.TRUETYPE_FONT, new File("./Crysta.ttf"));
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(customFont);
-        } catch (IOException | FontFormatException e) {
-            throw new RuntimeException(e);
-        }
+        Font customFont = Utils.getCustomFont();
         GameFrontEnd gameFrontEnd = new GameFrontEnd(customFont);
+        Utils.createAndShowGui(null, true, gameFrontEnd, customFont, "Counter", new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                e.getWindow().dispose();
+                System.exit(0);
+            }
+        }, null);
         gameFrontEnd.start();
-        JFrame frame = new JFrame("Game Panel");
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setUndecorated(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.getContentPane().add(gameFrontEnd);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            createAndShowGui();
-        });
+        createAndShowGui();
     }
 }

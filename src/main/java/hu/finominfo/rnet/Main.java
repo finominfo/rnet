@@ -58,9 +58,9 @@ public class Main {
         } catch (Throwable t) {
             logger.error("Error in Main() ", t);
             try {
-                Utils.restartNow(120_000);
+                Utils.processCommand(180_000, "sudo reboot");
             } catch (Throwable t2) {
-                logger.error("Error in restartNow() ", t2);
+                logger.error("Error in processCommand() ", t2);
                 System.exit(0);
             }
         }

@@ -4,7 +4,6 @@ import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
-import hu.finominfo.rnet.communication.tcp.events.control.objects.ResetCounter;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
@@ -22,17 +21,12 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.24.
@@ -117,16 +111,16 @@ public class Utils {
 //        }
         Globals.get().executor.shutdown();
 
-        restartNow(3000);
+        processCommand(3000, "sudo java -Xms400m -Xmx400m -Dpi4j.linking=dynamic -cp \"rnet.jar:lib/*\" hu.finominfo.rnet.Main");
     }
 
-    public static void restartNow(int wait) {
+    public static void processCommand(int wait, String command) {
         try {
             Thread.sleep(wait);
         } catch (InterruptedException e) {
             logger.error(e);
         }
-        final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "sudo java -Xms400m -Xmx400m -Dpi4j.linking=dynamic -cp \"rnet.jar:lib/*\" hu.finominfo.rnet.Main");
+        final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
         try {
             processBuilder.start();
         } catch (IOException e) {
