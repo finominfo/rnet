@@ -32,8 +32,8 @@ public class MyChannelHandler implements ChannelHandler {
         String ip = Globals.get().getIp(ipAndPort);
 
         //TODO: Ezt megvizsgálni, hogy jó-e!!!
-        Globals.get().serverClients.get(ip).setContext(null);
-        //Globals.get().serverClients.remove(ip);
+//        Globals.get().serverClients.get(ip).setContext(null);
+        Globals.get().serverClients.remove(ip);
 
     }
 
