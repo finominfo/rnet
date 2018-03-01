@@ -8,6 +8,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.29.
  */
@@ -22,9 +24,9 @@ public class DirEventHandler extends SimpleChannelInboundHandler<DirEvent> {
         try {
             ClientParam clientParam = Globals.get().serverClients.get(ip);
             clientParam.setStatus(msg.getStatus());
-            boolean shouldRefreshAll = false;
+            boolean shouldRefreshAll = true;
             if ((clientParam.getDefAudio() != null && !clientParam.getDefAudio().equals(msg.getDefAudio())) ||
-                    (clientParam.getDefAudio() != null && !clientParam.getDefVideo().equals(msg.getDefVideo()))) {
+                    (clientParam.getDefVideo() != null && !clientParam.getDefVideo().equals(msg.getDefVideo()))) {
                 shouldRefreshAll = true;
             }
             clientParam.setDefAudio(msg.getDefAudio());

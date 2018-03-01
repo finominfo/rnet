@@ -60,7 +60,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                 }
                 break;
             case SEND_BROADCAST:
-                if (broadcaster == null && shouldHandleAgain(1000) && currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
+                if (broadcaster == null && shouldHandleAgain(20000) && currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                     broadcaster = new Broadcaster(broadcastPort);
                     broadcaster.start(1, 400, this);
                 }
@@ -70,14 +70,18 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                     boolean foundNewClient = false;
                     Iterator<Map.Entry<String, ClientParam>> iterator = Globals.get().serverClients.entrySet().iterator();
                     while (iterator.hasNext()) {
-                        currentClient = iterator.next();
-                        ClientParam clientParam = currentClient.getValue();
-                        if (clientParam.possibleToTry() && null != clientParam.getContext() && clientParam.getConnectedBack().compareAndSet(false, true)) {
-                            Client client = new Client(currentClient.getKey(), clientPort);
-                            clientParam.setClient(client);
-                            client.bind().addListener(this);
-                            foundNewClient = true;
-                            break;
+                        try {
+                            currentClient = iterator.next();
+                            ClientParam clientParam = currentClient.getValue();
+                            if (null != clientParam.getContext() && null == clientParam.getClient() && clientParam.possibleToTry()){
+                                Client client = new Client(currentClient.getKey(), clientPort);
+                                clientParam.setClient(client);
+                                client.bind().addListener(this);
+                                foundNewClient = true;
+                                break;
+                            }
+                        } catch (Exception e) {
+                            logger.error(Utils.getStackTrace(e));
                         }
                     }
                     if (!foundNewClient) {
@@ -115,7 +119,7 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                 try {
                     if (currentTask.getTaskSendingFinished().compareAndSet(true, false)) {
                         Globals.get().connectedServers.get(currentTask.getToSend()).getFuture().channel().writeAndFlush(currentTask.getEvent());
-                        logger.info("CONTROL sending, type: " + ((ControlEvent)currentTask.getEvent()).getControlType().name());
+                        logger.info("CONTROL sending, type: " + ((ControlEvent) currentTask.getEvent()).getControlType().name());
                     }
                 } catch (Exception e) {
                     logger.error(Utils.getStackTrace(e));
@@ -194,8 +198,6 @@ public class Controller extends Worker implements CompletionHandler<CompletedEve
                     break;
                 case FIND_SERVERS_TO_CONNECT:
                     currentClient.getValue().getClient().stop();
-                    currentClient.getValue().getConnectedBack().set(false);
-                    currentClient.getValue().setLastTrying();
                     logger.error("Client could not connected back: " + currentClient.getKey() + " " + clientPort);
                     break;
                 case SEND_FILE:

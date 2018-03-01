@@ -242,6 +242,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
     }
 
     protected void refreshDirs() {
+        String audioListSelectedValue = audioList.getSelectedValue();
+        String videoListSelectedValue = videoList.getSelectedValue();
+        String pictureListSelectedValue = pictureList.getSelectedValue();
         if (shouldRefreshAll) {
             shouldRefreshAll = false;
             videoListModel.clear();
@@ -263,7 +266,6 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 Map<String, List<String>> dirs = Utils.getClientParam(selectedValue).getDirs();
                 if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
                         !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
-
                     videoListModel.clear();
                     dirs.get(Globals.videoFolder).stream().forEach(str -> videoListModel.addElement(str));
                 }
@@ -277,6 +279,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     pictureListModel.clear();
                     dirs.get(Globals.pictureFolder).stream().forEach(str -> pictureListModel.addElement(str));
                 }
+                audioList.setSelectedValue(audioListSelectedValue, false);
+                videoList.setSelectedValue(videoListSelectedValue, false);
+                pictureList.setSelectedValue(pictureListSelectedValue, false);
                 status.setText(Utils.getClientParam(selectedValue).getStatus());
             } else {
                 videoListModel.clear();
@@ -389,12 +394,11 @@ public class FrontEndUtils extends JFrame implements Runnable {
             int minutes;
             try {
                 minutes = Integer.valueOf(resetMinsText);
-                if (minutes > 30) {
-                    resetMins.setText("");
-                }
             } catch (Exception e) {
-                logger.error(Utils.getStackTrace(e));
                 minutes = 0;
+            }
+            if (minutes > 30) {
+                resetMins.setText("");
             }
             ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(minutes));
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));

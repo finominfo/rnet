@@ -36,7 +36,7 @@ public class EventDecoder extends ByteToMessageDecoder {
         if (eventType == null) {
             eventType = getEventType(input);
             if (eventType == null) return;
-            logger.info(eventType.name() + " event arrived");
+//            logger.info(eventType.name() + " event arrived");
         }
         switch (eventType) {
             case STATUS:
@@ -107,7 +107,7 @@ public class EventDecoder extends ByteToMessageDecoder {
             ChannelHandlerContext ctx = iterator.next();
             String ipAndPort = ctx.channel().remoteAddress().toString();
             String ip = Globals.get().getIp(ipAndPort);
-            if (Globals.get().serverClients.get(ip).getContext() == null) {
+            if (Globals.get().serverClients.get(ip) == null || Globals.get().serverClients.get(ip).getContext() == null) {
                 iterator.remove();
             }
         }

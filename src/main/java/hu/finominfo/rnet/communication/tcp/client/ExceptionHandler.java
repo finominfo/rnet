@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.communication.tcp.client;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
 import io.netty.channel.*;
 import org.apache.log4j.Logger;
 
@@ -18,9 +19,13 @@ public class ExceptionHandler extends ChannelDuplexHandler {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         logger.error(ipAndPort + " error.", cause);
         String ip = Globals.get().getIp(ipAndPort);
-        //ctx.channel().close();
-        //ctx.close();
-        //ctx.channel().deregister();
+        try {
+//            ctx.channel().deregister();
+            ctx.channel().close();
+            ctx.close();
+        } catch (Exception e) {
+            logger.equals(Utils.getStackTrace(e));
+        }
         Globals.get().serverClients.remove(ip);
         Globals.get().connectedServers.remove(ip);
 

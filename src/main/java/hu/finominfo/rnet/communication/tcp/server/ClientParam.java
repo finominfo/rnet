@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.22.
  */
 public class ClientParam {
-    private volatile ChannelHandlerContext context;
-    private final AtomicBoolean connectedBack = new AtomicBoolean(false);
+    private volatile ChannelHandlerContext context = null;
     private volatile Client client = null;
-    private volatile long lastTrying = 0;
+    private volatile AtomicLong lastTrying = new AtomicLong(0);
     private volatile String name = "";
     private volatile String status = null;
     private volatile String defAudio = null;
@@ -76,10 +76,6 @@ public class ClientParam {
         this.context = context;
     }
 
-    public AtomicBoolean getConnectedBack() {
-        return connectedBack;
-    }
-
     public Client getClient() {
         return client;
     }
@@ -88,11 +84,10 @@ public class ClientParam {
         this.client = client;
     }
 
-    public void setLastTrying() {
-        lastTrying = System.currentTimeMillis();
+    public boolean possibleToTry() {
+        long last = lastTrying.get();
+        long now = System.currentTimeMillis();
+        return last + 10_000 < now && lastTrying.compareAndSet(last, now);
     }
 
-    public boolean possibleToTry() {
-        return lastTrying + 2_000 < System.currentTimeMillis();
-    }
 }

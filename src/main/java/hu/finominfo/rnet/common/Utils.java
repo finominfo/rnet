@@ -48,7 +48,14 @@ public class Utils {
             name = name.substring(0, name.indexOf('(')).trim();
         }
         final String finalName = name;
-        return Globals.get().serverClients.entrySet().stream().filter(entry -> entry.getValue().getName().equals(finalName)).findFirst().get();
+        try {
+            return Globals.get().serverClients.entrySet().stream()
+                    .filter(entry -> entry.getValue().getName().equals(finalName))
+                    .findFirst().get();
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
+        }
+        return null;
     }
 
     public static String getFileType(FileType fileType) {

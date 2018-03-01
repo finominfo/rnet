@@ -4,6 +4,7 @@ import hu.finominfo.rnet.communication.tcp.events.Event;
 import hu.finominfo.rnet.communication.tcp.events.EventType;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
@@ -11,6 +12,7 @@ import java.util.*;
  * Created by kalman.kovacs@gmail.com on 2017.09.29.
  */
 public class DirEvent extends Event {
+    private final static Logger logger = Logger.getLogger(DirEventHandler.class);
     private final Map<String, List<String>> dirs;
     private final String status;
     private final String defAudio;
@@ -43,6 +45,7 @@ public class DirEvent extends Event {
     @Override
     public void getRemainingData(ByteBuf buf) {
         StringBuilder builder = new StringBuilder();
+//        logger.info("dirs: " + dirs);
         dirs.entrySet().stream().forEach(entry -> {
             builder.append(entry.getKey());
             entry.getValue().stream().forEach(name -> builder.append(":").append(name));

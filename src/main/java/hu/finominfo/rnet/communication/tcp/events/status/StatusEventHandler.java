@@ -22,24 +22,25 @@ public class StatusEventHandler extends SimpleChannelInboundHandler<StatusEvent>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, StatusEvent msg) throws Exception {
         logger.info("StatusEvent arrived: " + msg.getAddresses().get(0));
-        String ipAndPort = ctx.channel().remoteAddress().toString();
-        String ip = Globals.get().getIp(ipAndPort);
-        ClientParam clientParam = Globals.get().serverClients.get(ip);
-        for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
-            if (Utils.isAddressEquals(msg.getAddresses(), entry.getValue())) {
-                clientParam.setName(entry.getKey());
-                return;
+        try {
+            String ipAndPort = ctx.channel().remoteAddress().toString();
+            String ip = Globals.get().getIp(ipAndPort);
+            ClientParam clientParam = Globals.get().serverClients.get(ip);
+            for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
+                if (Utils.isAddressEquals(msg.getAddresses(), entry.getValue())) {
+                    clientParam.setName(entry.getKey());
+                    return;
+                }
             }
-        }
-        clientParam.setName(ip);
-        if (Globals.get().clientNameAddress.putIfAbsent(ip, msg.getAddresses()) == null) {
-            Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
-        }
-        if (Globals.VERSION > msg.getVersion()) {
-//            if (msg.getVersion() < 90) {
-//                Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, "h2-mvstore-1.4.196.jar", FileType.LIBRARY, ip);
-//            }
-            Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip);
+            clientParam.setName(ip);
+            if (Globals.get().clientNameAddress.putIfAbsent(ip, msg.getAddresses()) == null) {
+                Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
+            }
+            if (Globals.VERSION > msg.getVersion()) {
+                Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip);
+            }
+        } catch (Exception e) {
+            logger.error(Utils.getStackTrace(e));
         }
     }
 }

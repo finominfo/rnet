@@ -67,13 +67,17 @@ public class FrontEndWorker extends Worker {
             if (panels != null) {
                 final AtomicInteger i = new AtomicInteger(0);
                 Globals.get().serverClients.entrySet().stream().forEach(ipClient -> {
-                    String status = ipClient.getValue().getStatus();
-                    Optional<String> counterOptional = Arrays.stream(status.split("\n")).filter(row -> row.startsWith("Counter")).findFirst();
-                    if (counterOptional.isPresent()) {
-                        String counter = counterOptional.get().substring(9);
-                        panels[i.get()].setCounter(counter.toLowerCase().contains("invisible") ? "" : counter);
-                        panels[i.get()].setTitle(ipClient.getKey());
-                        i.incrementAndGet();
+                    try {
+                        String status = ipClient.getValue().getStatus();
+                        Optional<String> counterOptional = Arrays.stream(status.split("\n")).filter(row -> row.startsWith("Counter")).findFirst();
+                        if (counterOptional.isPresent()) {
+                            String counter = counterOptional.get().substring(9);
+                            panels[i.get()].setCounter(counter.toLowerCase().contains("invisible") ? "" : counter);
+                            panels[i.get()].setTitle(ipClient.getKey());
+                            i.incrementAndGet();
+                        }
+                    } catch (Exception e) {
+                        logger.error(Utils.getStackTrace(e));
                     }
                 });
             }
@@ -87,6 +91,7 @@ public class FrontEndWorker extends Worker {
     private String getIpPart(String ip) {
         return ip.substring(ip.lastIndexOf('.') + 1);
     }
+
     private void refreshServantList() {
         List<String> existingNameAndIpPart = Globals.get().serverClients.entrySet().stream()
                 .filter(entry -> entry.getValue().getContext() != null)

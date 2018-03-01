@@ -7,6 +7,7 @@
         <element id="directory" name="META-INF">
           <element id="file-copy" path="$PROJECT_DIR$/src/main/java/META-INF/MANIFEST.MF" />
         </element>
+        <element id="module-output" name="rnet_main" />
       </element>
       <element id="file-copy" path="$PROJECT_DIR$/beep-02.wav" />
       <element id="file-copy" path="$PROJECT_DIR$/config.properties" />

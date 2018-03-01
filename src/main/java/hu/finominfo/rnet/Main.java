@@ -57,11 +57,18 @@ public class Main {
             }
         } catch (Throwable t) {
             logger.error("Error in Main() ", t);
-            try {
-                Utils.processCommand(180_000, "sudo reboot");
-            } catch (Throwable t2) {
-                logger.error("Error in processCommand() ", t2);
-                System.exit(0);
+//            try {
+//                Utils.processCommand(180_000, "sudo reboot");
+//            } catch (Throwable t2) {
+//                logger.error("Error in processCommand() ", t2);
+//                System.exit(0);
+//            }
+            for (; ; ) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    logger.error(e);
+                }
             }
         }
     }
