@@ -61,6 +61,11 @@ public class Counter extends JPanel {
         }
         Panel[][] panels = new Panel[ROW][COLUMN];
         int i = 0;
+        long counterValue = Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)) * 60_000L;
+        String counterState = H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE);
+        if (!counterState.equals(H2KeyValue.COUNTER_FINISHED)) {
+            counterValue = Integer.valueOf(counterState) * 60_000L;
+        }
         for (Panel[] panel : panels) {
             for (int j = 0; j < panel.length; j++) {
                 panel[j] = new Panel(
@@ -72,7 +77,7 @@ public class Counter extends JPanel {
                         Color.GREEN,
                         Color.RED,
                         diff,
-                        Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)) * 60_000L,
+                        counterValue,
                         executor).make();
                 Globals.get().counter = panel[j];
                 i++;

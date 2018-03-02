@@ -135,7 +135,6 @@ public class Main {
     private static void checkFaultyRestart() {
         String counterState = H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE);
         if (!counterState.equals(H2KeyValue.COUNTER_FINISHED)) {
-            Globals.get().counter.milliseconds = Integer.valueOf(counterState) * 60_000L;
             Utils.startCounterMusic();
         }
     }
