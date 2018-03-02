@@ -133,8 +133,8 @@ public class Main {
     }
 
     private static void checkFaultyRestart() {
-        if (!H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE)
-                .equals(H2KeyValue.getValue(H2KeyValue.COUNTER_FINISHED))) {
+        if ((!H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE).equals(H2KeyValue.COUNTER_FINISHED)) &&
+                (!H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE).equals(H2KeyValue.getValue(H2KeyValue.COUNTER)))) {
             Utils.startCounterMusic();
         }
     }
