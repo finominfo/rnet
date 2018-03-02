@@ -77,7 +77,9 @@ public class H2KeyValue {
         if (dataMap.get(COUNTER) == null) {
             dataMap.put(COUNTER, "60");
         }
-        if (dataMap.get(COUNTER_CURRENT_STATE) == null || dataMap.get(COUNTER_CURRENT_STATE) == "0") {
+        if (dataMap.get(COUNTER_CURRENT_STATE) == null
+                || dataMap.get(COUNTER_CURRENT_STATE).equals("0")
+                ||  dataMap.get(COUNTER_CURRENT_STATE).equals(dataMap.get(COUNTER))) {
             dataMap.put(COUNTER_CURRENT_STATE, COUNTER_FINISHED);
         }
         if (dataMap.get(DEF_AUDIO) == null) {

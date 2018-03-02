@@ -7,6 +7,9 @@ import org.apache.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -14,6 +17,7 @@ import java.util.List;
  */
 public class EventEncoder extends MessageToMessageEncoder<Event> {
     private final static Logger logger = Logger.getLogger(EventEncoder.class);
+    private final static ConcurrentMap<String, AtomicLong> LOG_COUNTER = new ConcurrentHashMap<>();
 
     @Override
     protected void encode(ChannelHandlerContext ctx, Event msg, List<Object> out) throws Exception {
@@ -22,6 +26,11 @@ public class EventEncoder extends MessageToMessageEncoder<Event> {
         buf.writeByte(msg.getEventType().getNumber());
         msg.getRemainingData(buf);
         out.add(buf);
-        logger.info(msg.getEventType().name() + " event sent");
+        final String msgName = msg.getEventType().name();
+        AtomicLong logCounter = LOG_COUNTER.computeIfAbsent(msgName, name -> new AtomicLong(0));
+        long currentCounterValue = logCounter.incrementAndGet();
+        if ((currentCounterValue & 0x07) == 0) {
+            logger.info(currentCounterValue + ". " + msgName + " event sent.");
+        }
     }
 }
