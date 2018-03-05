@@ -213,6 +213,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                     currentClient.stop();
                     Globals.get().connectedServers.remove(currentConnectToServer);
                     Globals.get().connections.removeIf(connection -> connection.getServerIp().equals(currentConnectToServer));
+                    future.channel().pipeline().fireExceptionCaught(future.cause());
                     break;
                 case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
