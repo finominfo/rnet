@@ -122,16 +122,16 @@ public class Utils {
     }
 
     public static void processCommand(int wait, String command) {
+        simpleProcessCommand(wait, command);
+        System.exit(0);
+    }
+
+    public static InputStream simpleProcessCommand(int wait, String command) {
         try {
             Thread.sleep(wait);
         } catch (InterruptedException e) {
             logger.error(e);
         }
-        simpleProcessCommand(command);
-        System.exit(0);
-    }
-
-    public static InputStream simpleProcessCommand(String command) {
         final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
         try {
             return processBuilder.start().getInputStream();

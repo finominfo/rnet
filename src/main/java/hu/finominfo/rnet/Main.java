@@ -51,11 +51,18 @@ public class Main {
                         handleController();
                         break;
                     case SERVANT:
-                        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand("ps aux | grep [j]ava"));
-                        int first = rnet.indexOf("rnet");
-                        int second = rnet.indexOf("rnet", first + 1);
-                        if (second > first) {
-                            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet);
+                        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand(3000, "ps aux | grep [j]ava"));
+                        int found = 0;
+                        int i = 0;
+                        while (i > -1 && i < rnet.length()) {
+                            i = rnet.indexOf("rnet.java", i);
+                            if (i > -1) {
+                                found ++;
+                                i ++;
+                            }
+                        }
+                        if (found > 1) {
+                            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet + " - found: " + found);
                             System.exit(0);
                         } else {
                             logger.info("ps aux | grep [j]ava - result is: " + rnet);
