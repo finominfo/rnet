@@ -51,7 +51,16 @@ public class Main {
                         handleController();
                         break;
                     case SERVANT:
-                        handleServant(logger);
+                        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand("ps aux | grep [j]ava"));
+                        int first = rnet.indexOf("rnet");
+                        int second = rnet.indexOf("rnet", first + 1);
+                        if (second > first) {
+                            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet);
+                            System.exit(0);
+                        } else {
+                            logger.info("ps aux | grep [j]ava - result is: " + rnet);
+                            handleServant(logger);
+                        }
                         break;
                     case COUNTER:
                         handleCounter(logger);

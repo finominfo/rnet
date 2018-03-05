@@ -127,17 +127,27 @@ public class Utils {
         } catch (InterruptedException e) {
             logger.error(e);
         }
+        simpleProcessCommand(command);
+        System.exit(0);
+    }
+
+    public static InputStream simpleProcessCommand(String command) {
         final ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", command);
         try {
-            processBuilder.start();
+            return processBuilder.start().getInputStream();
         } catch (IOException e) {
             logger.error(e);
         }
-        System.exit(0);
+        return null;
     }
 
     public static void main(String[] args) {
         System.out.println(isAddressEquals(Arrays.asList(1L, 7L, 8L), Arrays.asList(7L, 4L, 1L)));
+    }
+
+    public static String convertStreamToString(InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
 
