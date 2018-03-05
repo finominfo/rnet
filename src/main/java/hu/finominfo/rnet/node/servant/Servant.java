@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.09.21.
@@ -37,6 +38,7 @@ public class Servant extends Worker implements ChannelFutureListener {
     private volatile String currentConnectToServer;
     private volatile Client currentClient;
     private volatile Map.Entry<String, ServerParam> currentServerParam;
+    private final AtomicLong longestDirSendingTime = new AtomicLong(0);
 
 
     public Servant() {
@@ -129,7 +131,8 @@ public class Servant extends Worker implements ChannelFutureListener {
                         Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
                                 .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
                         Globals.get().connectedServers.values().stream()
-                                .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(dirEvent));
+                                .filter(ServerParam::dirCanBeSend)
+                                .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(dirEvent).addListener(this));
                     }
                 } catch (Exception e) {
                     logger.error(e);
@@ -156,6 +159,9 @@ public class Servant extends Worker implements ChannelFutureListener {
             return;
         }
         currentTask.getTaskSendingFinished().set(true);
+        String ipAndPort = future.channel().remoteAddress().toString();
+        String ip = Globals.get().getIp(ipAndPort);
+        ServerParam serverParam = Globals.get().connectedServers.get(ip);
         if (future.isSuccess()) {
             switch (currentTask.getTaskToDo()) {
                 case MONITOR_BROADCAST:
@@ -172,6 +178,16 @@ public class Servant extends Worker implements ChannelFutureListener {
                     break;
                 case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was successful to server. " + currentServerParam.getKey() + ":" + clientPort);
+                    break;
+                case SEND_DIR:
+                    long lastDirSendingTime = serverParam.resetDir();
+                    long longestDirSending = longestDirSendingTime.get();
+                    while (longestDirSending < lastDirSendingTime) {
+                        if (longestDirSendingTime.compareAndSet(longestDirSending, lastDirSendingTime)) {
+                            logger.info("New longest dir sending time: " + lastDirSendingTime + " (" + ip + ").");
+                        }
+                        longestDirSending = longestDirSendingTime.get();
+                    }
                     break;
             }
         } else {
@@ -192,6 +208,11 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     currentServerParam.getValue().getSentAddresses().set(false);
+                    break;
+                case SEND_DIR:
+                    Globals.get().connectedServers.remove(ip);
+                    serverParam.getFuture().channel().closeFuture();
+                    logger.info("Send DIR EVENT was unsuccessful to server: " + ip + " - trying time was: " + serverParam.resetDir());
                     break;
             }
         }
