@@ -65,7 +65,6 @@ public class Main {
                             logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet + " - found: " + found);
                             System.exit(0);
                         } else {
-                            logger.info("ps aux | grep [j]ava - result is: " + rnet);
                             handleServant(logger);
                         }
                         break;

@@ -1,6 +1,7 @@
 package hu.finominfo.rnet.common;
 
 import com.pi4j.io.gpio.PinState;
+import hu.finominfo.rnet.RunningChecker;
 import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.client.Client;
@@ -51,13 +52,21 @@ public class Globals {
 
 
     private Globals() {
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        width = gd.getDisplayMode().getWidth();
-        height = gd.getDisplayMode().getHeight();
-        diff = ((double) width) / benchmarkWidth;
+        if (RunningChecker.check()) {
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            width = gd.getDisplayMode().getWidth();
+            height = gd.getDisplayMode().getHeight();
+            diff = ((double) width) / benchmarkWidth;
+        } else {
+            width = 0;
+            height = 0;
+            diff = 0;
+            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine.");
+            System.exit(0);
+        }
     }
 
-    public final static int VERSION = 144;
+    public final static int VERSION = 145;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -146,8 +155,8 @@ public class Globals {
             });
         }
 
-    return allCounter;
-}
+        return allCounter;
+    }
 
     public boolean isTasksEmpty() {
         return tasks.isEmpty();
