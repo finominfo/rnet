@@ -61,12 +61,10 @@ public class Globals {
             width = 0;
             height = 0;
             diff = 0;
-            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine.");
-            System.exit(0);
         }
     }
 
-    public final static int VERSION = 149;
+    public final static int VERSION = 151;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;

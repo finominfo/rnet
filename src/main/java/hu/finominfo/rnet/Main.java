@@ -75,7 +75,8 @@ public class Main {
                         break;
                 }
             } catch (Throwable t) {
-                logger.error("Error in Main() ", t);
+                //logger.error("Error in Main() ", t);
+                System.exit(0);
             }
         } else {
             logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine.");
