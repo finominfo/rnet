@@ -211,7 +211,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                     break;
                 case SEND_DIR:
                     Globals.get().connectedServers.remove(ip);
-                    serverParam.getFuture().channel().closeFuture();
+                    serverParam.getFuture().channel().close();
                     logger.info("Send DIR EVENT was unsuccessful to server: " + ip + " - trying time was: " + serverParam.resetDir());
                     break;
             }
