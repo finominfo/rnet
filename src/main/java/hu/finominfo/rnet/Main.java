@@ -42,6 +42,7 @@ public class Main {
     public static void main(String[] args) {
         setupLog4J();
         Logger logger = Logger.getLogger(Main.class);
+        logger.info("Version: " + Globals.getVersion());
         if (RunningChecker.check()) {
             try {
                 Interface.getInterfaces();

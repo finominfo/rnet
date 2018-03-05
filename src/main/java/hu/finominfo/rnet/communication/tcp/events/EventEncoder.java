@@ -29,7 +29,7 @@ public class EventEncoder extends MessageToMessageEncoder<Event> {
         final String msgName = msg.getEventType().name();
         AtomicLong logCounter = LOG_COUNTER.computeIfAbsent(msgName, name -> new AtomicLong(0));
         long currentCounterValue = logCounter.incrementAndGet();
-        if ((currentCounterValue & 0x07) == 0) {
+        if ((currentCounterValue & 0x3f) == 0) {
             logger.info(currentCounterValue + ". " + msgName + " event sent.");
         }
     }

@@ -26,6 +26,13 @@ public class StatusEventHandler extends SimpleChannelInboundHandler<StatusEvent>
             String ipAndPort = ctx.channel().remoteAddress().toString();
             String ip = Globals.get().getIp(ipAndPort);
             ClientParam clientParam = Globals.get().serverClients.get(ip);
+            if (Globals.VERSION > msg.getVersion()) {
+                if (Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip)) {
+                    logger.info("Successfully added to queue " + Globals.JAR_NAME + " (" + ip + ")");
+                } else {
+                    logger.info("Adding to queue " + Globals.JAR_NAME + " was not successful (" + ip + ").");
+                }
+            }
             for (Map.Entry<String, List<Long>> entry : Globals.get().clientNameAddress.entrySet()) {
                 if (Utils.isAddressEquals(msg.getAddresses(), entry.getValue())) {
                     clientParam.setName(entry.getKey());
@@ -35,13 +42,6 @@ public class StatusEventHandler extends SimpleChannelInboundHandler<StatusEvent>
             clientParam.setName(ip);
             if (Globals.get().clientNameAddress.putIfAbsent(ip, msg.getAddresses()) == null) {
                 Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
-            }
-            if (Globals.VERSION > msg.getVersion()) {
-                if (Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip)) {
-                    logger.info("Successfully added to queue " + Globals.JAR_NAME + " (" + ip + ")");
-                } else {
-                    logger.info("Adding to queue " + Globals.JAR_NAME + " was not successful (" + ip + ").");
-                }
             }
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));

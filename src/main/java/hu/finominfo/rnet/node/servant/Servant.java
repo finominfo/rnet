@@ -15,6 +15,7 @@ import hu.finominfo.rnet.communication.tcp.server.Server;
 import hu.finominfo.rnet.taskqueue.Task;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import hu.finominfo.rnet.taskqueue.Worker;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import org.apache.log4j.Logger;
@@ -131,8 +132,10 @@ public class Servant extends Worker implements ChannelFutureListener {
                         Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
                                 .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
                         Globals.get().connectedServers.values().stream()
-                                .filter(ServerParam::dirCanBeSend)
-                                .forEach(serverParam -> serverParam.getFuture().channel().writeAndFlush(dirEvent).addListener(this));
+                                //.filter(ServerParam::dirCanBeSend)
+                                .map(serverParam -> serverParam.getFuture().channel())
+                                //.filter(Channel::isWritable)
+                                .forEach(channel -> channel.writeAndFlush(dirEvent).addListener(FIRE_EXCEPTION_ON_FAILURE));
                     }
                 } catch (Exception e) {
                     logger.error(e);
@@ -159,9 +162,6 @@ public class Servant extends Worker implements ChannelFutureListener {
             return;
         }
         currentTask.getTaskSendingFinished().set(true);
-        String ipAndPort = future.channel().remoteAddress().toString();
-        String ip = Globals.get().getIp(ipAndPort);
-        ServerParam serverParam = Globals.get().connectedServers.get(ip);
         if (future.isSuccess()) {
             switch (currentTask.getTaskToDo()) {
                 case MONITOR_BROADCAST:
@@ -179,16 +179,23 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was successful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     break;
-                case SEND_DIR:
-                    long lastDirSendingTime = serverParam.resetDir();
-                    long longestDirSending = longestDirSendingTime.get();
-                    while (longestDirSending < lastDirSendingTime) {
-                        if (longestDirSendingTime.compareAndSet(longestDirSending, lastDirSendingTime)) {
-                            logger.info("New longest dir sending time: " + lastDirSendingTime + " (" + ip + ").");
-                        }
-                        longestDirSending = longestDirSendingTime.get();
-                    }
-                    break;
+//                case SEND_DIR:
+//                    try {
+//                        String ipAndPort = future.channel().remoteAddress().toString();
+//                        String ip = Globals.get().getIp(ipAndPort);
+//                        ServerParam serverParam = Globals.get().connectedServers.get(ip);
+//                        long lastDirSendingTime = serverParam.resetDir();
+//                        long longestDirSending = longestDirSendingTime.get();
+//                        while (longestDirSending < lastDirSendingTime) {
+//                            if (longestDirSendingTime.compareAndSet(longestDirSending, lastDirSendingTime)) {
+//                                logger.info("New longest dir sending time: " + lastDirSendingTime + " (" + ip + ").");
+//                            }
+//                            longestDirSending = longestDirSendingTime.get();
+//                        }
+//                    } catch (Exception e) {
+//                        logger.error(Utils.getStackTrace(e));
+//                    }
+//                    break;
             }
         } else {
             switch (currentTask.getTaskToDo()) {
@@ -209,11 +216,18 @@ public class Servant extends Worker implements ChannelFutureListener {
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
                     currentServerParam.getValue().getSentAddresses().set(false);
                     break;
-                case SEND_DIR:
-                    Globals.get().connectedServers.remove(ip);
-                    serverParam.getFuture().channel().close();
-                    logger.info("Send DIR EVENT was unsuccessful to server: " + ip + " - trying time was: " + serverParam.resetDir());
-                    break;
+//                case SEND_DIR:
+//                    try {
+//                        String ipAndPort = future.channel().remoteAddress().toString();
+//                        String ip = Globals.get().getIp(ipAndPort);
+//                        ServerParam serverParam = Globals.get().connectedServers.get(ip);
+//                        Globals.get().connectedServers.remove(ip);
+//                        serverParam.getFuture().channel().close();
+//                        logger.info("Send DIR EVENT was unsuccessful to server: " + ip + " - trying time was: " + serverParam.resetDir());
+//                    } catch (Exception e) {
+//                        logger.error(Utils.getStackTrace(e));
+//                    }
+//                    break;
             }
         }
     }

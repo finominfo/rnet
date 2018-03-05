@@ -15,12 +15,16 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class DirEventHandler extends SimpleChannelInboundHandler<DirEvent> {
     private final static Logger logger = Logger.getLogger(DirEventHandler.class);
+    private final static AtomicLong dirCounter = new AtomicLong(0);
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DirEvent msg) throws Exception {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         String ip = Globals.get().getIp(ipAndPort);
-        logger.info("DirEvent arrived: " + ip);
+        long currentCounterValue = dirCounter.incrementAndGet();
+        if ((dirCounter.incrementAndGet() & 0x3f) == 0) {
+            logger.info(currentCounterValue + ". DirEvent arrived (last ip: " + ip + ")");
+        }
         try {
             ClientParam clientParam = Globals.get().serverClients.get(ip);
             clientParam.setStatus(msg.getStatus());

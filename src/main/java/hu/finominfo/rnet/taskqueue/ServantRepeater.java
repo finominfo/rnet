@@ -18,7 +18,7 @@ public class ServantRepeater implements Runnable {
         try {
             long now = System.currentTimeMillis();
             if (nextDirSend < now && Globals.get().isTasksEmpty()) {
-                nextDirSend = now + ThreadLocalRandom.current().nextInt(2000, 5001);
+                nextDirSend = now + ThreadLocalRandom.current().nextInt(1000, 2001);
                 Globals.get().addToTasksIfNotExists(TaskToDo.SEND_DIR);
             }
         }catch (Exception e) {
