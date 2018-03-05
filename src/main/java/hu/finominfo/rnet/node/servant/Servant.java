@@ -158,7 +158,7 @@ public class Servant extends Worker implements ChannelFutureListener {
             if (future.channel() != null && future.channel().remoteAddress() != null) {
                 ip = future.channel().remoteAddress().toString();
             }
-            logger.error("currentTask is null: " + future.channel().remoteAddress().toString());
+            logger.info("currentTask is null." + ip);
             return;
         }
         currentTask.getTaskSendingFinished().set(true);
