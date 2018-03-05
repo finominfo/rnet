@@ -41,7 +41,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
 
     protected final JLabel servantsLabel = new JLabel(ServantsIcon);
     public final DefaultListModel<String> servantsListModel = new DefaultListModel();
-    protected final JList<String> servantsList = new JList<String>(servantsListModel);
+    public final JList<String> servantsList = new JList<String>(servantsListModel);
     protected final JScrollPane servantsPane = new JScrollPane(servantsList, VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton renameBtn = new JButton(RenameIcon);
     protected final JButton sendTextBtn = new JButton(SendTextIcon);

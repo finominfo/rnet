@@ -99,11 +99,17 @@ public class FrontEndWorker extends Worker {
                 .map(entry -> entry.getValue().getName() + " (" + getIpPart(entry.getKey()) + ")")
                 .collect(Collectors.toList());
         List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsListModel.elements());
-        boolean foundNew = existingNameAndIpPart.stream().filter(nameOrIp -> !elements.contains(nameOrIp)).findAny().isPresent();
-        boolean foundOld = elements.stream().filter(nameOrIp -> !existingNameAndIpPart.contains(nameOrIp)).findAny().isPresent();
-        if (foundNew || foundOld) {
+        if (!existingNameAndIpPart.equals(elements)) {
+            List<String> selectedValuesList = Globals.get().getFrontEnd().servantsList.getSelectedValuesList();
             Globals.get().getFrontEnd().servantsListModel.clear();
             existingNameAndIpPart.forEach(nameOrIp -> Globals.get().getFrontEnd().servantsListModel.addElement(nameOrIp));
+            if (selectedValuesList != null) {
+                for (int i = 0; i < existingNameAndIpPart.size(); i++) {
+                    if (selectedValuesList.contains(Globals.get().getFrontEnd().servantsListModel.elementAt(i))) {
+                        Globals.get().getFrontEnd().servantsList.setSelectedIndex(i);
+                    }
+                }
+            }
         }
     }
 
