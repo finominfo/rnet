@@ -6,36 +6,40 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class RunningChecker {
 
     private volatile static File f;
     private volatile static FileChannel channel;
     private volatile static FileLock lock;
-    private final static AtomicBoolean FIRST_CHECK = new AtomicBoolean(false);
+    private static final Lock LOCK = new ReentrantLock();
     private volatile static Boolean RESULT = null;
 
     public static boolean check() {
-        while (RESULT == null) {
-            if (FIRST_CHECK.compareAndSet(false, true)) {
-                try {
-                    f = new File("running.lock");
-                    if (f.exists()) {
-                        f.delete();
-                    }
-                    channel = new RandomAccessFile(f, "rw").getChannel();
-                    lock = channel.tryLock();
-                    if (lock == null) {
-                        channel.close();
-                        RESULT = false;
-                    }
-                    Runtime.getRuntime().addShutdownHook(new Thread(RunningChecker::unlockFile));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    RESULT = false;
+        if (RESULT == null) {
+            LOCK.lock();
+            try {
+                f = new File("running.lock");
+                if (f.exists()) {
+                    f.delete();
                 }
+                channel = new RandomAccessFile(f, "rw").getChannel();
+                lock = channel.tryLock();
+                if (lock == null) {
+                    channel.close();
+                    RESULT = false;
+                } else {
+                    Runtime.getRuntime().addShutdownHook(new Thread(RunningChecker::unlockFile));
+                    RESULT = true;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                RESULT = false;
+            } finally {
+                LOCK.unlock();
             }
-            RESULT = true;
         }
         return RESULT;
     }

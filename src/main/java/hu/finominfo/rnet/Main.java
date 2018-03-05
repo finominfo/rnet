@@ -42,33 +42,35 @@ public class Main {
     public static void main(String[] args) {
         setupLog4J();
         Logger logger = Logger.getLogger(Main.class);
-        logger.info("Version: " + Globals.getVersion());
         if (RunningChecker.check()) {
             try {
                 Interface.getInterfaces();
                 switch (Props.get().getNodeType()) {
                     case CONTROLLER:
+                        logger.info("Version: " + Globals.getVersion());
                         handleController();
                         break;
                     case SERVANT:
-                        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand(3000, "ps aux | grep [j]ava"));
+                        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand(500, "ps aux | grep [j]ava"));
                         int found = 0;
                         int i = 0;
                         while (i > -1 && i < rnet.length()) {
                             i = rnet.indexOf("rnet.java", i);
                             if (i > -1) {
-                                found ++;
-                                i ++;
+                                found++;
+                                i++;
                             }
                         }
                         if (found > 1) {
                             logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet + " - found: " + found);
                             System.exit(0);
                         } else {
+                            logger.info("Version: " + Globals.getVersion());
                             handleServant(logger);
                         }
                         break;
                     case COUNTER:
+                        logger.info("Version: " + Globals.getVersion());
                         handleCounter(logger);
                         break;
                 }
