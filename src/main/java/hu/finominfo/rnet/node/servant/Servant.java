@@ -211,6 +211,7 @@ public class Servant extends Worker implements ChannelFutureListener {
                 case FIND_SERVERS_TO_CONNECT:
                     logger.error("HttpServer could not connected: " + currentConnectToServer);
                     currentClient.stop();
+                    Globals.get().connectedServers.remove(currentConnectToServer);
                     break;
                 case SEND_MAC_ADDRESSES:
                     logger.info("Send mac addresses was unsuccessful to server. " + currentServerParam.getKey() + ":" + clientPort);
