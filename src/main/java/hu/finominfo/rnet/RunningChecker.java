@@ -26,6 +26,7 @@ public class RunningChecker {
             Runtime.getRuntime().addShutdownHook(new Thread(RunningChecker::unlockFile));
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
         return true;
     }

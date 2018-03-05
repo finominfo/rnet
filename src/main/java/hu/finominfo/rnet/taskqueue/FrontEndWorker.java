@@ -95,19 +95,15 @@ public class FrontEndWorker extends Worker {
     private void refreshServantList() {
         List<String> existingNameAndIpPart = Globals.get().serverClients.entrySet().stream()
                 .filter(entry -> entry.getValue().getContext() != null)
-                .map(entry -> entry.getValue().getName() + " (" + getIpPart(entry.getKey()) + ")").collect(Collectors.toList());
-
-//        List<String> existingNameOrIp = Globals.get().serverClients.values().stream()
-//                .filter(clientParam -> clientParam.getContext() != null)
-//                .map(ClientParam::getName).collect(Collectors.toList());
+                .sorted((o1, o2) -> (getIpPart(o1.getKey()).compareTo(getIpPart(o2.getKey()))))
+                .map(entry -> entry.getValue().getName() + " (" + getIpPart(entry.getKey()) + ")")
+                .collect(Collectors.toList());
         List<String> elements = Collections.list(Globals.get().getFrontEnd().servantsListModel.elements());
-        existingNameAndIpPart.stream()
-                .filter(nameOrIp -> !elements.contains(nameOrIp))
-                .forEach(Globals.get().getFrontEnd().servantsListModel::addElement);
-        for (int i = 0; i < elements.size(); i++) {
-            if (!existingNameAndIpPart.contains(elements.get(i))) {
-                Globals.get().getFrontEnd().servantsListModel.remove(i);
-            }
+        boolean foundNew = existingNameAndIpPart.stream().filter(nameOrIp -> !elements.contains(nameOrIp)).findAny().isPresent();
+        boolean foundOld = elements.stream().filter(nameOrIp -> !existingNameAndIpPart.contains(nameOrIp)).findAny().isPresent();
+        if (foundNew || foundOld) {
+            Globals.get().getFrontEnd().servantsListModel.clear();
+            existingNameAndIpPart.forEach(nameOrIp -> Globals.get().getFrontEnd().servantsListModel.addElement(nameOrIp));
         }
     }
 
