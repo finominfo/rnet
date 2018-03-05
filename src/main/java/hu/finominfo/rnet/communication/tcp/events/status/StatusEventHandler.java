@@ -37,7 +37,11 @@ public class StatusEventHandler extends SimpleChannelInboundHandler<StatusEvent>
                 Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.SAVE_NAME_ADDRESS);
             }
             if (Globals.VERSION > msg.getVersion()) {
-                Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip);
+                if (Globals.get().addToTasksIfNotExists(TaskToDo.SEND_FILE, Globals.JAR_NAME, FileType.MAIN, ip)) {
+                    logger.info("Successfully added to queue " + Globals.JAR_NAME + " (" + ip + ")");
+                } else {
+                    logger.info("Adding to queue " + Globals.JAR_NAME + " was not successful (" + ip + ").");
+                }
             }
         } catch (Exception e) {
             logger.error(Utils.getStackTrace(e));

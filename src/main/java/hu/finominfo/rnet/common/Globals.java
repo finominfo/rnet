@@ -184,11 +184,9 @@ public class Globals {
         }
     }
 
-    public final void addToTasksIfNotExists(TaskToDo taskToDo, String name, FileType fileType, String toSend) {
+    public final boolean addToTasksIfNotExists(TaskToDo taskToDo, String name, FileType fileType, String toSend) {
         Task task = new Task(taskToDo, name, fileType, toSend);
-        if (!tasks.contains(task)) {
-            tasks.add(task);
-        }
+        return !tasks.contains(task) && tasks.add(task);
     }
 
     public final void addToTasksForced(TaskToDo taskToDo) {
