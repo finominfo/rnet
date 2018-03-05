@@ -42,34 +42,26 @@ public class Main {
     public static void main(String[] args) {
         setupLog4J();
         Logger logger = Logger.getLogger(Main.class);
-        try {
-            Interface.getInterfaces();
-            switch (Props.get().getNodeType()) {
-                case CONTROLLER:
-                    handleController();
-                    break;
-                case SERVANT:
-                    handleServant(logger);
-                    break;
-                case COUNTER:
-                    handleCounter(logger);
-                    break;
-            }
-        } catch (Throwable t) {
-            logger.error("Error in Main() ", t);
-//            try {
-//                Utils.processCommand(180_000, "sudo reboot");
-//            } catch (Throwable t2) {
-//                logger.error("Error in processCommand() ", t2);
-//                System.exit(0);
-//            }
-            for (; ; ) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    logger.error(e);
+        if (RunningChecker.check()) {
+            try {
+                Interface.getInterfaces();
+                switch (Props.get().getNodeType()) {
+                    case CONTROLLER:
+                        handleController();
+                        break;
+                    case SERVANT:
+                        handleServant(logger);
+                        break;
+                    case COUNTER:
+                        handleCounter(logger);
+                        break;
                 }
+            } catch (Throwable t) {
+                logger.error("Error in Main() ", t);
             }
+        } else {
+            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine.");
+            System.exit(0);
         }
     }
 
