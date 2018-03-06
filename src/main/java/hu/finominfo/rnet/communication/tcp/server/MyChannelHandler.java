@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
  */
 public class MyChannelHandler implements ChannelHandler {
     private final static Logger logger = Logger.getLogger(MyChannelHandler.class);
+
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         String ipAndPort = ctx.channel().remoteAddress().toString();
@@ -26,14 +27,20 @@ public class MyChannelHandler implements ChannelHandler {
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         logger.info(ipAndPort + " disconnected.");
-        String ip = Globals.get().getIp(ipAndPort);
-        Globals.get().serverClients.remove(ip);
-        Globals.get().connectedServers.remove(ip);
+        try {
+            ctx.channel().close();
+            ctx.close();
+            String ip = Globals.get().getIp(ipAndPort);
+            Globals.get().serverClients.remove(ip);
+            Globals.get().connectedServers.remove(ip);
+        } catch (Exception e) {
+            logger.equals(Utils.getStackTrace(e));
+        }
 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception{
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         MyExceptionHandler.handle(ctx, cause);
     }
 
