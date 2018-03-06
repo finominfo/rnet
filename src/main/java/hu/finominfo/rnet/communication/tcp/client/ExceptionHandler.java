@@ -2,6 +2,7 @@ package hu.finominfo.rnet.communication.tcp.client;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.MyExceptionHandler;
 import io.netty.channel.*;
 import org.apache.log4j.Logger;
 
@@ -16,42 +17,6 @@ public class ExceptionHandler extends ChannelDuplexHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        String ipAndPort = ctx.channel().remoteAddress().toString();
-        logger.error(ipAndPort + " error.", cause);
-        String ip = Globals.get().getIp(ipAndPort);
-        try {
-//            ctx.channel().deregister();
-            ctx.channel().close();
-            ctx.close();
-        } catch (Exception e) {
-            logger.equals(Utils.getStackTrace(e));
-        }
-        Globals.get().serverClients.remove(ip);
-        Globals.get().connectedServers.remove(ip);
-
-        // Uncaught exceptions from inbound handlers will propagate up to this handler
+        MyExceptionHandler.handle(ctx, cause);
     }
-
-//    @Override
-//    public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) {
-//        ctx.connect(remoteAddress, localAddress, promise.addListener(future -> {
-//            if (!future.isSuccess()) {
-//                // Handle connect exception here...
-//            }
-//        }));
-//    }
-
-//    @Override
-//    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) {
-//        ctx.write(msg, promise.addListener(new ChannelFutureListener() {
-//            @Override
-//            public void operationComplete(ChannelFuture future) {
-//                if (!future.isSuccess()) {
-//                    // Handle write exception here...
-//                }
-//            }
-//        }));
-//    }
-
-    // ... override more outbound methods to handle their exceptions as well
 }

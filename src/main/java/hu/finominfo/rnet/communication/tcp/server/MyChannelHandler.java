@@ -1,6 +1,8 @@
 package hu.finominfo.rnet.communication.tcp.server;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.MyExceptionHandler;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,12 +18,7 @@ public class MyChannelHandler implements ChannelHandler {
         String ipAndPort = ctx.channel().remoteAddress().toString();
         logger.info(ipAndPort + " connected.");
         String ip = Globals.get().getIp(ipAndPort);
-        ClientParam clientParam = Globals.get().serverClients.get(ip);
-        if (null == clientParam) {
-            Globals.get().serverClients.put(ip, new ClientParam(ctx));
-        } else {
-            clientParam.setContext(ctx);
-        }
+        Globals.get().serverClients.put(ip, new ClientParam(ctx));
         Globals.get().addToTasksIfNotExists(TaskToDo.FIND_SERVERS_TO_CONNECT);
     }
 
@@ -36,8 +33,8 @@ public class MyChannelHandler implements ChannelHandler {
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        logger.error(ctx.channel().remoteAddress().toString(), cause);
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception{
+        MyExceptionHandler.handle(ctx, cause);
     }
 
 }

@@ -11,15 +11,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServerParam {
     private volatile ChannelFuture future;
     private final AtomicBoolean sentAddresses = new AtomicBoolean(false);
-    private final AtomicLong sentDir = new AtomicLong(0);
-
-    public boolean dirCanBeSend() {
-        return sentDir.compareAndSet(0, System.currentTimeMillis());
-    }
-
-    public long resetDir() {
-        return System.currentTimeMillis() - sentDir.getAndSet(0);
-    }
 
     public ServerParam(ChannelFuture future) {
         this.future = future;

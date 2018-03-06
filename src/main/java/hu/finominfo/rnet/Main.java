@@ -42,8 +42,8 @@ public class Main {
     public static void main(String[] args) {
         setupLog4J();
         Logger logger = Logger.getLogger(Main.class);
-        if (RunningChecker.check()) {
-            try {
+        try {
+            if (RunningChecker.check()) {
                 Interface.getInterfaces();
                 switch (Props.get().getNodeType()) {
                     case CONTROLLER:
@@ -51,36 +51,39 @@ public class Main {
                         handleController();
                         break;
                     case SERVANT:
-                        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand(500, "ps aux | grep [j]ava"));
-                        int found = 0;
-                        int i = 0;
-                        while (i > -1 && i < rnet.length()) {
-                            i = rnet.indexOf("rnet.java", i);
-                            if (i > -1) {
-                                found++;
-                                i++;
-                            }
-                        }
-                        if (found > 1) {
-                            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet + " - found: " + found);
-                            System.exit(0);
-                        } else {
-                            logger.info("Version: " + Globals.getVersion());
-                            handleServant(logger);
-                        }
+                        handleServant(logger);
                         break;
                     case COUNTER:
                         logger.info("Version: " + Globals.getVersion());
                         handleCounter(logger);
                         break;
                 }
-            } catch (Throwable t) {
-                //logger.error("Error in Main() ", t);
+            } else {
+                logger.warn("Rnet is already running on this machine.");
                 System.exit(0);
             }
+        } catch (Throwable t) {
+            logger.error("Error in Main() ", t);
+        }
+    }
+
+    private static boolean checkRnetRunning(Logger logger) {
+        String rnet = Utils.convertStreamToString(Utils.simpleProcessCommand(500, "ps aux | grep [j]ava"));
+        int found = 0;
+        int i = 0;
+        while (i > -1 && i < rnet.length()) {
+            i = rnet.indexOf("rnet.java", i);
+            if (i > -1) {
+                found++;
+                i++;
+            }
+        }
+        if (found > 1) {
+            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine: " + rnet + " - found: " + found);
+            return true;
         } else {
-            logger.warn("Rnet " + Globals.getVersion() + " is already running on this machine.");
-            System.exit(0);
+            logger.info("Version: " + Globals.getVersion());
+            return false;
         }
     }
 
