@@ -290,11 +290,14 @@ public class Utils {
                     Globals.get().executor.schedule(() -> {
                         player.close();
                     }, (player.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
-                    Globals.get().executor.schedule(() -> {
-                        if (runnable != null && wasRun.compareAndSet(false, true)) {
-                            Globals.get().executor.submit(runnable);
-                        }
-                    }, 3, TimeUnit.SECONDS);
+                    if (runnable != null && wasRun.compareAndSet(false, true)) {
+                        runnable.run();
+                    }
+//                    Globals.get().executor.schedule(() -> {
+//                        if (runnable != null && wasRun.compareAndSet(false, true)) {
+//                            Globals.get().executor.submit(runnable);
+//                        }
+//                    }, 3, TimeUnit.SECONDS);
 
                 } catch (Exception e) {
                     logger.error(getStackTrace(e));
