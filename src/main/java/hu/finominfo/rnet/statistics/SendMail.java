@@ -2,12 +2,22 @@ package hu.finominfo.rnet.statistics;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Interface;
+import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.database.H2KeyValue;
 import org.apache.log4j.Logger;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.net.URI;
+import java.nio.file.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +30,7 @@ public class SendMail {
 
         try{
             final String emailMessage = Stat.get();
-            System.out.println(emailMessage);
+            //System.out.println(emailMessage);
             final String fromEmail = "rnetkk4@gmail.com"; //requires valid gmail id
             final String password = "Alma1241"; // correct password for gmail id
             final String toEmail = "rnetkk4@gmail.com"; // can be any email id
@@ -43,13 +53,36 @@ public class SendMail {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(fromEmail));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-            message.setSubject("statistics");
-            message.setText(emailMessage);
+            message.setSubject("statistics and log");
+            //message.setText(emailMessage);
+
+            Map<String, String> env = new HashMap<>();
+            env.put("create", "true");
+            Path path = Paths.get("./log.zip");
+            URI uri = URI.create("jar:" + path.toUri());
+            try (FileSystem zipfs = FileSystems.newFileSystem(uri, env)) {
+                Path externalTxtFile = Paths.get("./log/logging.log");
+                Path pathInZipfile = zipfs.getPath("/logging.log");
+                Files.copy(externalTxtFile, pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            BodyPart messageBodyPart = new MimeBodyPart();
+            messageBodyPart.setText(emailMessage);
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(messageBodyPart);
+            messageBodyPart = new MimeBodyPart();
+            String filename = "./log.zip";
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+            message.setContent(multipart);
+
             Transport.send(message);
             logger.info("Mail Sent");
             H2KeyValue.set(H2KeyValue.LAST_SENDING, String.valueOf(System.currentTimeMillis()));
         }catch(Exception ex){
-            System.out.println(ex.getMessage());
+            System.out.println(Utils.getStackTrace(ex));
             logger.error("Mail fail", ex);
         }
     }

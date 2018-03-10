@@ -3,8 +3,13 @@ package hu.finominfo.rnet.statistics;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.database.H2KeyValue;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Enumeration;
 
 /**
  * Created by kalman.kovacs@gmail.com on 2017.12.02.
@@ -55,6 +60,7 @@ public class Stat {
 
     public static String get() {
         StringBuilder stat = new StringBuilder();
+        stat.append("\nIP addresseso: ").append(list()).append("\n");
         stat.append("\nMAC: ").append(Long.toHexString(Interface.addresses.get(0)));
         stat.append("\nDefault video: ").append(H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
         stat.append("\nDefault audio: ").append(H2KeyValue.getValue(H2KeyValue.DEF_AUDIO)).append("\n");
@@ -63,6 +69,30 @@ public class Stat {
         }
         stat.append(getInstance().initStat);
         return stat.toString();
+    }
+
+    public static StringBuilder list() {
+        StringBuilder result = new StringBuilder();
+        Enumeration<NetworkInterface> nets = null;
+        try {
+            nets = NetworkInterface.getNetworkInterfaces();
+            for (NetworkInterface netint : Collections.list(nets)) {
+                displayInterfaceInformation(netint, result);
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    static void displayInterfaceInformation(NetworkInterface netint, StringBuilder result) throws SocketException {
+        result.append("Display name:").append(netint.getDisplayName()).append(System.lineSeparator());
+        result.append("Name:").append(netint.getName()).append(System.lineSeparator());
+        Enumeration<InetAddress> inetAddresses = netint.getInetAddresses();
+        for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+            result.append("InetAddress:").append(inetAddress).append(System.lineSeparator());
+        }
+        result.append(System.lineSeparator());
     }
 
     public String getName(LocalDateTime dateTime) {
