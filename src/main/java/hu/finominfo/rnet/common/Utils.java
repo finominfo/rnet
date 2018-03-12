@@ -20,7 +20,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
@@ -89,11 +91,10 @@ public class Utils {
 
     public static List<String> getFilesFromFolder(String folder) {
         List<String> files = new ArrayList<>();
-        try {
-            Files.newDirectoryStream(Paths.get(folder), path -> path.toFile().isFile())
-                    .forEach(path -> files.add(path.toFile().getName()));
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(folder), path -> path.toFile().isFile())) {
+            stream.forEach(path -> files.add(path.toFile().getName()));
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(Utils.getStackTrace(e));
         }
         return files;
     }
