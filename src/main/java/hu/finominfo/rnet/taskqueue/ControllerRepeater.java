@@ -16,18 +16,18 @@ public class ControllerRepeater implements Runnable {
     public void run() {
         try {
             counter++;
-            if (Globals.get().isTasksEmpty() && ((counter & 0x3f) == 0)) {
+            if (Globals.get().isTasksEmpty() && ((counter & 0x7f) == 0)) {
                 Globals.get().addToTasksIfNotExists(TaskToDo.SEND_BROADCAST);
             }
-            if (Globals.get().isTasksEmpty() && ((counter & 0x01) == 0)) {
+            if (Globals.get().isFrontEndTasksEmpty()) {
+                if ((counter & 0x03) == 0) {
+                    Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.REFRESH_SERVANT_LIST);
+                }
                 Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.REFRESH_ALL_COUNTER);
             }
-            if (Globals.get().isFrontEndTasksEmpty()) {
-                Globals.get().addToFrontEndTasksIfNotExists(FrontEndTaskToDo.REFRESH_SERVANT_LIST);
-            }
-        }catch (Exception e) {
+        } catch (Exception e) {
             logger.error(e);
         }
-        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+        Globals.get().executor.schedule(this, 250, TimeUnit.MILLISECONDS);
     }
 }

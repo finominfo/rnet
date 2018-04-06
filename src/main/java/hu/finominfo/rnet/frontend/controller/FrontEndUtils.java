@@ -7,23 +7,25 @@ import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.*;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
-import hu.finominfo.rnet.frontend.controller.allcounter.AllCounter;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
 import hu.finominfo.rnet.taskqueue.TaskToDo;
-import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static javax.swing.ScrollPaneConstants.*;
 
@@ -31,6 +33,8 @@ import static javax.swing.ScrollPaneConstants.*;
  * Created by kalman.kovacs@gmail.com on 2017.10.08.
  */
 public class FrontEndUtils extends JFrame implements Runnable {
+
+    protected final ConcurrentMap<String, Long> resetNotEnabledUntil = new ConcurrentHashMap<>();
 
     protected volatile boolean shouldRefreshAll = false;
 
@@ -254,11 +258,13 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (servantsList.getSelectedValuesList().isEmpty()) {
             startBtn.setEnabled(false);
             stopBtn.setEnabled(false);
-            resetBtn.setEnabled(false);
+            resetShouldDisabled();
         } else {
             startBtn.setEnabled(true);
             stopBtn.setEnabled(true);
-            resetBtn.setEnabled(true);
+            if (servantsList.getSelectedValuesList().stream().filter(s -> resetNotEnabledUntil.get(s) == null ||  resetNotEnabledUntil.get(s) < System.currentTimeMillis()).findAny().isPresent()) {
+                resetShouldEnabled();
+            }
         }
         if (servantsList.getSelectedValuesList().size() < 2) {
             String selectedValue = servantsList.getSelectedValue();
@@ -402,10 +408,24 @@ public class FrontEndUtils extends JFrame implements Runnable {
             }
             ControlEvent controlEvent = new ControlEvent(ControlType.RESET_COUNTER, new ResetCounter(minutes));
             Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
+            resetShouldDisabledThenEnabled(selectedValue);
         });
         if (selectedValuesList.size() != 1) {
             servantsList.clearSelection();
         }
+    }
+
+    protected void resetShouldDisabledThenEnabled(String selectedValue) {
+        resetShouldDisabled();
+        resetNotEnabledUntil.put(selectedValue, System.currentTimeMillis() + 2000);
+    }
+
+    protected void resetShouldDisabled() {
+        resetBtn.setEnabled(false);
+    }
+
+    protected void resetShouldEnabled() {
+        resetBtn.setEnabled(true);
     }
 
     protected void sendOnlyControl(ControlType controlType) {
