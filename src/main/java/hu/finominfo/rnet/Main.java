@@ -103,7 +103,7 @@ public class Main {
         controller.run();
         Globals.get().controller = controller;
         new FrontEndWorker().run();
-        PictureResize.get();
+        //PictureResize.get();
     }
 
     private static void handleServant(Logger logger) {

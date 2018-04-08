@@ -40,7 +40,7 @@ public class PictureResize {
             } else {
                 logger.info("There is no " + Globals.pictureFolder + " folder.");
             }
-        }, 10, TimeUnit.SECONDS);
+        }, 20, TimeUnit.SECONDS);
     }
 
     private void checkAllFiles() {
