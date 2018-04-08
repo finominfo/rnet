@@ -25,22 +25,13 @@ public class PictureDisplay {
     ScheduledFuture<?> lastSchedule = null;
     JDialog lastDialog = null;
 
-    public void display(final String pathAndName, final int seconds) {
+    public void display(final String pathAndName, final String name, final int seconds) {
         try {
-            ImageIcon icon = new ImageIcon(pathAndName);
-            int iconHeight = icon.getIconHeight();
-            int iconWidth = icon.getIconWidth();
-            double widthScale = ((double) Globals.get().width) / (double) iconWidth;
-            double heightScale = ((double) Globals.get().height) / (double) iconHeight;
-            double resize = widthScale < heightScale ? widthScale : heightScale;
-            int x = (int) (iconWidth * resize);
-            int y = (int) (iconHeight * resize);
-            int locationX = (Globals.get().width - x) / 2;
-            int locationY = (Globals.get().height - y) / 2;
-            Image scaledInstance = icon.getImage().getScaledInstance(x, y, Image.SCALE_SMOOTH);
-            icon = new ImageIcon(scaledInstance);  // transform it back
+            ImageIcon icon = new ImageIcon(PictureResize.get().getResizedImage(pathAndName, name));
             JDialog dialog = new JDialog();
             dialog.setUndecorated(true);
+            int locationX = (Globals.get().width - icon.getIconWidth()) / 2;
+            int locationY = (Globals.get().height - icon.getIconHeight()) / 2;
             dialog.setLocation(locationX, locationY);
             JLabel label = new JLabel(icon);
             BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
@@ -56,7 +47,7 @@ public class PictureDisplay {
             Globals.get().executor.schedule(() -> show(pathAndName), 10, TimeUnit.MILLISECONDS);
             lastSchedule = Globals.get().executor.schedule(() -> close(), seconds, TimeUnit.SECONDS);
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(Utils.getStackTrace(e));
         }
     }
 
@@ -90,6 +81,6 @@ public class PictureDisplay {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> PictureDisplay.get().display("C:\\images.jpg", 3));
+        SwingUtilities.invokeLater(() -> PictureDisplay.get().display("C:\\images.jpg", "images.jpg",  3));
     }
 }

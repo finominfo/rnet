@@ -4,6 +4,7 @@ import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.http.HttpServer;
 import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
+import hu.finominfo.rnet.frontend.servant.common.PictureResize;
 import hu.finominfo.rnet.frontend.servant.counter.Counter;
 import hu.finominfo.rnet.frontend.servant.gameknock.GameKnockSimple;
 import hu.finominfo.rnet.frontend.servant.gameknock.io.HandlingIO;
@@ -102,6 +103,7 @@ public class Main {
         controller.run();
         Globals.get().controller = controller;
         new FrontEndWorker().run();
+        PictureResize.get();
     }
 
     private static void handleServant(Logger logger) {
@@ -143,6 +145,7 @@ public class Main {
             Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
             startGameKnock(logger);
             Globals.get().executor.schedule(() -> checkFaultyRestart(), 25, TimeUnit.SECONDS);
+            PictureResize.get();
         }, 2, TimeUnit.SECONDS);
     }
 

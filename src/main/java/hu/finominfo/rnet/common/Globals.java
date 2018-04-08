@@ -64,7 +64,7 @@ public class Globals {
         }
     }
 
-    public final static int VERSION = 164;
+    public final static int VERSION = 169;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -89,6 +89,7 @@ public class Globals {
     public final static String videoFolder = "video";
     public final static String audioFolder = "audio";
     public final static String pictureFolder = "picture";
+    public final static String resizedPictureFolder = "resizedpicture";
     public final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(8);
     public final Queue<Event> events = new ConcurrentLinkedQueue<>();
     public final ConcurrentHashMap.KeySetView<Connection, Boolean> connections = ConcurrentHashMap.newKeySet();

@@ -266,7 +266,7 @@ public class Utils {
     }
 
     public static void showPicture(ShowPicture showPicture) {
-        attention(() -> PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getSeconds()));
+        attention(() -> PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getShortName(), showPicture.getSeconds()));
     }
 
     public static void showMessage(MessageEvent msg) {
