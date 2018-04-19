@@ -1,12 +1,12 @@
 package hu.finominfo.rnet.node.servant;
 
-import hu.finominfo.rnet.database.H2KeyValue;
+import hu.finominfo.rnet.communication.tcp.events.dir.RichDirEvent;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.common.*;
 import hu.finominfo.rnet.common.Interface;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
 import hu.finominfo.rnet.communication.tcp.events.status.StatusEvent;
-import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
 import hu.finominfo.rnet.communication.udp.Connection;
 import hu.finominfo.rnet.communication.udp.in.ConnectionMonitor;
@@ -122,9 +122,8 @@ public class Servant extends Worker implements ChannelFutureListener {
             case SEND_DIR:
                 try {
                     if (!Globals.get().connectedServers.isEmpty()) {
-                        DirEvent dirEvent = new DirEvent(Globals.get().status.getCurrent(),
-                                H2KeyValue.getValue(H2KeyValue.DEF_AUDIO),
-                                H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
+                        Types saved = Types.getSaved();
+                        RichDirEvent dirEvent = new RichDirEvent(Globals.get().status.getCurrent(), saved);
                         Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
                                 .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
                         Globals.get().connectedServers.values().stream()

@@ -2,9 +2,9 @@ package hu.finominfo.rnet.communication.tcp.events;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
+import hu.finominfo.rnet.communication.tcp.events.dir.RichDirEvent;
 import hu.finominfo.rnet.communication.tcp.events.status.StatusEvent;
 import hu.finominfo.rnet.communication.tcp.events.del.DelFileEvent;
-import hu.finominfo.rnet.communication.tcp.events.dir.DirEvent;
 import hu.finominfo.rnet.communication.tcp.events.file.FileEvent;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
 import hu.finominfo.rnet.communication.tcp.events.wait.WaitEvent;
@@ -53,15 +53,15 @@ public class EventDecoder extends ByteToMessageDecoder {
                 break;
             case DIR:
                 inputCollector.setEventType(EventType.DIR);
-                if (input.readableBytes() > 15) {
-                    if (input.readableBytes() < input.getInt(5) + input.getInt(9) + input.getInt(13) + input.getInt(17) + 16) {
+                if (input.readableBytes() > 19) {
+                    if (input.readableBytes() < input.getInt(5) + input.getInt(9) + input.getInt(13) + input.getInt(17) + input.getInt(21) + 20) {
                         return;
                     }
                 } else {
                     return;
                 }
                 inputCollector.setEventType(null);
-                out.add(DirEvent.create(input));
+                out.add(RichDirEvent.create(input));
                 break;
             case WAIT:
                 out.add(WaitEvent.create(input));

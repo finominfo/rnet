@@ -2,6 +2,7 @@ package hu.finominfo.rnet;
 
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.http.HttpServer;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.MessageDisplay;
 import hu.finominfo.rnet.frontend.servant.common.PictureResize;
@@ -63,8 +64,9 @@ public class Main {
                 logger.warn("Rnet is already running on this machine.");
                 System.exit(0);
             }
-        } catch (Throwable t) {
-            logger.error("Error in Main() ", t);
+        } catch (Exception t) {
+            logger.info("Something problem happened in Main().");
+            logger.error(Utils.getStackTrace(t));
         }
     }
 
@@ -107,46 +109,57 @@ public class Main {
     }
 
     private static void handleServant(Logger logger) {
-        Globals.get().executor.schedule(() -> {
-            Counter.createAndShowGui();
-            Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
-            Globals.get().executor.schedule(() -> Stat.getInstance().init(), 8, TimeUnit.SECONDS);
-
+        try {
             Globals.get().executor.schedule(() -> {
-                long lastSending = Long.valueOf(H2KeyValue.getValue(H2KeyValue.LAST_SENDING));
-                LocalDateTime last = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSending), TimeZone.getDefault().toZoneId());
-                LocalDateTime current = LocalDateTime.now();
-                boolean shouldSend = (System.currentTimeMillis() < 2514764800000L && last.getDayOfMonth() != current.getDayOfMonth())
-                        || last.getMonthValue() != current.getMonthValue();
-                if (shouldSend) {
-                    SendMail.send();
+                try {
+                    Counter.createAndShowGui();
+                    Globals.get().executor.schedule(() -> new HttpServer().start(), 3, TimeUnit.SECONDS);
+                    Globals.get().executor.schedule(() -> Stat.getInstance().init(), 8, TimeUnit.SECONDS);
+
+                    Globals.get().executor.schedule(() -> {
+                        long lastSending = Long.valueOf(H2KeyValue.getValue(H2KeyValue.LAST_SENDING));
+                        LocalDateTime last = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastSending), TimeZone.getDefault().toZoneId());
+                        LocalDateTime current = LocalDateTime.now();
+                        boolean shouldSend = (System.currentTimeMillis() < 2514764800000L && last.getDayOfMonth() != current.getDayOfMonth())
+                                || last.getMonthValue() != current.getMonthValue();
+                        if (shouldSend) {
+                            SendMail.send();
+                        }
+                    }, 12, TimeUnit.SECONDS);
+
+                    Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
+                    Servant servant = new Servant();
+                    Globals.get().servant = servant;
+                    Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
+
+                    Globals.get().executor.schedule(() ->
+                                    MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
+                            2, TimeUnit.SECONDS);
+
+                    LocalDateTime localNow = LocalDateTime.now();
+                    ZoneId currentZone = ZoneId.systemDefault();
+                    ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
+                    ZonedDateTime zonedNext5;
+                    zonedNext5 = zonedNow.withHour(4).withMinute(0).withSecond(0);
+                    if (zonedNow.compareTo(zonedNext5) > 0) {
+                        zonedNext5 = zonedNext5.plusDays(1);
+                    }
+                    Duration duration = Duration.between(zonedNow, zonedNext5);
+                    final long initialDelay = ((duration.getSeconds()) / 60) + Interface.fromAddress;
+                    Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
+                    startGameKnock(logger);
+                    Globals.get().executor.schedule(() -> checkFaultyRestart(), 25, TimeUnit.SECONDS);
+                    PictureResize.get();
+                    Globals.get().types = Types.getSaved();
+                } catch (Exception t) {
+                    logger.info("Something problem happened inside.");
+                    logger.error(Utils.getStackTrace(t));
                 }
-            }, 12, TimeUnit.SECONDS);
-
-            Globals.get().executor.schedule(new ServantRepeater(), 15, TimeUnit.SECONDS);
-            Servant servant = new Servant();
-            Globals.get().servant = servant;
-            Globals.get().executor.schedule(servant, 2, TimeUnit.SECONDS);
-
-            Globals.get().executor.schedule(() ->
-                            MessageDisplay.get().show("RNET servant version " + Globals.getVersion(), 3),
-                    2, TimeUnit.SECONDS);
-
-            LocalDateTime localNow = LocalDateTime.now();
-            ZoneId currentZone = ZoneId.systemDefault();
-            ZonedDateTime zonedNow = ZonedDateTime.of(localNow, currentZone);
-            ZonedDateTime zonedNext5;
-            zonedNext5 = zonedNow.withHour(4).withMinute(0).withSecond(0);
-            if (zonedNow.compareTo(zonedNext5) > 0) {
-                zonedNext5 = zonedNext5.plusDays(1);
-            }
-            Duration duration = Duration.between(zonedNow, zonedNext5);
-            final long initialDelay = ((duration.getSeconds()) / 60) + Interface.fromAddress;
-            Globals.get().executor.schedule(() -> Utils.restartApplication(), initialDelay, TimeUnit.MINUTES);
-            startGameKnock(logger);
-            Globals.get().executor.schedule(() -> checkFaultyRestart(), 25, TimeUnit.SECONDS);
-            PictureResize.get();
-        }, 2, TimeUnit.SECONDS);
+            }, 5, TimeUnit.SECONDS);
+        } catch (Exception t) {
+            logger.info("Something problem happened.");
+            logger.error(Utils.getStackTrace(t));
+        }
     }
 
     private static void checkFaultyRestart() {

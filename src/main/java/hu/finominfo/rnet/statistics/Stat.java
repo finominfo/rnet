@@ -62,8 +62,8 @@ public class Stat {
         StringBuilder stat = new StringBuilder();
         stat.append("\nIP addresseso: ").append(list()).append("\n");
         stat.append("\nMAC: ").append(Long.toHexString(Interface.addresses.get(0)));
-        stat.append("\nDefault video: ").append(H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
-        stat.append("\nDefault audio: ").append(H2KeyValue.getValue(H2KeyValue.DEF_AUDIO)).append("\n");
+        //stat.append("\nDefault video: ").append(H2KeyValue.getValue(H2KeyValue.DEF_VIDEO));
+        //stat.append("\nDefault audio: ").append(H2KeyValue.getValue(H2KeyValue.DEF_AUDIO)).append("\n");
         if (!Clicker.get().getToday().isEmpty()) {
             stat.append("\nToday: ").append(Clicker.get().getToday()).append("\n");
         }

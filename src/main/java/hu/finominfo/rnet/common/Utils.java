@@ -5,6 +5,8 @@ import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayAudio;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.events.message.MessageEvent;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
@@ -152,11 +154,33 @@ public class Utils {
     }
 
 
-    public static void startCounterVideo() {
-        String videoPlayAtCounterStart = Props.get().getVideoPlayAtCounterStart();
+    public static void playMediaBeforeStartCounter() {
+        Types types = Types.getSaved();
+        String videoPlayAtCounterStart = types.getVideoTypes().get(TimeOrder.BEFORE);
         if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
-            PlayVideo playVideo = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
-            VideoPlayer.get().play(playVideo);
+            PlayVideo play = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
+            VideoPlayer.get().play(play);
+            Globals.get().executor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    if (VideoPlayer.get().isPlaying()) {
+                        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+                    } else {
+                        playAudioBeforeStartCounter();
+                    }
+                }
+            });
+        } else {
+            playAudioBeforeStartCounter();
+        }
+    }
+
+    public static void playAudioBeforeStartCounter() {
+        Types types = Types.getSaved();
+        String audioPlayAtCounterStart = types.getAudioTypes().get(TimeOrder.BEFORE);
+        if (audioPlayAtCounterStart != null && !audioPlayAtCounterStart.isEmpty()) {
+            PlayVideo play = new PlayVideo(Globals.audioFolder, audioPlayAtCounterStart, 30);
+            VideoPlayer.get().play(play);
             Globals.get().executor.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -173,7 +197,8 @@ public class Utils {
     }
 
     public static void startCounterMusic() {
-        String contMusicAtCounterStart = Props.get().getContMusicAtCounterStart();
+        Types types = Types.getSaved();
+        String contMusicAtCounterStart = types.getAudioTypes().get(TimeOrder.DURING);
         if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
             String fileName = Globals.audioFolder + File.separator + contMusicAtCounterStart;
             File f = new File(fileName);

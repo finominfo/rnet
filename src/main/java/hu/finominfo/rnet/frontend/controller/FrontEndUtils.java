@@ -5,6 +5,7 @@ import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlEvent;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.*;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.ClientParam;
 import hu.finominfo.rnet.taskqueue.FrontEndTaskToDo;
@@ -19,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledFuture;
@@ -262,7 +264,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         } else {
             startBtn.setEnabled(true);
             stopBtn.setEnabled(true);
-            if (servantsList.getSelectedValuesList().stream().filter(s -> resetNotEnabledUntil.get(s) == null ||  resetNotEnabledUntil.get(s) < System.currentTimeMillis()).findAny().isPresent()) {
+            if (servantsList.getSelectedValuesList().stream().filter(s -> resetNotEnabledUntil.get(s) == null || resetNotEnabledUntil.get(s) < System.currentTimeMillis()).findAny().isPresent()) {
                 resetShouldEnabled();
             }
         }
@@ -273,17 +275,38 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
                         !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
                     videoListModel.clear();
-                    dirs.get(Globals.videoFolder).stream().forEach(str -> videoListModel.addElement(str));
+                    dirs.get(Globals.videoFolder).stream().forEach(str -> {
+                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getVideoTypes();
+                        Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
+                        if (optional.isPresent()) {
+                            videoListModel.addElement(optional.get().getKey().getSign() + str);
+                        } else
+                            videoListModel.addElement(str);
+                    });
                 }
                 if (audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
                         !dirs.get(Globals.audioFolder).stream().allMatch(str -> audioListModel.contains(str))) {
                     audioListModel.clear();
-                    dirs.get(Globals.audioFolder).stream().forEach(str -> audioListModel.addElement(str));
+                    dirs.get(Globals.audioFolder).stream().forEach(str -> {
+                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getAudioTypes();
+                        Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
+                        if (optional.isPresent()) {
+                            audioListModel.addElement(optional.get().getKey().getSign() + str);
+                        } else
+                            audioListModel.addElement(str);
+                    });
                 }
                 if (pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
                         !dirs.get(Globals.pictureFolder).stream().allMatch(str -> pictureListModel.contains(str))) {
                     pictureListModel.clear();
-                    dirs.get(Globals.pictureFolder).stream().forEach(str -> pictureListModel.addElement(str));
+                    dirs.get(Globals.pictureFolder).stream().forEach(str -> {
+                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getPictureTypes();
+                        Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
+                        if (optional.isPresent()) {
+                            pictureListModel.addElement(optional.get().getKey().getSign() + str);
+                        } else
+                            pictureListModel.addElement(str);
+                    });
                 }
                 audioList.setSelectedValue(audioListSelectedValue, false);
                 videoList.setSelectedValue(videoListSelectedValue, false);

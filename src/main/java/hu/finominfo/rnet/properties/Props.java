@@ -80,14 +80,6 @@ public class Props {
         return httpPort;
     }
 
-    public String getVideoPlayAtCounterStart() {
-        return H2KeyValue.getValue(H2KeyValue.DEF_VIDEO);
-    }
-
-    public String getContMusicAtCounterStart() {
-        return H2KeyValue.getValue(H2KeyValue.DEF_AUDIO);
-    }
-
     public String getAttention() {
         return attention;
     }

@@ -3,6 +3,7 @@ package hu.finominfo.rnet.frontend.controller;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.ControlType;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 
 import javax.swing.*;
@@ -112,13 +113,16 @@ public class FrontEnd extends FrontEndUtils {
                                                           boolean isSelected, boolean cellHasFocus) {
                 Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (servantsList.getSelectedValuesList().size() < 2) {
-                    String selectedValue = servantsList.getSelectedValue();
-                    String defAudio = Utils.getClientParam(selectedValue).getDefAudio();
-                    if (value instanceof String && ((String) value).equals(defAudio)) {
-                        setBackground(Color.YELLOW);
-                        setForeground(Color.RED);
-                        if (isSelected) {
-                            setBackground(getBackground().darker());
+                    final String selectedValue = servantsList.getSelectedValue();
+                    if (value instanceof String && ((String) value).startsWith("*")) {
+                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getAudioTypes();
+                        final String decreasedValue = ((String) value).substring(3);
+                        if (types.values().contains(decreasedValue)) {
+                            setBackground(Color.YELLOW);
+                            setForeground(Color.RED);
+                            if (isSelected) {
+                                setBackground(getBackground().darker());
+                            }
                         }
                     }
                 }
@@ -157,12 +161,15 @@ public class FrontEnd extends FrontEndUtils {
                 Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (servantsList.getSelectedValuesList().size() < 2) {
                     String selectedValue = servantsList.getSelectedValue();
-                    String defVideo = Utils.getClientParam(selectedValue).getDefVideo();
-                    if (value instanceof String && ((String) value).equals(defVideo)) {
-                        setBackground(Color.YELLOW);
-                        setForeground(Color.RED);
-                        if (isSelected) {
-                            setBackground(getBackground().darker());
+                    if (value instanceof String && ((String) value).startsWith("*")) {
+                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getVideoTypes();
+                        final String decreasedValue = ((String) value).substring(3);
+                        if (types.values().contains(decreasedValue)) {
+                            setBackground(Color.YELLOW);
+                            setForeground(Color.RED);
+                            if (isSelected) {
+                                setBackground(getBackground().darker());
+                            }
                         }
                     }
                 }
@@ -191,7 +198,6 @@ public class FrontEnd extends FrontEndUtils {
         videoStop.addActionListener(e -> sendControlWithName(ControlType.STOP_VIDEO, videoList.getSelectedValue()));
 
 
-
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
         add(pictureLabel);
         pictureList.setSelectionMode(SINGLE_SELECTION);
@@ -208,6 +214,29 @@ public class FrontEnd extends FrontEndUtils {
         pictureAdd.addActionListener(e -> sendFile(Globals.pictureFolder, FileType.PICTURE));
         pictureDel.addActionListener(e -> deleteFile(Globals.pictureFolder, FileType.PICTURE, pictureList));
         pictureShow.addActionListener(e -> showPicture());
+        pictureList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList list, Object value, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (servantsList.getSelectedValuesList().size() < 2) {
+                    final String selectedValue = servantsList.getSelectedValue();
+                    if (value instanceof String && ((String) value).startsWith("*")) {
+                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getPictureTypes();
+                        final String decreasedValue = ((String) value).substring(3);
+                        if (types.values().contains(decreasedValue)) {
+                            setBackground(Color.YELLOW);
+                            setForeground(Color.RED);
+                            if (isSelected) {
+                                setBackground(getBackground().darker());
+                            }
+                        }
+                    }
+                }
+                return c;
+            }
+        });
+
 
 
         add(taskTextLabel);

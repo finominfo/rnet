@@ -26,7 +26,7 @@ public class MyChannelInboundHandlerAdapter extends ChannelInboundHandlerAdapter
             switch (Command.get(uri)) {
                 case start:
                     logger.info("START_COUNTER arrived: " + ip);
-                    Utils.startCounterVideo();
+                    Utils.playMediaBeforeStartCounter();
                     sendResponse(ctx, request, "Counter started.");
                     break;
                 case stop:

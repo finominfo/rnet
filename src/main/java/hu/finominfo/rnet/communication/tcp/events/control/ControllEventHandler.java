@@ -1,21 +1,18 @@
 package hu.finominfo.rnet.communication.tcp.events.control;
 
-import hu.finominfo.rnet.audio.AudioPlayer;
-import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.*;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.database.H2KeyValue;
-import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
-import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
-import hu.finominfo.rnet.frontend.servant.common.VideoPlayerContinuous;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.log4j.Logger;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 import static hu.finominfo.rnet.common.Utils.closeAudio;
 
@@ -26,6 +23,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
     private final static Logger logger = Logger.getLogger(ControllEventHandler.class);
     private final static ConcurrentMap<String, Long> defAudioHits = new ConcurrentHashMap<>();
     private final static ConcurrentMap<String, Long> defVideoHits = new ConcurrentHashMap<>();
+    private final static ConcurrentMap<String, Long> defPictureHits = new ConcurrentHashMap<>();
 
 
     @Override
@@ -38,7 +36,14 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                 case SHOW_PICTURE:
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
-                    Utils.showPicture(showPicture);
+                    if (showPicture.getSeconds() == 0) {
+                        Map<TimeOrder, String> picTypes = Types.getSavedType("PICTURE");
+                        Globals.get().types.setNext(picTypes, showPicture.getShortName());
+                        Types.setNext(picTypes, showPicture.getShortName());
+                        Globals.get().types.save();
+                    } else {
+                        Utils.showPicture(showPicture);
+                    }
                     break;
                 case PLAY_VIDEO:
                 case PLAY_VIDEO_CONTINUOUS:
@@ -60,7 +65,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("STOP_AUDIO arrived: " + ip);
                     String audName = ((Name) msg.getControlObject()).getName();
                     if (audName != null && !audName.isEmpty()) {
-                        checkHits(defAudioHits, audName, H2KeyValue.DEF_AUDIO);
+                        checkHits(defAudioHits, audName, Types.getSaved().getAudioTypes().get(TimeOrder.DURING));
                     } else {
                         logger.warn("No audName in STOP_AUDIO");
                     }
@@ -70,7 +75,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("STOP_VIDEO arrived: " + ip);
                     String vidName = ((Name) msg.getControlObject()).getName();
                     if (vidName != null && !vidName.isEmpty()) {
-                        checkHits(defVideoHits, vidName, H2KeyValue.DEF_VIDEO);
+                        checkHits(defVideoHits, vidName, Types.getSaved().getAudioTypes().get(TimeOrder.BEFORE));
                     } else {
                         logger.warn("No vidName in STOP_VIDEO");
                     }
@@ -95,7 +100,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case START_COUNTER:
                     logger.info("START_COUNTER arrived: " + ip);
-                    Utils.startCounterVideo();
+                    Utils.playMediaBeforeStartCounter();
                     break;
                 case STOP_COUNTER:
                     logger.info("STOP_COUNTER arrived: " + ip);

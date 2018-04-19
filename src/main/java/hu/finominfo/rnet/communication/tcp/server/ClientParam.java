@@ -2,6 +2,7 @@ package hu.finominfo.rnet.communication.tcp.server;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.communication.tcp.client.Client;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.ArrayList;
@@ -21,25 +22,35 @@ public class ClientParam {
     private volatile AtomicLong lastTrying = new AtomicLong(0);
     private volatile String name = "";
     private volatile String status = null;
-    private volatile String defAudio = null;
-    private volatile String defVideo = null;
     private final Map<String, List<String>> dirs = new HashMap();
+    private volatile Types types = null;
 
-    public String getDefAudio() {
-        return defAudio;
+    public Types getTypes() {
+        return types;
     }
 
-    public void setDefAudio(String defAudio) {
-        this.defAudio = defAudio;
+    public void setTypes(Types types) {
+        this.types = types;
     }
 
-    public String getDefVideo() {
-        return defVideo;
-    }
-
-    public void setDefVideo(String defVideo) {
-        this.defVideo = defVideo;
-    }
+    //    private volatile String defAudio = null;
+//    private volatile String defVideo = null;
+//
+//    public String getDefAudio() {
+//        return defAudio;
+//    }
+//
+//    public void setDefAudio(String defAudio) {
+//        this.defAudio = defAudio;
+//    }
+//
+//    public String getDefVideo() {
+//        return defVideo;
+//    }
+//
+//    public void setDefVideo(String defVideo) {
+//        this.defVideo = defVideo;
+//    }
 
     public String getStatus() {
         return status;

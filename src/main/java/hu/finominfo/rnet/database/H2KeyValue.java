@@ -1,6 +1,8 @@
 package hu.finominfo.rnet.database;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import org.apache.log4j.Logger;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
@@ -20,8 +22,6 @@ public class H2KeyValue {
     public static String COUNTER = "counter";
     public static String COUNTER_FINISHED = "stop";
     public static String COUNTER_CURRENT_STATE = "counterCurrentState";
-    public static String DEF_AUDIO = "defAudio";
-    public static String DEF_VIDEO = "defVideo";
 
     private static H2KeyValue ourInstance = new H2KeyValue();
     private final static Logger logger = Logger.getLogger(H2KeyValue.class);
@@ -81,12 +81,6 @@ public class H2KeyValue {
                 || dataMap.get(COUNTER_CURRENT_STATE).equals("0")
                 ||  dataMap.get(COUNTER_CURRENT_STATE).equals(dataMap.get(COUNTER))) {
             dataMap.put(COUNTER_CURRENT_STATE, COUNTER_FINISHED);
-        }
-        if (dataMap.get(DEF_AUDIO) == null) {
-            dataMap.put(DEF_AUDIO, "startMusic.wav");
-        }
-        if (dataMap.get(DEF_VIDEO) == null) {
-            dataMap.put(DEF_VIDEO, "startVideo.avi");
         }
         if (dataMap.get(LAST_SENDING) == null) {
             dataMap.put(LAST_SENDING, "0");

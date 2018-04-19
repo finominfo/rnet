@@ -61,9 +61,10 @@ public class Counter extends JPanel {
         }
         Panel[][] panels = new Panel[ROW][COLUMN];
         int i = 0;
-        long counterValue = Integer.valueOf(H2KeyValue.getValue(H2KeyValue.COUNTER)) * 60_000L;
+        String count = H2KeyValue.getValue(H2KeyValue.COUNTER);
+        long counterValue = Integer.valueOf(count == null ? "60" : count) * 60_000L;
         String counterState = H2KeyValue.getValue(H2KeyValue.COUNTER_CURRENT_STATE);
-        if (!counterState.equals(H2KeyValue.COUNTER_FINISHED)) {
+        if (counterState != null && !counterState.equals(H2KeyValue.COUNTER_FINISHED)) {
             counterValue = Integer.valueOf(counterState) * 60_000L;
         }
         for (Panel[] panel : panels) {

@@ -6,6 +6,7 @@ import hu.finominfo.rnet.audio.AudioPlayer;
 import hu.finominfo.rnet.audio.AudioPlayerContinuous;
 import hu.finominfo.rnet.communication.tcp.client.Client;
 import hu.finominfo.rnet.communication.tcp.client.ServerParam;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.communication.tcp.events.file.FileType;
 import hu.finominfo.rnet.communication.tcp.server.Server;
 import hu.finominfo.rnet.communication.udp.Connection;
@@ -52,19 +53,19 @@ public class Globals {
 
 
     private Globals() {
-        if (RunningChecker.check()) {
+        //if (RunningChecker.check()) {
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             width = gd.getDisplayMode().getWidth();
             height = gd.getDisplayMode().getHeight();
             diff = ((double) width) / benchmarkWidth;
-        } else {
-            width = 0;
-            height = 0;
-            diff = 0;
-        }
+//        } else {
+//            width = 0;
+//            height = 0;
+//            diff = 0;
+//        }
     }
 
-    public final static int VERSION = 170;
+    public final static int VERSION = 181;
     public final static String JAR_NAME = "rnet.jar";
     public final static String PROP_NAME = "config.properties";
     public volatile Task currentTask = null;
@@ -72,6 +73,7 @@ public class Globals {
     public volatile Worker servant = null;
     public volatile Server server = null;
     public volatile Client client = null;
+    public volatile Types types = null;
     public volatile ConnectionBroadcaster broadcaster = null;
     public volatile ConnectionMonitor monitor = null;
     public volatile hu.finominfo.rnet.frontend.servant.counter.Panel counter = null;
