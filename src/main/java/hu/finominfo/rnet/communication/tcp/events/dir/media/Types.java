@@ -114,37 +114,40 @@ public class Types {
     }
 
     public static void setNext(Map<TimeOrder, String> types, String current) {
-        logger.info("current: " + current);
         Map<TimeOrder, String> emptyPlaces = new HashMap<>();
         types.entrySet().stream()
                 .filter(entry -> entry.getValue() == null || entry.getValue().isEmpty())
                 .forEach(x -> emptyPlaces.put(x.getKey(), x.getValue()));
         Optional<Map.Entry<TimeOrder, String>> currentType = types.entrySet().stream()
                 .filter(entry -> entry.getValue() != null && entry.getValue().equals(current)).findAny();
-        if (currentType.isPresent()) {
-            currentType.get().setValue("");
-        }
-        if (emptyPlaces.isEmpty()) {
-            return;
-        }
-        if (emptyPlaces.size() == 1) {
-            Map.Entry<TimeOrder, String> other = emptyPlaces.entrySet().iterator().next();
-            other.setValue(current);
-            return;
-        }
         Map<TimeOrder, String> sortedTypes = new TreeMap<TimeOrder, String>(types);
-        Iterator<Map.Entry<TimeOrder, String>> iterator = sortedTypes.entrySet().iterator();
-        while(iterator.hasNext()) {
-            Map.Entry<TimeOrder, String> entry = iterator.next();
-            if (entry.getValue() != null && entry.getValue().equals(current)) {
-                break;
+        if (currentType.isPresent()) {
+            Iterator<Map.Entry<TimeOrder, String>> iterator = sortedTypes.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<TimeOrder, String> entry = iterator.next();
+                if (entry.getValue().equals(current)) {
+                    break;
+                }
             }
-        }
-        if (iterator.hasNext()) {
-            Map.Entry<TimeOrder, String> entry = iterator.next();
-            entry.setValue(current);
+            while (iterator.hasNext()) {
+                Map.Entry<TimeOrder, String> entry = iterator.next();
+                if (entry.getValue() == null || entry.getValue().isEmpty()) {
+                    entry.setValue(current);
+                    break;
+                }
+            }
+            types.putAll(sortedTypes);
+            currentType.get().setValue("");
         } else {
-            sortedTypes.entrySet().iterator().next().setValue(current);
+            Iterator<Map.Entry<TimeOrder, String>> iterator = sortedTypes.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<TimeOrder, String> entry = iterator.next();
+                if (entry.getValue() == null || entry.getValue().isEmpty()) {
+                    entry.setValue(current);
+                    break;
+                }
+            }
+            types.putAll(sortedTypes);
         }
     }
 
@@ -155,5 +158,24 @@ public class Types {
                 ", videoTypes=" + videoTypes +
                 ", pictureTypes=" + pictureTypes +
                 '}';
+    }
+
+    public static void main(String[] args) {
+        Map<TimeOrder, String> picTypes = new HashMap<>();
+        PICTURE.forEach(to -> picTypes.put(to, ""));
+        setNext(picTypes, "tesztoldold");
+        System.out.println("result: " + picTypes);
+        setNext(picTypes, "tesztold");
+        System.out.println("result: " + picTypes);
+        setNext(picTypes, "teszt");
+        System.out.println("result: " + picTypes);
+        setNext(picTypes, "teszt");
+        System.out.println("result: " + picTypes);
+        setNext(picTypes, "teszt");
+        System.out.println("result: " + picTypes);
+        setNext(picTypes, "teszt");
+        System.out.println("result: " + picTypes);
+        setNext(picTypes, "teszt");
+        System.out.println("result: " + picTypes);
     }
 }
