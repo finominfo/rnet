@@ -353,8 +353,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (!selectedValuesList.isEmpty() && list.getSelectedValue() != null) {
             String fileName = list.getSelectedValue();
             if (fileName != null) {
+                final String shortName = fileName.startsWith("*") ? fileName.substring(3) : fileName;
                 selectedValuesList.stream().forEach(selectedValue -> {
-                    Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, fileName, fileType, Utils.getIp(selectedValue)));
+                    Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.DEL_FILE, shortName, fileType, Utils.getIp(selectedValue)));
                 });
                 if (selectedValuesList.size() != 1) {
                     servantsList.clearSelection();
@@ -369,8 +370,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (!selectedValuesList.isEmpty() && pictureList.getSelectedValue() != null) {
             String fileName = pictureList.getSelectedValue();
             if (fileName != null) {
+                final String shortName = fileName.startsWith("*") ? fileName.substring(3) : fileName;
                 selectedValuesList.stream().forEach(selectedValue -> {
-                    ShowPicture showPicture = new ShowPicture(Utils.getFileType(FileType.PICTURE), fileName, Integer.valueOf(showSeconds.getText()));
+                    ShowPicture showPicture = new ShowPicture(Utils.getFileType(FileType.PICTURE), shortName, Integer.valueOf(showSeconds.getText()));
                     ControlEvent controlEvent = new ControlEvent(ControlType.SHOW_PICTURE, showPicture);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
@@ -387,8 +389,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (!selectedValuesList.isEmpty() && videoList.getSelectedValue() != null) {
             String fileName = videoList.getSelectedValue();
             if (fileName != null) {
+                final String shortName = fileName.startsWith("*") ? fileName.substring(3) : fileName;
                 selectedValuesList.stream().forEach(selectedValue -> {
-                    PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.VIDEO), fileName, Integer.valueOf(showSeconds.getText()));
+                    PlayVideo playVideo = new PlayVideo(Utils.getFileType(FileType.VIDEO), shortName, Integer.valueOf(showSeconds.getText()));
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
@@ -404,8 +407,9 @@ public class FrontEndUtils extends JFrame implements Runnable {
         if (!selectedValuesList.isEmpty() && audioList.getSelectedValue() != null) {
             String fileName = audioList.getSelectedValue();
             if (fileName != null) {
+                final String shortName = fileName.startsWith("*") ? fileName.substring(3) : fileName;
                 selectedValuesList.stream().forEach(selectedValue -> {
-                    PlayAudio playVideo = new PlayAudio(Utils.getFileType(FileType.AUDIO), fileName, Integer.valueOf(showSeconds.getText()));
+                    PlayAudio playVideo = new PlayAudio(Utils.getFileType(FileType.AUDIO), shortName, Integer.valueOf(showSeconds.getText()));
                     ControlEvent controlEvent = new ControlEvent(controlType, playVideo);
                     Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, controlEvent, Utils.getIp(selectedValue)));
                 });
@@ -462,9 +466,10 @@ public class FrontEndUtils extends JFrame implements Runnable {
     }
 
     protected void sendControlWithName(ControlType controlType, String name) {
+        final String shortName = name.startsWith("*") ? name.substring(3) : name;
         List<String> selectedValuesList = servantsList.getSelectedValuesList();
         selectedValuesList.stream().forEach(selectedValue -> {
-            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType, new Name(name)), Utils.getIp(selectedValue)));
+            Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_CONTROL, new ControlEvent(controlType, new Name(shortName)), Utils.getIp(selectedValue)));
         });
         if (selectedValuesList.size() != 1) {
             servantsList.clearSelection();

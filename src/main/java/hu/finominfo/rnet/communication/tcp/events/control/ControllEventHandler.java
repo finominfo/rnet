@@ -3,6 +3,7 @@ package hu.finominfo.rnet.communication.tcp.events.control;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.*;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Media;
 import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
 import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.database.H2KeyValue;
@@ -13,6 +14,7 @@ import org.apache.log4j.Logger;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static hu.finominfo.rnet.common.Utils.closeAudio;
 
@@ -23,7 +25,8 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
     private final static Logger logger = Logger.getLogger(ControllEventHandler.class);
     private final static ConcurrentMap<String, Long> defAudioHits = new ConcurrentHashMap<>();
     private final static ConcurrentMap<String, Long> defVideoHits = new ConcurrentHashMap<>();
-    private final static ConcurrentMap<String, Long> defPictureHits = new ConcurrentHashMap<>();
+    private final static AtomicLong lastAudioStop = new AtomicLong(0);
+    private final static AtomicLong lastVideoStop = new AtomicLong(0);
 
 
     @Override
@@ -37,10 +40,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
                     if (showPicture.getSeconds() == 0) {
-                        Map<TimeOrder, String> picTypes = Types.getSavedType("PICTURE");
-                        Globals.get().types.setNext(picTypes, showPicture.getShortName());
-                        Types.setNext(picTypes, showPicture.getShortName());
-                        Globals.get().types.save();
+                        Globals.get().types.setNext(Globals.get().types.getPictureTypes(), showPicture.getShortName()).save();
                     } else {
                         Utils.showPicture(showPicture);
                     }
@@ -65,17 +65,28 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("STOP_AUDIO arrived: " + ip);
                     String audName = ((Name) msg.getControlObject()).getName();
                     if (audName != null && !audName.isEmpty()) {
-                        checkHits(defAudioHits, audName, Types.getSaved().getAudioTypes().get(TimeOrder.DURING));
+                        long now = System.currentTimeMillis();
+                        long last = lastAudioStop.get();
+                        if (checkHits(defAudioHits, audName)) {
+                        //if (now - last < 5000 && lastAudioStop.compareAndSet(last, now)) {
+                            Globals.get().types.setNext(Globals.get().types.getAudioTypes(), audName).save();
+                        } else {
+                            closeAudio();
+                        }
                     } else {
-                        logger.warn("No audName in STOP_AUDIO");
+                        closeAudio();
                     }
-                    closeAudio();
                     break;
                 case STOP_VIDEO:
                     logger.info("STOP_VIDEO arrived: " + ip);
                     String vidName = ((Name) msg.getControlObject()).getName();
                     if (vidName != null && !vidName.isEmpty()) {
-                        checkHits(defVideoHits, vidName, Types.getSaved().getAudioTypes().get(TimeOrder.BEFORE));
+                        long now = System.currentTimeMillis();
+                        long last = lastVideoStop.get();
+                        if (checkHits(defVideoHits, vidName)) {
+                        //if (now - last < 5000 && lastVideoStop.compareAndSet(last, now)) {
+                            Globals.get().types.setNext(Globals.get().types.getVideoTypes(), vidName).save();
+                        }
                     } else {
                         logger.warn("No vidName in STOP_VIDEO");
                     }
@@ -112,7 +123,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
         }
     }
 
-    private void checkHits(ConcurrentMap<String, Long> defHits, String name, String key) {
+    private boolean checkHits(ConcurrentMap<String, Long> defHits, String name) {
         Long value = defHits.get(name);
         Long now = System.currentTimeMillis();
         if (value == null) {
@@ -124,11 +135,11 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
         }
         long hits = (value >> 60) + 1;
         long time = value & 0xfffffffffffffffL;
-        if (now - time < 15_000L) {
-            if (hits > 2) {
+        if (now - time < 5_000L) {
+            if (hits > 1) {
                 defHits.remove(name);
-                H2KeyValue.set(key, name);
                 logger.info("checkHits name set: " + name);
+                return true;
             } else {
                 long newValue = (hits << 60) | time;
                 defHits.put(name, newValue);
@@ -137,6 +148,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
             long newValue = (1 << 60) | now;
             defHits.put(name, newValue);
         }
+        return false;
     }
 
 

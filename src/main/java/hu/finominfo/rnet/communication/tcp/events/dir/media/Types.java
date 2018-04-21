@@ -1,13 +1,11 @@
 package hu.finominfo.rnet.communication.tcp.events.dir.media;
 
-import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.database.H2KeyValue;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.CharsetUtil;
 import org.apache.log4j.Logger;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by kks on 2018.04.13..
@@ -15,9 +13,6 @@ import java.util.stream.Collectors;
 public class Types {
     //TODO: Az AUDIO DURING-ot az omxplayer játsza le.
     private final static Logger logger = Logger.getLogger(Types.class);
-    public static List<TimeOrder> AUDIO = Arrays.asList(TimeOrder.BEFORE, TimeOrder.DURING, TimeOrder.SUCCESS, TimeOrder.FAILED);
-    public static List<TimeOrder> VIDEO = Arrays.asList(TimeOrder.BEFORE, TimeOrder.SUCCESS, TimeOrder.FAILED);
-    public static List<TimeOrder> PICTURE = Arrays.asList(TimeOrder.BEFORE, TimeOrder.SUCCESS, TimeOrder.FAILED);
 
     private final Map<TimeOrder, String> audioTypes;
     private final Map<TimeOrder, String> videoTypes;
@@ -89,38 +84,37 @@ public class Types {
         return type;
     }
 
-    public static Types getSaved() {
-        return new Types(getSavedType("AUDIO"), getSavedType("VIDEO"), getSavedType("PICTURE"));
+    public static Types load() {
+        return new Types(Media.AUDIO.load(), Media.VIDEO.load(), Media.PICTURE.load());
     }
 
-    public static Map<TimeOrder, String> getSavedType(String type) {
-        Map<TimeOrder, String> savedType = new HashMap<>();
-        AUDIO.stream().forEach(timeOrder ->
-                savedType.put(timeOrder, H2KeyValue.getValue(type + timeOrder.ordinal())));
-        return savedType;
+    public static Types empty() {
+        return new Types(Media.AUDIO.empty(), Media.VIDEO.empty(), Media.PICTURE.empty());
     }
+
 
     public void save() {
-        getAudioTypes().forEach((key, value) -> H2KeyValue.set("AUDIO" + key.ordinal(), value == null ? "" : value));
-        getVideoTypes().forEach((key, value) -> H2KeyValue.set("VIDEO" + key.ordinal(), value == null ? "" : value));
-        getPictureTypes().forEach((key, value) -> {
-            H2KeyValue.set("PICTURE" + key.ordinal(), value == null ? "" : value);
-            logger.info("PICTURE" + key.ordinal() + " - " + (value == null ? "" : value));
-        });
+        getAudioTypes().forEach((key, value) -> H2KeyValue.set(Media.AUDIO.value + key.ordinal(), checkValue(value, key)));
+        getVideoTypes().forEach((key, value) -> H2KeyValue.set(Media.VIDEO.value + key.ordinal(), checkValue(value, key)));
+        getPictureTypes().forEach((key, value) -> H2KeyValue.set(Media.PICTURE.value + key.ordinal(), checkValue(value, key)));
+    }
+
+    private String checkValue(String value, TimeOrder key) {
+        return value == null ? "" : (value.startsWith(key.getSign()) ? value.substring(key.getSign().length()) : value);
     }
 
     private static void saveType(Map<TimeOrder, String> types, String type) {
         types.forEach((key, value) -> H2KeyValue.set(type + key.ordinal(), value == null ? "" : value));
     }
 
-    public static void setNext(Map<TimeOrder, String> types, String current) {
+    public Types setNext(Map<TimeOrder, String> oneOfTypes, String current) {
         Map<TimeOrder, String> emptyPlaces = new HashMap<>();
-        types.entrySet().stream()
+        oneOfTypes.entrySet().stream()
                 .filter(entry -> entry.getValue() == null || entry.getValue().isEmpty())
                 .forEach(x -> emptyPlaces.put(x.getKey(), x.getValue()));
-        Optional<Map.Entry<TimeOrder, String>> currentType = types.entrySet().stream()
+        Optional<Map.Entry<TimeOrder, String>> currentType = oneOfTypes.entrySet().stream()
                 .filter(entry -> entry.getValue() != null && entry.getValue().equals(current)).findAny();
-        Map<TimeOrder, String> sortedTypes = new TreeMap<TimeOrder, String>(types);
+        Map<TimeOrder, String> sortedTypes = new TreeMap<TimeOrder, String>(oneOfTypes);
         if (currentType.isPresent()) {
             Iterator<Map.Entry<TimeOrder, String>> iterator = sortedTypes.entrySet().iterator();
             while (iterator.hasNext()) {
@@ -136,7 +130,7 @@ public class Types {
                     break;
                 }
             }
-            types.putAll(sortedTypes);
+            oneOfTypes.putAll(sortedTypes);
             currentType.get().setValue("");
         } else {
             Iterator<Map.Entry<TimeOrder, String>> iterator = sortedTypes.entrySet().iterator();
@@ -147,8 +141,9 @@ public class Types {
                     break;
                 }
             }
-            types.putAll(sortedTypes);
+            oneOfTypes.putAll(sortedTypes);
         }
+        return this;
     }
 
     @Override
@@ -162,20 +157,20 @@ public class Types {
 
     public static void main(String[] args) {
         Map<TimeOrder, String> picTypes = new HashMap<>();
-        PICTURE.forEach(to -> picTypes.put(to, ""));
-        setNext(picTypes, "tesztoldold");
-        System.out.println("result: " + picTypes);
-        setNext(picTypes, "tesztold");
-        System.out.println("result: " + picTypes);
-        setNext(picTypes, "teszt");
-        System.out.println("result: " + picTypes);
-        setNext(picTypes, "teszt");
-        System.out.println("result: " + picTypes);
-        setNext(picTypes, "teszt");
-        System.out.println("result: " + picTypes);
-        setNext(picTypes, "teszt");
-        System.out.println("result: " + picTypes);
-        setNext(picTypes, "teszt");
-        System.out.println("result: " + picTypes);
+        Media.PICTURE.timeOrder.forEach(to -> picTypes.put(to, ""));
+//        setNext(picTypes, "tesztoldold");
+//        System.out.println("result: " + picTypes);
+//        setNext(picTypes, "tesztold");
+//        System.out.println("result: " + picTypes);
+//        setNext(picTypes, "teszt");
+//        System.out.println("result: " + picTypes);
+//        setNext(picTypes, "teszt");
+//        System.out.println("result: " + picTypes);
+//        setNext(picTypes, "teszt");
+//        System.out.println("result: " + picTypes);
+//        setNext(picTypes, "teszt");
+//        System.out.println("result: " + picTypes);
+//        setNext(picTypes, "teszt");
+//        System.out.println("result: " + picTypes);
     }
 }

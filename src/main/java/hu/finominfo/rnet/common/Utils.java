@@ -155,7 +155,7 @@ public class Utils {
 
 
     public static void playMediaBeforeStartCounter() {
-        Types types = Types.getSaved();
+        Types types = Types.load();
         String videoPlayAtCounterStart = types.getVideoTypes().get(TimeOrder.BEFORE);
         if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
             PlayVideo play = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
@@ -176,7 +176,7 @@ public class Utils {
     }
 
     public static void playAudioBeforeStartCounter() {
-        Types types = Types.getSaved();
+        Types types = Types.load();
         String audioPlayAtCounterStart = types.getAudioTypes().get(TimeOrder.BEFORE);
         if (audioPlayAtCounterStart != null && !audioPlayAtCounterStart.isEmpty()) {
             PlayVideo play = new PlayVideo(Globals.audioFolder, audioPlayAtCounterStart, 30);
@@ -197,7 +197,7 @@ public class Utils {
     }
 
     public static void startCounterMusic() {
-        Types types = Types.getSaved();
+        Types types = Types.load();
         String contMusicAtCounterStart = types.getAudioTypes().get(TimeOrder.DURING);
         if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
             String fileName = Globals.audioFolder + File.separator + contMusicAtCounterStart;

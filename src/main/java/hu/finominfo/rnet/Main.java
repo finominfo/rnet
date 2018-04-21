@@ -150,7 +150,7 @@ public class Main {
                     startGameKnock(logger);
                     Globals.get().executor.schedule(() -> checkFaultyRestart(), 25, TimeUnit.SECONDS);
                     PictureResize.get();
-                    Globals.get().types = Types.getSaved();
+                    Globals.get().types = Types.load();
                 } catch (Exception t) {
                     logger.info("Something problem happened inside.");
                     logger.error(Utils.getStackTrace(t));

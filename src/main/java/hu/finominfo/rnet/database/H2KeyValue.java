@@ -1,12 +1,14 @@
 package hu.finominfo.rnet.database;
 
 import hu.finominfo.rnet.common.Globals;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Media;
 import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
 import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import org.apache.log4j.Logger;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.MVStore;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +87,12 @@ public class H2KeyValue {
         if (dataMap.get(LAST_SENDING) == null) {
             dataMap.put(LAST_SENDING, "0");
         }
+        Arrays.asList(Media.values()).forEach(media -> media.timeOrder.forEach(timeOrder -> {
+            String key = media.value + timeOrder.ordinal();
+            if (dataMap.get(key) == null) {
+                dataMap.put(key, "");
+            }
+        }));
     }
 
     private void compactFile(long maxCompactTime, MVStore store) {

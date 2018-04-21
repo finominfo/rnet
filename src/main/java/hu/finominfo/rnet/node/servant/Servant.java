@@ -122,7 +122,7 @@ public class Servant extends Worker implements ChannelFutureListener {
             case SEND_DIR:
                 try {
                     if (!Globals.get().connectedServers.isEmpty()) {
-                        Types saved = Types.getSaved();
+                        Types saved = Types.load();
                         RichDirEvent dirEvent = new RichDirEvent(Globals.get().status.getCurrent(), saved);
                         Arrays.asList(Globals.videoFolder, Globals.audioFolder, Globals.pictureFolder).stream()
                                 .forEach(folder -> dirEvent.getDirs().put(folder, Utils.getFilesFromFolder(folder)));
