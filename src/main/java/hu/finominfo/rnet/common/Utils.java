@@ -84,7 +84,7 @@ public class Utils {
         return path;
     }
 
-    public static String getStackTrace(Exception e) {
+    public static String getStackTrace(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
@@ -205,8 +205,10 @@ public class Utils {
             if (f.exists() && !f.isDirectory()) {
                 try {
                     closeAudio();
-                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
-                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
+                    Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
+                    Globals.get().audioPlayerContinuous.play(null);
+//                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
+//                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
                 } catch (Exception e) {
                     logger.error(getStackTrace(e));
                 }

@@ -54,8 +54,6 @@ public class GameFrontEnd extends JPanel {
         mainPanel.setBackground(BG);
         mainPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         AudioPlayerWrapper beep = new AudioPlayerWrapper(executor, propertiesReader.getBeep());
-        AudioPlayer success = new AudioPlayer(executor, propertiesReader.getSuccess());
-        AudioPlayer failed = new AudioPlayer(executor, propertiesReader.getFailed());
         if (monkeysEnabled) {
             monkeysEnabled();
         }
@@ -65,8 +63,6 @@ public class GameFrontEnd extends JPanel {
             for (int j = 0; j < panel.length; j++) {
                 panel[j] = new GamePanel(
                         beep,
-                        success,
-                        failed,
                         customFont,
                         Color.BLACK,
                         Color.GREEN,

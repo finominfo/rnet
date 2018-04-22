@@ -5,7 +5,11 @@ import hu.finominfo.rnet.audio.AudioPlayerWrapper;
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
+import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.database.H2KeyValue;
+import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.statistics.Clicker;
@@ -54,8 +58,8 @@ public class Panel extends JPanel {
     public final AtomicBoolean buttonsAreVisible = new AtomicBoolean(true);
     public final Font customFont;
     public final AudioPlayerWrapper beep;
-    public final AudioPlayer success;
-    public final AudioPlayer failed;
+    public static volatile AudioPlayer success;
+    public static volatile AudioPlayer failed;
     public static final long DELAY = 10_000;
     public static final long DELAY_VISIBLE = 5_000;
     public final int invisibleAfter = Props.get().getInvisible() * 60_000;
@@ -66,6 +70,23 @@ public class Panel extends JPanel {
     public final Runnable refresh = new Runnable() {
         @Override
         public void run() {
+
+            String succ = Globals.get().types.getAudioTypes().get(TimeOrder.SUCCESS);
+            String fail = Globals.get().types.getAudioTypes().get(TimeOrder.FAILED);
+            if (success != null) {
+                if (!success.getFile().getName().endsWith(succ)) {
+                    success = new AudioPlayer(Globals.get().executor, succ);
+                }
+            } else {
+                success = new AudioPlayer(Globals.get().executor, succ);
+            }
+            if (failed != null) {
+                if (!failed.getFile().getName().endsWith(fail)) {
+                    failed = new AudioPlayer(Globals.get().executor, fail);
+                }
+            } else {
+                failed = new AudioPlayer(Globals.get().executor, fail);
+            }
             long now = System.currentTimeMillis();
             if (now - lastMovement > DELAY_VISIBLE) {
                 setInvisible();
@@ -96,6 +117,11 @@ public class Panel extends JPanel {
                 try {
                     if (failedPlayed.compareAndSet(false, true)) {
                         failed.play(null);
+                        Utils.closeAudio();
+                        int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.FAILED), 30);
+                        Globals.get().executor.schedule(() ->
+                                        playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.FAILED)),
+                                seconds, TimeUnit.SECONDS);
                     }
                 } catch (Exception ex) {
                     logger.error(Utils.getStackTrace(ex));
@@ -106,6 +132,11 @@ public class Panel extends JPanel {
                 try {
                     if (successPlayed.compareAndSet(false, true)) {
                         success.play(null);
+                        Utils.closeAudio();
+                        int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.SUCCESS), 30);
+                        Globals.get().executor.schedule(() ->
+                                        playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.SUCCESS)),
+                                seconds, TimeUnit.SECONDS);
                     }
                 } catch (Exception ex) {
                     logger.error(Utils.getStackTrace(ex));
@@ -118,6 +149,23 @@ public class Panel extends JPanel {
             ses.schedule(this, time, TimeUnit.MILLISECONDS);
         }
     };
+
+    public static int showPic(String picName, int seconds) {
+        if (picName != null && !picName.isEmpty()) {
+            logger.info("Show picture ");
+            ShowPicture showPicture = new ShowPicture(Globals.pictureFolder, picName, seconds);
+            PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getShortName(), showPicture.getSeconds());
+            return seconds;
+        }
+        return 0;
+    }
+
+    public static void playMediaAtFinish(String videoPlayAtFinish) {
+        if (videoPlayAtFinish != null && !videoPlayAtFinish.isEmpty()) {
+            PlayVideo play = new PlayVideo(Globals.videoFolder, videoPlayAtFinish, 30);
+            VideoPlayer.get().play(play);
+        }
+    }
 
     public void beepAndFlash() {
         //beep.play(null);
@@ -181,11 +229,9 @@ public class Panel extends JPanel {
         }
     }
 
-    public Panel(AudioPlayerWrapper beep, AudioPlayer success, AudioPlayer failed, Font customFont, Color backGroundColor, Color successBackGroundColor, Color failedBackGroundColor, double diff, long milliseconds, ScheduledExecutorService ses) {
+    public Panel(AudioPlayerWrapper beep, Font customFont, Color backGroundColor, Color successBackGroundColor, Color failedBackGroundColor, double diff, long milliseconds, ScheduledExecutorService ses) {
         super(new FlowLayout());
         this.beep = beep;
-        this.success = success;
-        this.failed = failed;
         this.customFont = customFont;
         this.backGroundColor = backGroundColor;
         this.diff = diff;

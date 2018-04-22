@@ -2,6 +2,7 @@ package hu.finominfo.rnet.frontend.servant.counter;
 
 import hu.finominfo.rnet.common.Globals;
 import hu.finominfo.rnet.common.Utils;
+import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
 import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.properties.Props;
 import hu.finominfo.rnet.frontend.servant.counter.io.HandlingIO;
@@ -48,17 +49,6 @@ public class Counter extends JPanel {
         mainPanel.setBackground(BG);
         mainPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
         AudioPlayerWrapper beep = null;
-        AudioPlayer success = null;
-        AudioPlayer failed = null;
-        try {
-            //beep = new AudioPlayerWrapper(executor, props.getBeep());
-            String success1 = props.getSuccess();
-            String failed1 = props.getFailed();
-            success = new AudioPlayer(executor, success1 == null ? "success.wav" : success1);
-            failed = new AudioPlayer(executor, failed1 == null ? "failed_counter.wav" : failed1);
-        } catch (Exception e) {
-            logger.error(e);
-        }
         Panel[][] panels = new Panel[ROW][COLUMN];
         int i = 0;
         String count = H2KeyValue.getValue(H2KeyValue.COUNTER);
@@ -71,8 +61,6 @@ public class Counter extends JPanel {
             for (int j = 0; j < panel.length; j++) {
                 panel[j] = new Panel(
                         beep,
-                        success,
-                        failed,
                         customFont,
                         Color.BLACK,
                         Color.GREEN,

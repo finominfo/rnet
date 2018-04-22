@@ -19,8 +19,8 @@ public class GamePanel extends Panel {
         flash();
     }
 
-    public GamePanel(AudioPlayerWrapper beep, AudioPlayer success, AudioPlayer failed, Font customFont, Color backGroundColor, Color successBackGroundColor, Color failedBackGroundColor, double diff, long milliseconds, ScheduledExecutorService ses) {
-        super(beep, success, failed, customFont, backGroundColor, successBackGroundColor, failedBackGroundColor, diff, milliseconds, ses);
+    public GamePanel(AudioPlayerWrapper beep, Font customFont, Color backGroundColor, Color successBackGroundColor, Color failedBackGroundColor, double diff, long milliseconds, ScheduledExecutorService ses) {
+        super(beep, customFont, backGroundColor, successBackGroundColor, failedBackGroundColor, diff, milliseconds, ses);
     }
 
     public GamePanel make() {

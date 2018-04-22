@@ -36,6 +36,10 @@ public class AudioPlayer {
         }
     }
 
+    public File getFile() {
+        return file;
+    }
+
     public void play(final CompletionHandler<CompletedEvent, Object> comp) {
         try {
             Globals.get().status.setAudio("Playing: " + file.getName());
