@@ -40,7 +40,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     logger.info("SHOW_PICTURE arrived: " + ip);
                     ShowPicture showPicture = (ShowPicture) msg.getControlObject();
                     if (showPicture.getSeconds() == 0) {
-                        Globals.get().types.setNext(Globals.get().types.getPictureTypes(), showPicture.getShortName()).save();
+                        //Globals.get().types.setNext(Globals.get().types.getPictureTypes(), showPicture.getShortName()).save();
                     } else {
                         Utils.showPicture(showPicture);
                     }

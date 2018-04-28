@@ -7,7 +7,6 @@ import hu.finominfo.rnet.common.Utils;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.PlayVideo;
 import hu.finominfo.rnet.communication.tcp.events.control.objects.ShowPicture;
 import hu.finominfo.rnet.communication.tcp.events.dir.media.TimeOrder;
-import hu.finominfo.rnet.communication.tcp.events.dir.media.Types;
 import hu.finominfo.rnet.database.H2KeyValue;
 import hu.finominfo.rnet.frontend.servant.common.PictureDisplay;
 import hu.finominfo.rnet.frontend.servant.common.VideoPlayer;
@@ -49,6 +48,7 @@ public class Panel extends JPanel {
     public volatile long start;
     public volatile long finished;
     public volatile JLabel timer;
+    public volatile JLabel resultText;
     public volatile JButton stopStartButton;
     public volatile JButton resetButton;
     public final String stopStartTexts[] = new String[]{"STOP", "START"};
@@ -71,80 +71,96 @@ public class Panel extends JPanel {
         @Override
         public void run() {
 
-            String succ = Globals.get().types.getAudioTypes().get(TimeOrder.SUCCESS);
-            String fail = Globals.get().types.getAudioTypes().get(TimeOrder.FAILED);
-            if (success != null) {
-                if (!success.getFile().getName().endsWith(succ)) {
+            try {
+                String succ = Globals.get().types.getAudioTypes().get(TimeOrder.SUCCESS);
+                String fail = Globals.get().types.getAudioTypes().get(TimeOrder.FAILED);
+                if (success != null) {
+                    if (!success.getFile().getName().endsWith(succ)) {
+                        success = new AudioPlayer(Globals.get().executor, succ);
+                    }
+                } else if (succ != null && !succ.isEmpty()) {
                     success = new AudioPlayer(Globals.get().executor, succ);
                 }
-            } else {
-                success = new AudioPlayer(Globals.get().executor, succ);
-            }
-            if (failed != null) {
-                if (!failed.getFile().getName().endsWith(fail)) {
+                if (failed != null) {
+                    if (!failed.getFile().getName().endsWith(fail)) {
+                        failed = new AudioPlayer(Globals.get().executor, fail);
+                    }
+                } else if (fail != null && !fail.isEmpty()) {
                     failed = new AudioPlayer(Globals.get().executor, fail);
                 }
-            } else {
-                failed = new AudioPlayer(Globals.get().executor, fail);
+                long now = System.currentTimeMillis();
+                if (now - lastMovement > DELAY_VISIBLE) {
+                    setInvisible();
+                }
+                long time = start - now + milliseconds;
+                if (lastMilliseconds + invisibleAfter < now) {
+                    timer.setVisible(false);
+                    Globals.get().status.setCounter("invisible");
+                }
+                if (time > 0 && finished == 0) {
+                    String timeString = getTime(time);
+                    Globals.get().status.setCounter(timeString);
+                    lastMilliseconds = now;
+                    timer.setText(timeString);
+                    Panel.this.setBackground(backGroundColor);
+                    int sec = (int) (time / 1000);
+                    if (sec % 60 == 0 && sec > 59) {
+                        beepAndFlash();
+                    } else if (sec < 60 && sec > 15 && sec % 10 == 0) {
+                        beepAndFlash();
+                    } else if (sec < 16 && sec > 10) {
+                        beepAndFlash();
+                    } else if (sec < 11) {
+                        moreBeepAndFlash();
+                    }
+                } else if (time <= 0 && ((finished - start > milliseconds) || (finished == 0))) {
+                    changeColorIfPossible(failedBackGroundColor);
+                    try {
+                        if (failedPlayed.compareAndSet(false, true)) {
+                            if (failed != null) {
+                                failed.play(null);
+                            }
+                            Utils.closeAudio();
+                            timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (650d * diff)));
+                            resultText.setForeground(Color.RED);
+                            resultText.setText("GAME OVER");
+//                            int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.FAILED), 30);
+                            Globals.get().executor.schedule(() ->
+                                            playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.FAILED)),
+                                    0, TimeUnit.SECONDS);
+                        }
+                    } catch (Exception ex) {
+                        logger.error(Utils.getStackTrace(ex));
+                        VideoPlayer.get().play(new PlayVideo(".", "failed_counter.wav", 10));
+                    }
+                } else if (!resetState) {
+                    changeColorIfPossible(successBackGroundColor);
+                    try {
+                        if (successPlayed.compareAndSet(false, true)) {
+                            if (success != null) {
+                                success.play(null);
+                            }
+                            Utils.closeAudio();
+                            timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (650d * diff)));
+                            resultText.setForeground(Color.GREEN);
+                            resultText.setText("CONGRATULATIONS");
+//                            int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.SUCCESS), 30);
+
+                            Globals.get().executor.schedule(() ->
+                                            playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.SUCCESS)),
+                                    0, TimeUnit.SECONDS);
+                        }
+                    } catch (Exception ex) {
+                        logger.error(Utils.getStackTrace(ex));
+                        VideoPlayer.get().play(new PlayVideo(".", "success.wav", 10));
+                    }
+                }
+
+            } catch (Exception e) {
+                logger.info(Utils.getStackTrace(e));
             }
             long now = System.currentTimeMillis();
-            if (now - lastMovement > DELAY_VISIBLE) {
-                setInvisible();
-            }
-            long time = start - now + milliseconds;
-            if (lastMilliseconds + invisibleAfter < now) {
-                timer.setVisible(false);
-                Globals.get().status.setCounter("invisible");
-            }
-            if (time > 0 && finished == 0) {
-                String timeString = getTime(time);
-                Globals.get().status.setCounter(timeString);
-                lastMilliseconds = now;
-                timer.setText(timeString);
-                Panel.this.setBackground(backGroundColor);
-                int sec = (int) (time / 1000);
-                if (sec % 60 == 0 && sec > 59) {
-                    beepAndFlash();
-                } else if (sec < 60 && sec > 15 && sec % 10 == 0) {
-                    beepAndFlash();
-                } else if (sec < 16 && sec > 10) {
-                    beepAndFlash();
-                } else if (sec < 11) {
-                    moreBeepAndFlash();
-                }
-            } else if (time <= 0 && ((finished - start > milliseconds) || (finished == 0))) {
-                changeColorIfPossible(failedBackGroundColor);
-                try {
-                    if (failedPlayed.compareAndSet(false, true)) {
-                        failed.play(null);
-                        Utils.closeAudio();
-                        int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.FAILED), 30);
-                        Globals.get().executor.schedule(() ->
-                                        playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.FAILED)),
-                                seconds, TimeUnit.SECONDS);
-                    }
-                } catch (Exception ex) {
-                    logger.error(Utils.getStackTrace(ex));
-                    VideoPlayer.get().play(new PlayVideo(".", "failed_counter.wav", 10));
-                }
-            } else if (!resetState) {
-                changeColorIfPossible(successBackGroundColor);
-                try {
-                    if (successPlayed.compareAndSet(false, true)) {
-                        success.play(null);
-                        Utils.closeAudio();
-                        int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.SUCCESS), 30);
-                        Globals.get().executor.schedule(() ->
-                                        playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.SUCCESS)),
-                                seconds, TimeUnit.SECONDS);
-                    }
-                } catch (Exception ex) {
-                    logger.error(Utils.getStackTrace(ex));
-                    VideoPlayer.get().play(new PlayVideo(".", "success.wav", 10));
-                }
-            }
-            now = System.currentTimeMillis();
-            time = (start - now + milliseconds) % 1000;
+            long time = (start - now + milliseconds) % 1000;
             time = time < 600 ? 650 : time + 50;
             ses.schedule(this, time, TimeUnit.MILLISECONDS);
         }
@@ -244,13 +260,27 @@ public class Panel extends JPanel {
     public Panel make() {
         setBackground(backGroundColor);
         setBorder(BorderFactory.createEmptyBorder((int) (200d * diff), 0, 0, 0));
-        //add(createLabel(title));
+//        add(createLabel(title));
+        add(createText());
         add(createTimer());
         add(createStopStartButton());
         add(createResetButton());
         resetButton.setVisible(false);
         lastMovement = System.currentTimeMillis();
         return this;
+    }
+
+    public JLabel createText() {
+        resultText = new JLabel();
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
+        resultText.setFont(new Font("Arial", Font.PLAIN, (int) (125d * diff)));
+        resultText.setBackground(Color.BLACK);
+        //resultText.setFont(customFont.deriveFont(Font.ITALIC, (float) (85d * diff)));
+        resultText.setHorizontalAlignment(JLabel.CENTER);
+        resultText.setForeground(Color.WHITE);
+        return resultText;
     }
 
     public JLabel createTimer() {
@@ -347,6 +377,8 @@ public class Panel extends JPanel {
 
     public void makeStart() {
         if (finished != 0) {
+            logger.info("makeStart()");
+            //resultText.setText("");
             Globals.get().executor.submit(() -> Clicker.click());
             timer.setVisible(true);
             long now = System.currentTimeMillis();
@@ -364,6 +396,7 @@ public class Panel extends JPanel {
     }
 
     public void makeStop() {
+        logger.info("makeStop()");
         long now = System.currentTimeMillis();
         lastMilliseconds = now;
         timer.setVisible(true);
@@ -371,7 +404,7 @@ public class Panel extends JPanel {
         finished = now;
         stopStartButton.setText(stopStartTexts[1]);
         stopStartButton.setVisible(false);
-        resetButton.setVisible(true);
+        resetButton.setVisible(false);
         resetState = false;
     }
 
@@ -384,7 +417,7 @@ public class Panel extends JPanel {
                     stopStartButton.setVisible(true);
                 }
                 if (!resetState) {
-                    resetButton.setVisible(true);
+                    resetButton.setVisible(false);
                 }
             }
             return becameVisible;
@@ -412,6 +445,8 @@ public class Panel extends JPanel {
     }
 
     public void resetButtonPressed() {
+        resultText.setText("");
+        timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (850d * diff)));
         long now = System.currentTimeMillis();
         lastMilliseconds = now;
         timer.setVisible(true);

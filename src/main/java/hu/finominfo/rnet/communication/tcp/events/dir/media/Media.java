@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by kks on 2018.04.21..
  */
 public enum Media {
-    AUDIO("AUDIO", Arrays.asList(TimeOrder.BEFORE, TimeOrder.DURING, TimeOrder.SUCCESS, TimeOrder.FAILED)),
+    AUDIO("AUDIO", Arrays.asList(TimeOrder.DURING, TimeOrder.SUCCESS, TimeOrder.FAILED)),
     VIDEO("VIDEO", Arrays.asList(TimeOrder.BEFORE, TimeOrder.SUCCESS, TimeOrder.FAILED)),
     PICTURE("PICTURE", Arrays.asList(TimeOrder.BEFORE, TimeOrder.SUCCESS, TimeOrder.FAILED));
 

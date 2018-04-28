@@ -75,28 +75,27 @@ public class Counter extends JPanel {
         }
         setLayout(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
-        executor.schedule(new Runnable() {
-            @Override
-            public void run() {
-                for (Panel[] panelRow : panels) {
-                    for (Panel panel : panelRow) {
-                        panel.refresh.run();
-                    }
+        executor.schedule(() -> {
+            for (Panel[] panelRow : panels) {
+                logger.info("panel");
+                for (Panel panel : panelRow) {
+                    logger.info("refresh");
+                    panel.refresh.run();
                 }
-                try {
-                    new HandlingIO() {
-                        @Override
-                        public void stopButtonPressed() {
-                            for (Panel[] panelRow : panels) {
-                                for (Panel panel : panelRow) {
-                                    panel.makeStop();
-                                }
+            }
+            try {
+                new HandlingIO() {
+                    @Override
+                    public void stopButtonPressed() {
+                        for (Panel[] panelRow : panels) {
+                            for (Panel panel : panelRow) {
+                                panel.makeStop();
                             }
                         }
-                    };
-                } catch (Exception e) {
-                    logger.error(e);
-                }
+                    }
+                };
+            } catch (Exception e) {
+                logger.error(e);
             }
         }, 1, TimeUnit.SECONDS);
     }

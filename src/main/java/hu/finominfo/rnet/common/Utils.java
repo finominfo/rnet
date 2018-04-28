@@ -155,65 +155,82 @@ public class Utils {
 
 
     public static void playMediaBeforeStartCounter() {
-        Types types = Types.load();
-        String videoPlayAtCounterStart = types.getVideoTypes().get(TimeOrder.BEFORE);
-        if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
-            PlayVideo play = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
-            VideoPlayer.get().play(play);
-            Globals.get().executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    if (VideoPlayer.get().isPlaying()) {
-                        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
-                    } else {
-                        playAudioBeforeStartCounter();
+        try {
+            Types types = Types.load();
+            String videoPlayAtCounterStart = types.getVideoTypes().get(TimeOrder.BEFORE);
+            if (videoPlayAtCounterStart != null && !videoPlayAtCounterStart.isEmpty()) {
+                PlayVideo play = new PlayVideo(Globals.videoFolder, videoPlayAtCounterStart, 30);
+                VideoPlayer.get().play(play);
+                Globals.get().executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (VideoPlayer.get().isPlaying()) {
+                            Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+                        } else {
+                            playAudioBeforeStartCounter();
+                        }
                     }
-                }
-            });
-        } else {
+                });
+            } else {
+                playAudioBeforeStartCounter();
+            }
+        } catch (Exception e) {
+            logger.error(getStackTrace(e));
             playAudioBeforeStartCounter();
         }
     }
 
     public static void playAudioBeforeStartCounter() {
-        Types types = Types.load();
-        String audioPlayAtCounterStart = types.getAudioTypes().get(TimeOrder.BEFORE);
-        if (audioPlayAtCounterStart != null && !audioPlayAtCounterStart.isEmpty()) {
-            PlayVideo play = new PlayVideo(Globals.audioFolder, audioPlayAtCounterStart, 30);
-            VideoPlayer.get().play(play);
-            Globals.get().executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    if (VideoPlayer.get().isPlaying()) {
-                        Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
-                    } else {
-                        startCounterMusic();
+        logger.info("EDDIG - 1");
+        try {
+            Types types = Types.load();
+            String audioPlayAtCounterStart = types.getAudioTypes().get(TimeOrder.BEFORE);
+            if (audioPlayAtCounterStart != null && !audioPlayAtCounterStart.isEmpty()) {
+                PlayVideo play = new PlayVideo(Globals.audioFolder, audioPlayAtCounterStart, 30);
+                VideoPlayer.get().play(play);
+                Globals.get().executor.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (VideoPlayer.get().isPlaying()) {
+                            Globals.get().executor.schedule(this, 1, TimeUnit.SECONDS);
+                        } else {
+                            startCounterMusic();
+                        }
                     }
-                }
-            });
-        } else {
+                });
+            } else {
+                startCounterMusic();
+            }
+        } catch (Exception e) {
+            logger.error(getStackTrace(e));
             startCounterMusic();
         }
     }
 
     public static void startCounterMusic() {
-        Types types = Types.load();
-        String contMusicAtCounterStart = types.getAudioTypes().get(TimeOrder.DURING);
-        if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
-            String fileName = Globals.audioFolder + File.separator + contMusicAtCounterStart;
-            File f = new File(fileName);
-            if (f.exists() && !f.isDirectory()) {
-                try {
-                    closeAudio();
-                    Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
-                    Globals.get().audioPlayerContinuous.play(null);
+        logger.info("EDDIG - 2");
+        try {
+            Types types = Types.load();
+            String contMusicAtCounterStart = types.getAudioTypes().get(TimeOrder.DURING);
+            if (contMusicAtCounterStart != null && !contMusicAtCounterStart.isEmpty()) {
+                String fileName = Globals.audioFolder + File.separator + contMusicAtCounterStart;
+                File f = new File(fileName);
+                if (f.exists() && !f.isDirectory()) {
+                    try {
+                        closeAudio();
+                        Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
+                        Globals.get().audioPlayerContinuous.play(null);
 //                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
 //                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
-                } catch (Exception e) {
-                    logger.error(getStackTrace(e));
+                    } catch (Exception e) {
+                        logger.error(getStackTrace(e));
+                    }
                 }
             }
+        } catch (Exception e) {
+            logger.error(getStackTrace(e));
         }
+        logger.info("EDDIG - 3");
         Globals.get().counter.makeStart();
     }
 
@@ -354,7 +371,7 @@ public class Utils {
                 ProcessBuilder processBuilder = new ProcessBuilder("amixer", "cget", "numid=1");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(processBuilder.start().getInputStream()));
                 int i = 0;
-                while ( (++i) < 4 && (line = reader.readLine()) != null);
+                while ((++i) < 4 && (line = reader.readLine()) != null) ;
                 String num = line.substring(line.indexOf("=") + 1);
                 lastVolume = Integer.valueOf(num);
             } catch (IOException e) {
