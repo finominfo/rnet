@@ -117,13 +117,13 @@ public class Panel extends JPanel {
                     changeColorIfPossible(failedBackGroundColor);
                     try {
                         if (failedPlayed.compareAndSet(false, true)) {
-                            if (failed != null) {
-                                failed.play(null);
-                            }
-                            Utils.closeAudio();
                             timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (650d * diff)));
                             resultText.setForeground(Color.RED);
                             resultText.setText("GAME OVER");
+                            if (failed != null) {
+                                Globals.get().executor.submit(() -> failed.play(null));
+                            }
+                            Utils.closeAudio();
 //                            int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.FAILED), 30);
                             Globals.get().executor.schedule(() ->
                                             playMediaAtFinish(Globals.get().types.getVideoTypes().get(TimeOrder.FAILED)),
@@ -137,13 +137,13 @@ public class Panel extends JPanel {
                     changeColorIfPossible(successBackGroundColor);
                     try {
                         if (successPlayed.compareAndSet(false, true)) {
-                            if (success != null) {
-                                success.play(null);
-                            }
-                            Utils.closeAudio();
                             timer.setFont(customFont.deriveFont(Font.ITALIC, (float) (650d * diff)));
                             resultText.setForeground(Color.GREEN);
                             resultText.setText("CONGRATULATIONS");
+                            if (success != null) {
+                                Globals.get().executor.submit(() -> success.play(null));
+                            }
+                            Utils.closeAudio();
 //                            int seconds = showPic(Globals.get().types.getPictureTypes().get(TimeOrder.SUCCESS), 30);
 
                             Globals.get().executor.schedule(() ->

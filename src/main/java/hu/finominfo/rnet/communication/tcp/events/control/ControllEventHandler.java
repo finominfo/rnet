@@ -68,7 +68,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                         long now = System.currentTimeMillis();
                         long last = lastAudioStop.get();
                         if (checkHits(defAudioHits, audName)) {
-                        //if (now - last < 5000 && lastAudioStop.compareAndSet(last, now)) {
+                            //if (now - last < 5000 && lastAudioStop.compareAndSet(last, now)) {
                             Globals.get().types.setNext(Globals.get().types.getAudioTypes(), audName).save();
                         } else {
                             closeAudio();
@@ -84,7 +84,7 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                         long now = System.currentTimeMillis();
                         long last = lastVideoStop.get();
                         if (checkHits(defVideoHits, vidName)) {
-                        //if (now - last < 5000 && lastVideoStop.compareAndSet(last, now)) {
+                            //if (now - last < 5000 && lastVideoStop.compareAndSet(last, now)) {
                             Globals.get().types.setNext(Globals.get().types.getVideoTypes(), vidName).save();
                         }
                     } else {
@@ -93,9 +93,9 @@ public class ControllEventHandler extends SimpleChannelInboundHandler<ControlEve
                     break;
                 case RESET_COUNTER:
                     logger.info("RESET_COUNTER arrived: " + ip);
-                    closeAudio();
                     int minutes = ((ResetCounter) msg.getControlObject()).getMinutes();
                     if (minutes == 0 || minutes > 30) {
+                        closeAudio();
                         //Globals.get().counter.makeStart();
                         Globals.get().counter.makeStop();
                         if (minutes == 0) {

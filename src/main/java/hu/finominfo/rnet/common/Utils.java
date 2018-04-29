@@ -328,34 +328,21 @@ public class Utils {
         if (attention != null && !attention.isEmpty()) {
             String fileName = Globals.audioFolder + File.separator + attention;
             File f = new File(fileName);
-            if (f.exists() && !f.isDirectory()) {
-                try {
-                    final AudioPlayer player = new AudioPlayer(Globals.get().executor, fileName);
-                    player.play(null);
-                    Globals.get().executor.schedule(() -> {
-                        player.close();
-                    }, (player.getClip().getMicrosecondLength() / 1000) + 200, TimeUnit.MILLISECONDS);
-                    Globals.get().executor.schedule(() -> {
-                        if (runnable != null && wasRun.compareAndSet(false, true)) {
-                            Globals.get().executor.submit(runnable);
-                        }
-                    }, 10, TimeUnit.MILLISECONDS);
+            if (f.exists() && !f.isDirectory()) try {
+                final AudioPlayer player = new AudioPlayer(Globals.get().executor, fileName);
+                player.play(null);
+                long playLength = player.getClip().getMicrosecondLength() / 1000 + 200;
+                Globals.get().executor.schedule(() -> player.close(), playLength, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                logger.error(getStackTrace(e));
+            }
+        }
+        Globals.get().executor.schedule(() -> runRunnable(runnable, wasRun), 10, TimeUnit.MILLISECONDS);
+    }
 
-                } catch (Exception e) {
-                    logger.error(getStackTrace(e));
-                    if (runnable != null && wasRun.compareAndSet(false, true)) {
-                        Globals.get().executor.submit(runnable);
-                    }
-                }
-            } else {
-                if (runnable != null && wasRun.compareAndSet(false, true)) {
-                    Globals.get().executor.submit(runnable);
-                }
-            }
-        } else {
-            if (runnable != null && wasRun.compareAndSet(false, true)) {
-                Globals.get().executor.submit(runnable);
-            }
+    private static void runRunnable(Runnable runnable, AtomicBoolean wasRun) {
+        if (runnable != null && wasRun.compareAndSet(false, true)) {
+            Globals.get().executor.submit(runnable);
         }
     }
 
