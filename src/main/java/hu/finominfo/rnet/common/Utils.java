@@ -181,7 +181,6 @@ public class Utils {
     }
 
     public static void playAudioBeforeStartCounter() {
-        logger.info("EDDIG - 1");
         try {
             Types types = Types.load();
             String audioPlayAtCounterStart = types.getAudioTypes().get(TimeOrder.BEFORE);
@@ -208,7 +207,6 @@ public class Utils {
     }
 
     public static void startCounterMusic() {
-        logger.info("EDDIG - 2");
         try {
             Types types = Types.load();
             String contMusicAtCounterStart = types.getAudioTypes().get(TimeOrder.DURING);
@@ -218,10 +216,10 @@ public class Utils {
                 if (f.exists() && !f.isDirectory()) {
                     try {
                         closeAudio();
-                        Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
-                        Globals.get().audioPlayerContinuous.play(null);
-//                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
-//                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
+                        //Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
+                        //Globals.get().audioPlayerContinuous.play(null);
+                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
+                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
                     } catch (Exception e) {
                         logger.error(getStackTrace(e));
                     }
@@ -230,7 +228,6 @@ public class Utils {
         } catch (Exception e) {
             logger.error(getStackTrace(e));
         }
-        logger.info("EDDIG - 3");
         Globals.get().counter.makeStart();
     }
 

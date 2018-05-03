@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -76,17 +77,17 @@ public class Panel extends JPanel {
                 String fail = Globals.get().types.getAudioTypes().get(TimeOrder.FAILED);
                 if (success != null) {
                     if (!success.getFile().getName().endsWith(succ)) {
-                        success = new AudioPlayer(Globals.get().executor, succ);
+                        success = new AudioPlayer(Globals.get().executor, Globals.audioFolder + File.separator + succ);
                     }
                 } else if (succ != null && !succ.isEmpty()) {
-                    success = new AudioPlayer(Globals.get().executor, succ);
+                    success = new AudioPlayer(Globals.get().executor, Globals.audioFolder + File.separator + succ);
                 }
                 if (failed != null) {
                     if (!failed.getFile().getName().endsWith(fail)) {
-                        failed = new AudioPlayer(Globals.get().executor, fail);
+                        failed = new AudioPlayer(Globals.get().executor, Globals.audioFolder + File.separator + fail);
                     }
                 } else if (fail != null && !fail.isEmpty()) {
-                    failed = new AudioPlayer(Globals.get().executor, fail);
+                    failed = new AudioPlayer(Globals.get().executor, Globals.audioFolder + File.separator + fail);
                 }
                 long now = System.currentTimeMillis();
                 if (now - lastMovement > DELAY_VISIBLE) {

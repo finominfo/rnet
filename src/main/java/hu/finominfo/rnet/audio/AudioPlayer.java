@@ -5,6 +5,7 @@ import hu.finominfo.rnet.common.Globals;
 import java.io.File;
 import java.nio.channels.CompletionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -26,8 +27,8 @@ public class AudioPlayer {
 
     public AudioPlayer(ScheduledExecutorService ses, String audioFile) {
         this.ses = ses;
-        this.file = new File(audioFile);
         try {
+            this.file = new File(audioFile);
             audioIn = AudioSystem.getAudioInputStream(file);
             clip = AudioSystem.getClip();
             clip.open(audioIn);
@@ -70,6 +71,11 @@ public class AudioPlayer {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        AudioPlayer audioPlayer = new AudioPlayer(new ScheduledThreadPoolExecutor(1), "\\ableton\\bir d1.wav");
+        audioPlayer.play(null);
     }
 
 }
