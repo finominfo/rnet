@@ -103,6 +103,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JButton videoDel = new JButton(DelIcon);
     protected final JButton videoContinuousPlay = new JButton("CONT PLAY");
     protected final JButton videoStop = new JButton(StopIcon2);
+    protected final JButton videoB = new JButton("B");
 
 
     protected final JLabel pictureLabel = new JLabel(PictureIcon);
@@ -231,19 +232,23 @@ public class FrontEndUtils extends JFrame implements Runnable {
                     null, options, options[1]);
             if (option == 0) { // pressing OK button
                 String message = text.getText();
-                List<String> selectedValuesList = servantsList.getSelectedValuesList();
-                final AtomicInteger seconds = new AtomicInteger(30);
-                try {
-                    seconds.set(Integer.valueOf(showSeconds.getText()));
-                } catch (Exception e) {
-                    logger.error(e);
-                }
-                if (!selectedValuesList.isEmpty()) {
-                    selectedValuesList.stream().forEach(selectedValue -> {
-                        Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_MESSAGE, message, null, Utils.getIp(selectedValue), seconds.get()));
-                    });
-                }
+                sendMessage(message);
             }
+        }
+    }
+
+    void sendMessage(String message) {
+        List<String> selectedValuesList = servantsList.getSelectedValuesList();
+        final AtomicInteger seconds = new AtomicInteger(30);
+        try {
+            seconds.set(Integer.valueOf(showSeconds.getText()));
+        } catch (Exception e) {
+            logger.error(e);
+        }
+        if (!selectedValuesList.isEmpty()) {
+            selectedValuesList.stream().forEach(selectedValue -> {
+                Globals.get().tasks.add(new hu.finominfo.rnet.taskqueue.Task(TaskToDo.SEND_MESSAGE, message, null, Utils.getIp(selectedValue), seconds.get()));
+            });
         }
     }
 

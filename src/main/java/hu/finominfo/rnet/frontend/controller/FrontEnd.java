@@ -189,13 +189,22 @@ public class FrontEnd extends FrontEndUtils {
         add(videoDel);
         videoContinuousPlay.setBounds(680, 470, 0, 0);
         videoStop.setBounds(580, 420, 50, 48);
+        videoB.setBounds(580, 470, 50, 48);
         add(videoContinuousPlay);
         add(videoStop);
+        add(videoB);
         videoAdd.addActionListener(e -> sendFile(Globals.videoFolder, FileType.VIDEO));
         videoDel.addActionListener(e -> deleteFile(Globals.videoFolder, FileType.VIDEO, videoList));
         videoPlay.addActionListener(e -> playVideo(ControlType.PLAY_VIDEO));
         videoContinuousPlay.addActionListener(e -> playVideo(ControlType.PLAY_VIDEO_CONTINUOUS));
         videoStop.addActionListener(e -> sendControlWithName(ControlType.STOP_VIDEO, videoList.getSelectedValue()));
+        videoB.addActionListener(e -> {
+            String value = videoList.getSelectedValue();
+            if (value.startsWith("*")) {
+                value = value.substring(3);
+            }
+            sendMessage("v*b*" + value);
+        });
 
 
         pictureLabel.setFont(new Font(pictureLabel.getFont().getName(), Font.BOLD, 25));
