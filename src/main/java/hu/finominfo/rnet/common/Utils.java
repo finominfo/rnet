@@ -218,8 +218,8 @@ public class Utils {
                         closeAudio();
                         //Globals.get().audioPlayerContinuous = new AudioPlayerContinuous(Globals.get().executor, fileName);
                         //Globals.get().audioPlayerContinuous.play(null);
-                    Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
-                    Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
+                        Globals.get().videoPlayerContinuous = VideoPlayerContinuous.get();
+                        Globals.get().videoPlayerContinuous.play(new PlayVideo(Globals.audioFolder, contMusicAtCounterStart, 100));
                     } catch (Exception e) {
                         logger.error(getStackTrace(e));
                     }
@@ -308,6 +308,72 @@ public class Utils {
 
     public static void showPicture(ShowPicture showPicture) {
         attention(() -> PictureDisplay.get().display(showPicture.getPathAndName(), showPicture.getShortName(), showPicture.getSeconds()));
+    }
+
+    public static void handleMessage(MessageEvent msg) {
+        String text = msg.getText();
+        if (text.length() > 4 && text.charAt(1) == '*' && text.charAt(3) == '*') {
+            handleSpecialText(msg);
+        } else
+            showMessage(msg);
+    }
+
+    private static void handleSpecialText(MessageEvent msg) {
+        String text = msg.getText();
+        String firstPart = text.substring(0, 4).toLowerCase();
+        String partOfName = text.substring(4);
+        char mediaType = firstPart.charAt(0);
+        char timeType = firstPart.charAt(2);
+        Types types = Globals.get().types;
+        Map<TimeOrder, String> myType;
+        List<String> files;
+        switch (mediaType) {
+            case 'a':
+                myType = types.getAudioTypes();
+                files = Utils.getFilesFromFolder(Globals.audioFolder);
+                break;
+            case 'v':
+                myType = types.getVideoTypes();
+                files = Utils.getFilesFromFolder(Globals.videoFolder);
+                break;
+            default:
+                showMessage(msg);
+                return;
+        }
+        Optional<String> fileName = files.stream().filter(name -> name.startsWith(partOfName)).findFirst();
+        if (!fileName.isPresent()) {
+            fileName = files.stream().filter(name -> name.toLowerCase().startsWith(partOfName.toLowerCase())).findFirst();
+        }
+        if (!fileName.isPresent()) {
+            fileName = files.stream().filter(name -> name.contains(partOfName)).findFirst();
+        }
+        if (!fileName.isPresent()) {
+            fileName = files.stream().filter(name -> name.toLowerCase().contains(partOfName.toLowerCase())).findFirst();
+        }
+        if (!fileName.isPresent()) {
+            showMessage(msg);
+            return;
+        }
+        final String finalFileName = fileName.get();
+        myType.entrySet().stream().filter(entry -> entry.getValue().equals(finalFileName)).forEach(entry -> entry.setValue(""));
+        switch (timeType) {
+            case 'b':
+                myType.put(TimeOrder.BEFORE, finalFileName);
+                break;
+            case 'd':
+                myType.put(TimeOrder.DURING, finalFileName);
+                break;
+            case 'f':
+                myType.put(TimeOrder.FAILED, finalFileName);
+                break;
+            case 's':
+                myType.put(TimeOrder.SUCCESS, finalFileName);
+                break;
+            default:
+                showMessage(msg);
+                return;
+        }
+        types.save();
     }
 
     public static void showMessage(MessageEvent msg) {
