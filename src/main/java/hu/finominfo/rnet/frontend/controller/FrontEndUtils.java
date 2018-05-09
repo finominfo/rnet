@@ -281,16 +281,19 @@ public class FrontEndUtils extends JFrame implements Runnable {
                 if (shouldRefreshAll || videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
                         !dirs.get(Globals.videoFolder).stream().allMatch(str -> visibleVideoNames.contains(str))) {
                     videoListModel.clear();
+                    videoListModel.ensureCapacity(visibleVideoNames.size());
                     visibleVideoNames.forEach(videoListModel::addElement);
                 }
                 if (shouldRefreshAll || audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
                         !dirs.get(Globals.audioFolder).stream().allMatch(str -> visibleAudioNames.contains(str))) {
                     audioListModel.clear();
+                    audioListModel.ensureCapacity(visibleAudioNames.size());
                     visibleAudioNames.forEach(audioListModel::addElement);
                 }
                 if (shouldRefreshAll || pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
                         !dirs.get(Globals.pictureFolder).stream().allMatch(str -> visiblePictureNames.contains(str))) {
                     pictureListModel.clear();
+                    pictureListModel.ensureCapacity(visiblePictureNames.size());
                     visiblePictureNames.forEach(pictureListModel::addElement);
                 }
                 audioList.setSelectedValue(audioListSelectedValue, false);
