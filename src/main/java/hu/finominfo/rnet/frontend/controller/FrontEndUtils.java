@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static javax.swing.ScrollPaneConstants.*;
 
@@ -128,6 +130,8 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JLabel statusLabel = new JLabel("STATUS");
 
     protected final static Logger logger = Logger.getLogger(FrontEnd.class);
+
+    private final Lock lock = new ReentrantLock();
 
     private String getToolTip(MouseEvent evt, String item, String folder) {
         String shortName = item.substring(0, item.lastIndexOf('.'));
@@ -278,28 +282,33 @@ public class FrontEndUtils extends JFrame implements Runnable {
                         getVisibleDirectory(Globals.audioFolder, dirs, Utils.getClientParam(selectedValue).getTypes().getAudioTypes());
                 final List<String> visiblePictureNames =
                         getVisibleDirectory(Globals.pictureFolder, dirs, Utils.getClientParam(selectedValue).getTypes().getPictureTypes());
-                if (shouldRefreshAll || videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
-                        !dirs.get(Globals.videoFolder).stream().allMatch(str -> visibleVideoNames.contains(str))) {
-                    videoListModel.clear();
-                    videoListModel.ensureCapacity(visibleVideoNames.size());
-                    visibleVideoNames.forEach(videoListModel::addElement);
+                lock.lock();
+                try {
+                    if (shouldRefreshAll || videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
+                            !dirs.get(Globals.videoFolder).stream().allMatch(str -> visibleVideoNames.contains(str))) {
+                        videoListModel.clear();
+                        videoListModel.ensureCapacity(visibleVideoNames.size());
+                        visibleVideoNames.forEach(videoListModel::addElement);
+                    }
+                    if (shouldRefreshAll || audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
+                            !dirs.get(Globals.audioFolder).stream().allMatch(str -> visibleAudioNames.contains(str))) {
+                        audioListModel.clear();
+                        audioListModel.ensureCapacity(visibleAudioNames.size());
+                        visibleAudioNames.forEach(audioListModel::addElement);
+                    }
+                    if (shouldRefreshAll || pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
+                            !dirs.get(Globals.pictureFolder).stream().allMatch(str -> visiblePictureNames.contains(str))) {
+                        pictureListModel.clear();
+                        pictureListModel.ensureCapacity(visiblePictureNames.size());
+                        visiblePictureNames.forEach(pictureListModel::addElement);
+                    }
+                    audioList.setSelectedValue(audioListSelectedValue, false);
+                    videoList.setSelectedValue(videoListSelectedValue, false);
+                    pictureList.setSelectedValue(pictureListSelectedValue, false);
+                    status.setText(Utils.getClientParam(selectedValue).getStatus());
+                } finally {
+                    lock.unlock();
                 }
-                if (shouldRefreshAll || audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
-                        !dirs.get(Globals.audioFolder).stream().allMatch(str -> visibleAudioNames.contains(str))) {
-                    audioListModel.clear();
-                    audioListModel.ensureCapacity(visibleAudioNames.size());
-                    visibleAudioNames.forEach(audioListModel::addElement);
-                }
-                if (shouldRefreshAll || pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
-                        !dirs.get(Globals.pictureFolder).stream().allMatch(str -> visiblePictureNames.contains(str))) {
-                    pictureListModel.clear();
-                    pictureListModel.ensureCapacity(visiblePictureNames.size());
-                    visiblePictureNames.forEach(pictureListModel::addElement);
-                }
-                audioList.setSelectedValue(audioListSelectedValue, false);
-                videoList.setSelectedValue(videoListSelectedValue, false);
-                pictureList.setSelectedValue(pictureListSelectedValue, false);
-                status.setText(Utils.getClientParam(selectedValue).getStatus());
                 shouldRefreshAll = false;
             } else {
                 videoListModel.clear();
@@ -312,7 +321,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     }
 
-    private List<String> getVisibleDirectory(String directory,  Map<String, List<String>> dirs, Map<TimeOrder, String> types) {
+    private List<String> getVisibleDirectory(String directory, Map<String, List<String>> dirs, Map<TimeOrder, String> types) {
         final List<String> result = new ArrayList<>();
         dirs.get(directory).stream().forEach(str -> {
             Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
