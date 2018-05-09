@@ -18,6 +18,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -81,7 +82,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
     protected final JLabel audioLabel = new JLabel(AudioIcon);
     public final DefaultListModel<String> audioListModel = new DefaultListModel();
     protected final JList<String> audioList = new JList<>(audioListModel);
-    protected final JScrollPane audioPane = new JScrollPane(audioList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    protected final JScrollPane audioPane = new JScrollPane(audioList, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton audioPlay = new JButton(SendIcon);
     protected final JButton audioAdd = new JButton(AddIcon);
     protected final JButton audioDel = new JButton(DelIcon);
@@ -97,7 +98,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     };
 
-    protected final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    protected final JScrollPane videoPane = new JScrollPane(videoList, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton videoPlay = new JButton(SendIcon);
     protected final JButton videoAdd = new JButton(AddIcon);
     protected final JButton videoDel = new JButton(DelIcon);
@@ -115,7 +116,7 @@ public class FrontEndUtils extends JFrame implements Runnable {
         }
     };
     ;
-    protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_ALWAYS, HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    protected final JScrollPane picturePane = new JScrollPane(pictureList, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
     protected final JButton pictureShow = new JButton(SendIcon);
     protected final JButton pictureAdd = new JButton(AddIcon);
     protected final JButton pictureDel = new JButton(DelIcon);
@@ -256,12 +257,6 @@ public class FrontEndUtils extends JFrame implements Runnable {
         String audioListSelectedValue = audioList.getSelectedValue();
         String videoListSelectedValue = videoList.getSelectedValue();
         String pictureListSelectedValue = pictureList.getSelectedValue();
-        if (shouldRefreshAll) {
-            shouldRefreshAll = false;
-            videoListModel.clear();
-            audioListModel.clear();
-            pictureListModel.clear();
-        }
         if (servantsList.getSelectedValuesList().isEmpty()) {
             startBtn.setEnabled(false);
             stopBtn.setEnabled(false);
@@ -277,46 +272,32 @@ public class FrontEndUtils extends JFrame implements Runnable {
             String selectedValue = servantsList.getSelectedValue();
             if (selectedValue != null) {
                 Map<String, List<String>> dirs = Utils.getClientParam(selectedValue).getDirs();
-                if (videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
-                        !dirs.get(Globals.videoFolder).stream().allMatch(str -> videoListModel.contains(str))) {
+                final List<String> visibleVideoNames =
+                        getVisibleDirectory(Globals.videoFolder, dirs, Utils.getClientParam(selectedValue).getTypes().getVideoTypes());
+                final List<String> visibleAudioNames =
+                        getVisibleDirectory(Globals.audioFolder, dirs, Utils.getClientParam(selectedValue).getTypes().getAudioTypes());
+                final List<String> visiblePictureNames =
+                        getVisibleDirectory(Globals.pictureFolder, dirs, Utils.getClientParam(selectedValue).getTypes().getPictureTypes());
+                if (shouldRefreshAll || videoListModel.getSize() != dirs.get(Globals.videoFolder).size() ||
+                        !dirs.get(Globals.videoFolder).stream().allMatch(str -> visibleVideoNames.contains(str))) {
                     videoListModel.clear();
-                    dirs.get(Globals.videoFolder).stream().forEach(str -> {
-                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getVideoTypes();
-                        Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
-                        if (optional.isPresent()) {
-                            videoListModel.addElement(optional.get().getKey().getSign() + str);
-                        } else
-                            videoListModel.addElement(str);
-                    });
+                    visibleVideoNames.forEach(videoListModel::addElement);
                 }
-                if (audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
-                        !dirs.get(Globals.audioFolder).stream().allMatch(str -> audioListModel.contains(str))) {
+                if (shouldRefreshAll || audioListModel.getSize() != dirs.get(Globals.audioFolder).size() ||
+                        !dirs.get(Globals.audioFolder).stream().allMatch(str -> visibleAudioNames.contains(str))) {
                     audioListModel.clear();
-                    dirs.get(Globals.audioFolder).stream().forEach(str -> {
-                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getAudioTypes();
-                        Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
-                        if (optional.isPresent()) {
-                            audioListModel.addElement(optional.get().getKey().getSign() + str);
-                        } else
-                            audioListModel.addElement(str);
-                    });
+                    visibleAudioNames.forEach(audioListModel::addElement);
                 }
-                if (pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
-                        !dirs.get(Globals.pictureFolder).stream().allMatch(str -> pictureListModel.contains(str))) {
+                if (shouldRefreshAll || pictureListModel.getSize() != dirs.get(Globals.pictureFolder).size() ||
+                        !dirs.get(Globals.pictureFolder).stream().allMatch(str -> visiblePictureNames.contains(str))) {
                     pictureListModel.clear();
-                    dirs.get(Globals.pictureFolder).stream().forEach(str -> {
-                        Map<TimeOrder, String> types = Utils.getClientParam(selectedValue).getTypes().getPictureTypes();
-                        Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
-                        if (optional.isPresent()) {
-                            pictureListModel.addElement(optional.get().getKey().getSign() + str);
-                        } else
-                            pictureListModel.addElement(str);
-                    });
+                    visiblePictureNames.forEach(pictureListModel::addElement);
                 }
                 audioList.setSelectedValue(audioListSelectedValue, false);
                 videoList.setSelectedValue(videoListSelectedValue, false);
                 pictureList.setSelectedValue(pictureListSelectedValue, false);
                 status.setText(Utils.getClientParam(selectedValue).getStatus());
+                shouldRefreshAll = false;
             } else {
                 videoListModel.clear();
                 audioListModel.clear();
@@ -326,6 +307,18 @@ public class FrontEndUtils extends JFrame implements Runnable {
         } else {
             status.setText("");
         }
+    }
+
+    private List<String> getVisibleDirectory(String directory,  Map<String, List<String>> dirs, Map<TimeOrder, String> types) {
+        final List<String> result = new ArrayList<>();
+        dirs.get(directory).stream().forEach(str -> {
+            Optional<Map.Entry<TimeOrder, String>> optional = types.entrySet().stream().filter(entry -> entry.getValue().equals(str)).findAny();
+            if (optional.isPresent()) {
+                result.add(optional.get().getKey().getSign() + str);
+            } else
+                result.add(str);
+        });
+        return result;
     }
 
     private void refreshTaskInfo() {
